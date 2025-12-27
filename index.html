@@ -6,11 +6,12 @@
   <title>Cybersecurity Research | [Tim Johns]</title>
   
   <!-- Added Favicon -->
-  <link rel="icon" href="assets/" type="image/jpeg">
+  <link rel="icon" href="assets/logo.png" type="image/png">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Added VT323 for the retro terminal look -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&family=VT323&display=swap" rel="stylesheet">
   
   <!-- PDF.js Library (Crucial for mobile support) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -33,6 +34,7 @@
       --border-color: #30363d;
       --font-body: 'Inter', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
+      --font-retro: 'VT323', monospace; /* New retro font variable */
     }
 
     body {
@@ -100,9 +102,17 @@
     }
     .dot { width: 10px; height: 10px; border-radius: 50%; }
     .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
-    .terminal-content { padding: 1.5rem; font-family: var(--font-mono); font-size: 0.9rem; }
+    
+    /* Updated Terminal Content for Retro Look */
+    .terminal-content { 
+      padding: 1.5rem; 
+      font-family: var(--font-retro); /* Swapped to VT323 */
+      font-size: 1.2rem; /* Increased size for readability with retro font */
+      line-height: 1.4;
+    }
+    
     .prompt-user { color: var(--terminal-green); }
-    .cursor { display: inline-block; width: 8px; height: 1.2em; background: var(--text-muted); animation: blink 1s step-end infinite; vertical-align: middle; }
+    .cursor { display: inline-block; width: 10px; height: 1.2em; background: var(--text-muted); animation: blink 1s step-end infinite; vertical-align: bottom; }
     @keyframes blink { 50% { opacity: 0; } }
 
     /* --- ARTICLES --- */
@@ -176,7 +186,7 @@
     <nav>
       <!-- Updated Nav Logo Structure -->
       <div class="nav-logo">
-        <img src="assets/" alt="Logo" class="site-icon">
+        <img src="assets/logo.png" alt="Logo" class="site-icon">
         ./security_blog
       </div>
       <div class="nav-links">
