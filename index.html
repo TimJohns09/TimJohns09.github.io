@@ -4,97 +4,245 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cybersecurity Research | [Your Name]</title>
+  
+  <!-- Import Fonts: Inter for readability, JetBrains Mono for code/headers -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
     /* --- THEME CONFIGURATION --- */
     :root {
-      --bg-color: #0d1117;       /* GitHub Dark Dimmed background */
-      --text-color: #c9d1d9;     /* Soft gray text for readability */
-      --accent-color: #58a6ff;   /* bright blue link/accent color */
-      --terminal-green: #2ea043; /* status success green */
-      --code-bg: #161b22;        /* slightly lighter dark for boxes */
+      /* Darker, deeper background */
+      --bg-color: #050505;       
+      --card-bg: #0d1117;
+      
+      /* Text Colors */
+      --text-main: #c9d1d9;     
+      --text-muted: #8b949e;
+      --header-white: #f0f6fc;
+
+      /* Accents */
+      --accent-primary: #58a6ff;   /* Bright Blue */
+      --accent-glow: rgba(88, 166, 255, 0.15);
+      --terminal-green: #238636;
       --border-color: #30363d;
-      --font-stack: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      
+      /* Fonts */
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
     }
 
     /* --- BASE STYLES --- */
     body {
       background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: var(--font-stack);
-      line-height: 1.6;
+      background-image: 
+        linear-gradient(rgba(13, 17, 23, 0.95), rgba(13, 17, 23, 0.95)),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2330363d' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.7;
       margin: 0;
       padding: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* --- LAYOUT --- */
     .container {
       max-width: 800px;
-      margin: 4rem auto;
-      padding: 0 1.5rem;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    /* --- NAV BAR (New) --- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 3rem;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--header-white);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links a {
+      margin-left: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-primary);
+      text-decoration: none;
     }
 
     /* --- TYPOGRAPHY --- */
     h1, h2, h3 {
-      color: #ffffff;
-      margin-top: 2rem;
+      color: var(--header-white);
+      font-family: var(--font-body);
+      font-weight: 600;
+      line-height: 1.3;
     }
     
-    h1 { 
-      border-bottom: 2px solid var(--border-color); 
-      padding-bottom: 0.5rem;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    h1::before {
+      content: "#";
+      color: var(--accent-primary);
+      margin-right: 0.5rem;
+      opacity: 0.6;
+      font-family: var(--font-mono);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 0.75rem;
     }
 
     a {
-      color: var(--accent-color);
+      color: var(--accent-primary);
       text-decoration: none;
+      transition: all 0.2s ease;
     }
     
     a:hover {
       text-decoration: underline;
+      text-underline-offset: 4px;
     }
 
-    /* --- TERMINAL HEADER EFFECT --- */
-    .terminal-header {
-      background: var(--code-bg);
+    /* --- TERMINAL HEADER WIDGET --- */
+    .terminal-widget {
+      background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 1rem;
-      margin-bottom: 2rem;
-      border-left: 5px solid var(--terminal-green);
+      border-radius: 8px;
+      margin-bottom: 4rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    .terminal-bar {
+      background: #161b22;
+      padding: 8px 12px;
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .red { background: #ff5f56; }
+    .yellow { background: #ffbd2e; }
+    .green { background: #27c93f; }
+
+    .terminal-content {
+      padding: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
     }
     
-    .prompt::before {
-      content: "$ ";
-      color: var(--terminal-green);
+    .prompt-line {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .prompt-user { color: var(--terminal-green); }
+    .prompt-path { color: var(--accent-primary); }
+    
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1.2em;
+      background: var(--text-muted);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* --- ARTICLE CARDS --- */
+    article {
+      margin-bottom: 4rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(48, 54, 61, 0.4);
+    }
+    
+    article:last-of-type { border-bottom: none; }
+
+    .meta {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .tag { 
+      background: rgba(56, 139, 253, 0.1); 
+      color: var(--accent-primary); 
+      border: 1px solid rgba(56, 139, 253, 0.3);
+      padding: 2px 8px; 
+      border-radius: 20px; 
+      font-size: 0.75em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       font-weight: bold;
     }
 
     /* --- PDF EMBEDDING STYLES --- */
-    .pdf-container {
-      margin-top: 2rem;
+    .pdf-wrapper {
+      margin-top: 1.5rem;
       border: 1px solid var(--border-color);
-      background: var(--code-bg);
-      height: 600px; /* Fixed height for the viewer */
-      width: 100%;
+      background: #000;
       border-radius: 6px;
       overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    .pdf-wrapper:hover {
+      border-color: #58a6ff;
+      box-shadow: 0 0 15px rgba(88, 166, 255, 0.1);
+    }
+
+    .pdf-header {
+      background: #161b22;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
     }
 
     .pdf-embed {
       width: 100%;
-      height: 100%;
+      height: 500px;
       border: none;
+      display: block;
     }
 
-    /* --- UTILS --- */
-    .date { color: #8b949e; font-size: 0.9rem; }
-    .tag { 
-      background: rgba(56, 139, 253, 0.15); 
-      color: var(--accent-color); 
-      padding: 2px 6px; 
-      border-radius: 4px; 
-      font-size: 0.8em;
-      margin-left: 10px;
+    /* --- RESPONSIVE ADJUSTMENTS --- */
+    @media (max-width: 600px) {
+      .container { padding-top: 0; }
+      h1 { font-size: 1.75rem; }
+      .pdf-embed { height: 400px; }
     }
   </style>
 </head>
@@ -102,52 +250,91 @@
 
   <div class="container">
     
-    <!-- HEADER SECTION -->
-    <header class="terminal-header">
-      <div class="prompt">whoami</div>
-      <p>Articles about topics in cryptography, malware analysis, and computer and network security that I find interesting.</p>
+    <!-- NAVIGATION -->
+    <nav>
+      <div class="nav-logo">./security_blog</div>
+      <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+        <a href="mailto:you@example.com">Contact</a>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION / TERMINAL -->
+    <header class="terminal-widget">
+      <div class="terminal-bar">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
+      </div>
+      <div class="terminal-content">
+        <div class="prompt-line">
+          <span class="prompt-user">root@research</span>
+          <span class="prompt-path">~/intro</span>
+          <span>$ cat whoami.txt</span>
+        </div>
+        <p style="margin: 0; color: var(--text-main);">
+          Articles about topics in cryptography, malware analysis, and network security that I find interesting.<span class="cursor"></span>
+        </p>
+      </div>
     </header>
 
     <h1>Latest Reports</h1>
 
-    <!-- ARTICLE 1: EXAMPLE PDF EMBED -->
-
-
-   <article>
-      <h2>A Gift for the Network:
-Digital Sovereignty and Symbolism in al-Qaeda's Most Famous Encryption Program</h2>
-      <p class="date">Posted on Dec 26, 2025 <span class="tag">Cryptography</span></p>
-      <p>This was originally a short research paper I wrote for a class about the sudy of terrorism I was taking. A second part, discussing cryptographic vulnerabilities is in the works.</p>
-      
-      <!-- PDF EMBED BLOCK -->
-      <div class="pdf-container">
-        <!-- Replace 'your-file.pdf' with your actual file path -->
-        <object data="assets/MS_Symbolic_Analysis.pdf" type="application/pdf" class="pdf-embed">
-          <p>
-            Your browser does not support embedded PDFs. 
-            <a href="assets/MS_Symbolic_Analysis.pdf">Download the PDF</a> to view it.
-          </p>
-        </object>
-      </div>
-    </article>
-
-    
+    <!-- ARTICLE 1 -->
     <article>
-      <h2>A Practical Analysis of Dual Elliptic Curve Deterministic Random
-Bit Generator</h2>
-      <p class="date">Posted on Dec 26, 2025 <span class="tag">Cryptography</span></p>
-      <p>An in-depth look at exploiting DUAL_EC_DRBG.</p>
+      <div class="meta">
+        <span>Dec 26, 2025</span>
+        <span class="tag">Cryptography</span>
+      </div>
+      <h2>A Gift for the Network: Digital Sovereignty and Symbolism in al-Qaeda's Most Famous Encryption Program</h2>
+      <p>This was originally a short research paper I wrote for a class about the study of terrorism I was taking. A second part, discussing cryptographic vulnerabilities is in the works.</p>
       
       <!-- PDF EMBED BLOCK -->
-      <div class="pdf-container">
-        <!-- Replace 'your-file.pdf' with your actual file path -->
-        <object data="assets/Dual_EC-1.pdf" type="application/pdf" class="pdf-embed">
-          <p>
-            Your browser does not support embedded PDFs. 
-            <a href="assets/Dual_EC-1.pdf">Download the PDF</a> to view it.
-          </p>
+      <div class="pdf-wrapper">
+        <div class="pdf-header">
+           <span>📄 MS_Symbolic_Analysis.pdf</span>
+           <a href="assets/MS_Symbolic_Analysis.pdf" download>Download ▼</a>
+        </div>
+        <object data="assets/MS_Symbolic_Analysis.pdf" type="application/pdf" class="pdf-embed">
+          <div style="padding: 2rem; text-align: center;">
+            <p>PDF viewer not supported on this device.</p>
+            <a href="assets/MS_Symbolic_Analysis.pdf" class="tag">Download PDF</a>
+          </div>
         </object>
       </div>
     </article>
 
- 
+    <!-- ARTICLE 2 -->
+    <article>
+      <div class="meta">
+        <span>Dec 26, 2025</span>
+        <span class="tag">Exploit Dev</span>
+      </div>
+      <h2>A Practical Analysis of Dual Elliptic Curve Deterministic Random Bit Generator</h2>
+      <p>An in-depth look at exploiting DUAL_EC_DRBG and the implications for modern RNG standards.</p>
+      
+      <!-- PDF EMBED BLOCK -->
+      <div class="pdf-wrapper">
+        <div class="pdf-header">
+           <span>📄 Dual_EC-1.pdf</span>
+           <a href="assets/Dual_EC-1.pdf" download>Download ▼</a>
+        </div>
+        <object data="assets/Dual_EC-1.pdf" type="application/pdf" class="pdf-embed">
+          <div style="padding: 2rem; text-align: center;">
+            <p>PDF viewer not supported on this device.</p>
+            <a href="assets/Dual_EC-1.pdf" class="tag">Download PDF</a>
+          </div>
+        </object>
+      </div>
+    </article>
+    
+    <!-- FOOTER -->
+    <footer style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 4rem; font-family: var(--font-mono);">
+      <p>EOF</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>
