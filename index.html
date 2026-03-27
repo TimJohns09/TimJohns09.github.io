@@ -3,190 +3,298 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cybersecurity Research | [Tim Johns]</title>
+  <title>Cybersecurity Research | Tim Johns</title>
   
-  <!-- Added Favicon -->
   <link rel="icon" href="assets/logo.png" type="image/png">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Added VT323 for the retro terminal look -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&family=VT323&display=swap" rel="stylesheet">
   
-  <!-- PDF.js Library (Crucial for mobile support) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
-    // Set the worker source for PDF.js
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   </script>
 
   <style>
-    /* --- THEME CONFIGURATION --- */
     :root {
       --bg-color: #050505;       
       --card-bg: #0d1117;
+      --card-hover: #121820;
       --text-main: #c9d1d9;     
       --text-muted: #8b949e;
       --header-white: #f0f6fc;
       --accent-primary: #58a6ff;   
       --accent-glow: rgba(88, 166, 255, 0.15);
-      --terminal-green: #238636;
-      --border-color: #30363d;
+      --terminal-green: #3fb950;
+      --border-color: #21262d;
+      --border-hover: #30363d;
       --font-body: 'Inter', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-      --font-retro: 'VT323', monospace; /* New retro font variable */
+      --font-retro: 'VT323', monospace;
     }
 
     body {
       background-color: var(--bg-color);
-      /* Subtle grid pattern for cyber vibe */
-      background-image: linear-gradient(rgba(13, 17, 23, 0.97), rgba(13, 17, 23, 0.97)),
-        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm1 1h38v38H1V1z' fill='%2330363d' fill-opacity='0.1'/%3E%3C/svg%3E");
+      background-image: linear-gradient(rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.95)),
+        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm1 1h38v38H1V1z' fill='%2321262d' fill-opacity='0.15'/%3E%3C/svg%3E");
       color: var(--text-main);
       font-family: var(--font-body);
-      line-height: 1.6;
+      font-weight: 300;
+      line-height: 1.7;
       margin: 0;
       padding: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 840px;
       margin: 0 auto;
-      padding: 2rem 1.5rem 5rem;
+      padding: 3rem 1.5rem 6rem;
     }
 
-    /* --- NAV --- */
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.5rem 0;
+      padding-bottom: 2rem;
       border-bottom: 1px solid var(--border-color);
-      margin-bottom: 3rem;
+      margin-bottom: 4rem;
     }
     
-    /* Updated Logo Styling */
     .nav-logo { 
       font-family: var(--font-mono); 
       font-weight: 700; 
       color: var(--header-white);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      font-size: 1.1rem;
+      letter-spacing: -0.5px;
     }
 
     .site-icon {
-      height: 32px;
+      height: 28px;
       width: auto;
-      border-radius: 4px;
-      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
-    .nav-links a { margin-left: 1.5rem; color: var(--text-muted); font-size: 0.9rem; text-decoration: none; }
-    .nav-links a:hover { color: var(--accent-primary); }
+    .nav-links a { 
+      margin-left: 2rem; 
+      color: var(--text-muted); 
+      font-size: 0.95rem; 
+      font-weight: 400;
+      text-decoration: none; 
+      transition: color 0.2s ease;
+    }
+    
+    .nav-links a:hover { 
+      color: var(--header-white); 
+    }
 
-    /* --- TERMINAL --- */
     .terminal-widget {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 6px;
-      margin-bottom: 3rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border-radius: 8px;
+      margin-bottom: 4rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      overflow: hidden;
     }
+    
     .terminal-bar {
       background: #161b22;
-      padding: 8px 12px;
+      padding: 10px 16px;
       display: flex;
-      gap: 6px;
+      gap: 8px;
       border-bottom: 1px solid var(--border-color);
     }
-    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
     .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
     
-    /* Updated Terminal Content for Retro Look */
     .terminal-content { 
-      padding: 1.5rem; 
-      font-family: var(--font-retro); /* Swapped to VT323 */
-      font-size: 1.2rem; /* Increased size for readability with retro font */
-      line-height: 1.4;
+      padding: 2rem; 
+      font-family: var(--font-retro);
+      font-size: 1.3rem; 
+      line-height: 1.5;
+      color: var(--text-main);
     }
     
-    .prompt-user { color: var(--terminal-green); }
-    .cursor { display: inline-block; width: 10px; height: 1.2em; background: var(--text-muted); animation: blink 1s step-end infinite; vertical-align: bottom; }
+    .prompt-user { 
+      color: var(--terminal-green); 
+      text-shadow: 0 0 5px rgba(63, 185, 80, 0.4);
+    }
+    
+    .cursor { 
+      display: inline-block; 
+      width: 10px; 
+      height: 1.1em; 
+      background: var(--text-muted); 
+      animation: blink 1s step-end infinite; 
+      vertical-align: bottom; 
+      margin-left: 4px;
+    }
+    
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* --- ARTICLES --- */
-    h1 { color: var(--header-white); font-family: var(--font-body); margin-bottom: 2rem; border-left: 4px solid var(--accent-primary); padding-left: 1rem; }
-    h2 { margin-top: 0; color: var(--header-white); font-size: 1.4rem; }
-    article { margin-bottom: 4rem; }
-    .meta { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
-    .tag { background: rgba(88, 166, 255, 0.1); color: var(--accent-primary); padding: 2px 8px; border-radius: 4px; font-size: 0.75em; border: 1px solid rgba(88, 166, 255, 0.2); }
-
-    /* --- PDF VIEWER (The Important Part) --- */
-    .pdf-viewer-container {
-      margin-top: 1.5rem;
-      background: #0d1117;
+    h1 { 
+      color: var(--header-white); 
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      margin-bottom: 2.5rem; 
+    }
+    
+    article { 
+      background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 6px;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2.5rem; 
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    article:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-hover);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      background: var(--card-hover);
+    }
+
+    article h2 { 
+      margin: 0.5rem 0 1rem; 
+      color: var(--header-white); 
+      font-size: 1.5rem; 
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+    
+    article p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .meta { 
+      font-family: var(--font-mono); 
+      font-size: 0.85rem; 
+      color: var(--text-muted); 
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .tag { 
+      background: rgba(88, 166, 255, 0.1); 
+      color: var(--accent-primary); 
+      padding: 4px 10px; 
+      border-radius: 20px; 
+      font-size: 0.75rem; 
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(88, 166, 255, 0.2); 
+    }
+
+    .pdf-viewer-container {
+      background: #090c10;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
       overflow: hidden;
     }
     
     .pdf-toolbar {
       background: #161b22;
-      padding: 8px 12px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: 0.85rem;
+      color: var(--text-main);
     }
     
     .pdf-canvas-wrapper {
       width: 100%;
-      height: 500px; /* Fixed height with scroll */
+      height: 450px; 
       overflow-y: auto;
       overflow-x: hidden;
-      background: #1c2128; /* Slightly lighter than pure black for contrast */
+      background: #0d1117; 
       text-align: center;
-      padding: 20px 0;
+      padding: 24px 0;
       position: relative;
     }
 
-    /* Loading Spinner */
+    /* Custom Scrollbar for PDF container */
+    .pdf-canvas-wrapper::-webkit-scrollbar {
+      width: 8px;
+    }
+    .pdf-canvas-wrapper::-webkit-scrollbar-track {
+      background: #0d1117;
+    }
+    .pdf-canvas-wrapper::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px;
+    }
+    .pdf-canvas-wrapper::-webkit-scrollbar-thumb:hover {
+      background: #8b949e;
+    }
+
     .loading-spinner {
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       color: var(--accent-primary);
       font-family: var(--font-mono);
+      font-size: 0.9rem;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; text-shadow: 0 0 10px var(--accent-glow); }
+      100% { opacity: 0.6; }
     }
 
     canvas {
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      margin-bottom: 10px;
-      max-width: 95%; /* Ensure it fits on mobile screens */
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      margin-bottom: 16px;
+      max-width: 90%; 
       height: auto !important;
+      border-radius: 4px;
     }
 
     .download-btn {
       color: var(--accent-primary);
       text-decoration: none;
-      border: 1px solid var(--border-color);
-      padding: 2px 8px;
-      border-radius: 4px;
-      transition: background 0.2s;
+      background: rgba(88, 166, 255, 0.05);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      font-weight: 600;
     }
-    .download-btn:hover { background: rgba(88, 166, 255, 0.1); }
+    
+    .download-btn:hover { 
+      background: rgba(88, 166, 255, 0.15); 
+      border-color: var(--accent-primary);
+      transform: translateY(-1px);
+    }
+    
+    @media (max-width: 600px) {
+      .container { padding: 2rem 1rem; }
+      .terminal-content { font-size: 1.1rem; padding: 1.5rem; }
+      article { padding: 1.5rem; }
+      .pdf-canvas-wrapper { height: 350px; }
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
     <nav>
-      <!-- Updated Nav Logo Structure -->
       <div class="nav-logo">
-        <img src="assets/logo.png" alt="Logo" class="site-icon">
+        <img src="assets/logo.png" alt="" class="site-icon" onerror="this.style.display='none'">
         ./security_blog
       </div>
       <div class="nav-links">
@@ -201,23 +309,19 @@
       </div>
       <div class="terminal-content">
         <div><span class="prompt-user">root@research:~$</span> cat intro.txt</div>
-        <div style="margin-top: 0.5rem; color: var(--text-main);">
-          Projects and papers pertaining to topics in cryptography, malware analysis and computer and network security.<span class="cursor"></span>
+        <div style="margin-top: 0.8rem;">
+          Projects and papers pertaining to topics in cryptography, malware analysis, and network security.<span class="cursor"></span>
         </div>
       </div>
     </header>
 
     <h1>Latest Reports</h1>
 
-
-
-    <!-- ARTICLE 1 -->
     <article>
-      <div class="meta">Jan 16, 2026 • <span class="tag">CRYPTOGRAPHY</span></div>
+      <div class="meta"><span>Jan 16, 2026</span> <span class="tag">CRYPTOGRAPHY</span></div>
       <h2>Understanding Merkle Roots</h2>
       <p>This is a basic introduction to Merkle roots. It's a cool concept that is (in my opinion) very easy to understand, so I figured I'd do a short writeup.</p>
       
-      <!-- PDF VIEWER CONTAINER -->
       <div class="pdf-viewer-container" data-url="assets/Merkle_Root.pdf">
         <div class="pdf-toolbar">
           <span>📄 Merkle_Root.pdf</span>
@@ -229,14 +333,11 @@
       </div>
     </article>
 
-    <!-- ARTICLE 1 -->
     <article>
-      <div class="meta">Dec 26, 2025 • <span class="tag">CRYPTOGRAPHY</span></div>
-      <h2>A Gift for the Network: Digital Sovereignty and Symbolism in al-Qaeda's most Famous Encryption Program</h2>
-      <p>This is a short research paper I wrote for a class I was taking about terrorism. I acquired a copy of the Mujahideen's Secrets v2.0 encryption program in order to do some basic analysis. This paper focuses on 
-        symbolism in the graphical user interface, and as such, is more of a political science paper, rather than a computer science one. A second paper outlining ways to exploit cryptographic vulnerabilities in the software is in the works.</p>
+      <div class="meta"><span>Dec 26, 2025</span> <span class="tag">CRYPTOGRAPHY</span></div>
+      <h2>Digital Sovereignty in al-Qaeda's Encryption</h2>
+      <p>This is a short research paper I wrote for a class I was taking about terrorism. I acquired a copy of the Mujahideen's Secrets v2.0 encryption program in order to do some basic analysis. This paper focuses on symbolism in the graphical user interface, and as such, is more of a political science paper, rather than a computer science one. A second paper outlining ways to exploit cryptographic vulnerabilities in the software is in the works.</p>
       
-      <!-- PDF VIEWER CONTAINER -->
       <div class="pdf-viewer-container" data-url="assets/MS_Symbolic_Analysis.pdf">
         <div class="pdf-toolbar">
           <span>📄 MS_Symbolic_Analysis.pdf</span>
@@ -248,14 +349,11 @@
       </div>
     </article>
 
-    <!-- ARTICLE 2 -->
     <article>
-      <div class="meta">Dec 26, 2025 • <span class="tag">CRYPTOGRAPHY</span></div>
-      <h2>An Analysis of the Supposed Backdoor in the Dual_EC_DRBG Algorithm</h2>
-      <p>I've been reading through the textbook "Hacking Cryptography" by Kamran Khan and Bill Cox for the second time, and I thought I'd do a writeup about the DUAL_EC_DRBG backdoor, how it works, and how to exploit it. Psuedorandom number generation algorithms seem
-      to get less attention than other cryptographic algorithms, but this is one of my favorite vulnerabilities to study.</p>
+      <div class="meta"><span>Dec 26, 2025</span> <span class="tag">CRYPTOGRAPHY</span></div>
+      <h2>Analysis of the Backdoor in Dual_EC_DRBG</h2>
+      <p>I've been reading through the textbook "Hacking Cryptography" by Kamran Khan and Bill Cox for the second time, and I thought I'd do a writeup about the DUAL_EC_DRBG backdoor, how it works, and how to exploit it. Pseudorandom number generation algorithms seem to get less attention than other cryptographic algorithms, but this is one of my favorite vulnerabilities to study.</p>
       
-      <!-- PDF VIEWER CONTAINER -->
       <div class="pdf-viewer-container" data-url="assets/Dual_EC-1.pdf">
         <div class="pdf-toolbar">
           <span>📄 Dual_EC-1.pdf</span>
@@ -269,10 +367,8 @@
 
   </div>
 
-  <!-- SCRIPT TO RENDER PDFS -->
   <script>
     document.addEventListener("DOMContentLoaded", async function() {
-      // Find all PDF containers
       const containers = document.querySelectorAll('.pdf-viewer-container');
 
       for (const container of containers) {
@@ -283,16 +379,12 @@
           const loadingTask = pdfjsLib.getDocument(url);
           const pdf = await loadingTask.promise;
           
-          // Remove spinner
           wrapper.innerHTML = '';
 
-          // Render first page only (for mobile performance)
-          // If you want all pages, loop from 1 to pdf.numPages
           for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
              const page = await pdf.getPage(pageNum);
              
-             // Dynamic scale based on container width
-             const containerWidth = wrapper.clientWidth - 40; // minus padding
+             const containerWidth = wrapper.clientWidth - 48; 
              const unscaledViewport = page.getViewport({ scale: 1 });
              const scale = containerWidth / unscaledViewport.width;
              const viewport = page.getViewport({ scale: scale });
@@ -310,16 +402,15 @@
              };
              await page.render(renderContext).promise;
              
-             // Add a small spacer between pages
              if (pageNum < pdf.numPages) {
                 const spacer = document.createElement('div');
-                spacer.style.height = '10px';
+                spacer.style.height = '16px';
                 wrapper.appendChild(spacer);
              }
           }
         } catch (error) {
           console.error('Error loading PDF:', error);
-          wrapper.innerHTML = '<div style="padding:20px; color:#ff5f56;">Error loading PDF. Please download to view.</div>';
+          wrapper.innerHTML = '<div style="padding:24px; color:#ff5f56; font-family: var(--font-mono);">Error establishing secure connection to document. Please use the download link above.</div>';
         }
       }
     });
