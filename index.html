@@ -459,14 +459,12 @@
     <!-- TAB: contact -->
     <div class="term-panel" id="tab-contact">
       <div class="term-body">
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="t-cmd">cat</span> <span class="t-arg">contact.txt</span></div>
-        <span class="t-out">Reach me via email or GitHub. For sensitive messages, use my PGP key below.</span>
-        <span class="t-gap"></span>
+        <span class="t-out" style="margin-bottom:12px;">Reach me via email or GitHub. For encrypted messages, use one of the PGP keys below.</span>
 
         <div class="contact-links">
           <a href="mailto:tjohns917@outlook.com" class="contact-chip">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            you@example.com
+            tjohns917@outlook.com
           </a>
           <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer" class="contact-chip">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
@@ -475,21 +473,51 @@
         </div>
 
         <span class="t-gap"></span>
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="t-cmd">gpg</span> <span class="t-arg">--fingerprint tjohns917@outlook.com</span></div>
-        <span class="t-out" style="margin-bottom:4px;">pub   ed25519 2025 [SC]</span>
-        <span class="t-out" style="font-family:var(--font-term);letter-spacing:1.5px;color:var(--tag-crypto);font-size:0.82rem;margin-bottom:4px;">280B C76D 616C 6F86 843E  96E2 26FF FF48 0466 81E4</span>
-        <span class="t-out" style="margin-bottom:14px;">uid   Tim Johns &lt;tjohns917@outlook.com&gt;</span>
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="t-cmd">gpg</span> <span class="t-arg">--export --armor tjohns917@outlook.com</span></div>
 
+        <!-- KEY 1 -->
         <div class="pgp-block">
           <div class="pgp-header">
-            <span class="pgp-label">PUBLIC KEY BLOCK</span>
-            <button class="pgp-copy-btn" id="pgpCopyBtn" onclick="copyPgp()">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <span class="pgp-label">KEY 1 &mdash; Ed25519 / cv25519 &middot; <span style="color:var(--green);">Thunderbird compatible</span></span>
+              <span style="font-family:var(--font-term);font-size:0.72rem;letter-spacing:1.2px;color:var(--tag-crypto);">17F0 4688 2E5B 32AD FE22 &nbsp;03E9 4270 2802 EB0C DFA7</span>
+            </div>
+            <button class="pgp-copy-btn" id="pgpCopyBtn1" onclick="copyPgp('pgpText1','pgpCopyBtn1','pgpCopyLabel1')">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <span id="pgpCopyLabel">Copy</span>
+              <span id="pgpCopyLabel1">Copy</span>
             </button>
           </div>
-          <div class="pgp-text" id="pgpText">-----BEGIN PGP PUBLIC KEY BLOCK-----
+          <div class="pgp-text" id="pgpText1">-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mDMEacrEyRYJKwYBBAHaRw8BAQdAZBdv/6KG7mUzwtBt3c7LTOY/eSMb+TPYTRBU
+Ig7UiOO0IVRpbSBKb2hucyA8dGpvaG5zOTE3QG91dGxvb2suY29tPoi1BBMWCgBd
+FiEEF/BGiC5bMq3+IgPpQnAoAusM36cFAmnKxMkbFIAAAAAABAAObWFudTIsMi41
+KzEuMTIsMCwzAhsDBQkDwmcABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJ
+EEJwKALrDN+n/ZsA/3muGkmnRdmtF2nrV6STtICjgTas5UMkTgTs5Q96yu1TAP40
+aU74ckaT8h7R5tlAXT2RvN4MQTKyCTHtj2hZw/oWC7g4BGnKxMkSCisGAQQBl1UB
+BQEBB0B1gdwDfSTRkWzasAw5KGVM1cwX9Uu0dzBo/meuNkCPMQMBCAeImgQYFgoA
+QhYhBBfwRoguWzKt/iID6UJwKALrDN+nBQJpysTJGxSAAAAAAAQADm1hbnUyLDIu
+NSsxLjEyLDAsMwIbDAUJA8JnAAAKCRBCcCgC6wzfp/7lAP9FnXoN0VjQ9xlvI2Yq
+ePB8iAK6RFT8S8xc50XJIKAqxAEAv9GHAur3hRYGAyhWPT1PMXrz5Ce7Bc3GjQ+T
+YJ5dsQw=
+=fLkd
+-----END PGP PUBLIC KEY BLOCK-----</div>
+        </div>
+
+        <span class="t-gap"></span>
+
+        <!-- KEY 2 -->
+        <div class="pgp-block">
+          <div class="pgp-header">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <span class="pgp-label">KEY 2 &mdash; ML-KEM (ky768_cv25519) &middot; <span style="color:var(--tag-crypto);">Quantum-resistant</span> &middot; <span style="color:var(--tag-malware);">GPG 2.5+ only, not Thunderbird compatible</span></span>
+              <span style="font-family:var(--font-term);font-size:0.72rem;letter-spacing:1.2px;color:var(--tag-crypto);">280B C76D 616C 6F86 843E &nbsp;96E2 26FF FF48 0466 81E4</span>
+            </div>
+            <button class="pgp-copy-btn" id="pgpCopyBtn2" onclick="copyPgp('pgpText2','pgpCopyBtn2','pgpCopyLabel2')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span id="pgpCopyLabel2">Copy</span>
+            </button>
+          </div>
+          <div class="pgp-text" id="pgpText2">-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mDMEaclyIhYJKwYBBAHaRw8BAQdAsZ5annNVFePL8vEpWueNWQqifNGrv53fx3jt
 R1v5jaG0IVRpbSBKb2hucyA8dGpvaG5zOTE3QG91dGxvb2suY29tPoi1BBMWCgBd
@@ -531,10 +559,9 @@ OQD+LWZVSs3Fb+5MA2daucg0FO08l+mNCRlbptxlK58lwAU=
         </div>
 
         <span class="t-gap"></span>
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="cursor"></span></div>
       </div>
     </div>
-  </div>
+    </div>
 
   <!-- REPORTS SECTION -->
   <div class="section-header">
@@ -707,10 +734,10 @@ OQD+LWZVSs3Fb+5MA2daucg0FO08l+mNCRlbptxlK58lwAU=
   }
 
   /* ── PGP COPY ── */
-  function copyPgp() {
-    const text = document.getElementById('pgpText').textContent;
-    const btn  = document.getElementById('pgpCopyBtn');
-    const lbl  = document.getElementById('pgpCopyLabel');
+  function copyPgp(textId, btnId, lblId) {
+    const text = document.getElementById(textId).textContent;
+    const btn  = document.getElementById(btnId);
+    const lbl  = document.getElementById(lblId);
     navigator.clipboard.writeText(text).then(() => {
       btn.classList.add('copied');
       lbl.textContent = 'Copied!';
