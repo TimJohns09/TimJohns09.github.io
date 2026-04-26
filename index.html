@@ -258,6 +258,9 @@
       background: #0a0e15;
       color: var(--text);
     }
+    object.code-frame {
+      padding: 0;
+    }
     [data-theme="light"] .code-viewer { background: #e8eef5; }
     .loading { position: absolute; inset: 0; display: grid; place-content: center; gap: 13px; color: var(--muted); font: .78rem var(--font-mono); }
     .spinner { justify-self: center; width: 26px; height: 26px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
@@ -563,13 +566,14 @@ OQD+LWZVSs3Fb+5MA2daucg0FO08l+mNCRlbptxlK58lwAU=
     }
 
     function renderPapers() {
+      state.renderedItems.clear();
       const visible = entries.map((entry, i) => ({ entry, i })).filter(({ entry }) => entryMatches(entry));
       $('#articleList').innerHTML = visible.map(({ entry, i }) => {
         const isCode = entry.kind === 'code';
         const viewerClass = isCode ? 'code-viewer' : 'pdf-viewer';
         const typeLabel = isCode ? 'PYTHON' : 'PDF';
         const actionLabel = isCode ? 'View code' : 'View paper';
-        const downloadLabel = isCode ? 'Download' : 'Download';
+        const downloadLabel = 'Download';
 
         return `
           <article data-index="${i}">
@@ -642,26 +646,33 @@ OQD+LWZVSs3Fb+5MA2daucg0FO08l+mNCRlbptxlK58lwAU=
     }
 
     async function renderCode(url, wrapper, index) {
-      const candidates = [url, `./${url}`, url.replace(/^assets\//, './assets/')];
+      try {
+        const response = await fetch(url, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      for (const candidate of [...new Set(candidates)]) {
-        try {
-          const response = await fetch(candidate, { cache: 'no-store' });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const code = await response.text();
+        const code = await response.text();
+        wrapper.textContent = code;
+        $(`#pages-${index}`).textContent = `${code.split(/\r\n|\r|\n/).length} lines`;
+        return;
+      } catch (err) {
+        console.warn(`Could not fetch ${url}:`, err);
 
-          wrapper.textContent = code;
-          $(`#pages-${index}`).textContent = `${code.split(/\r\n|\r|\n/).length} lines`;
-          return;
-        } catch (err) {
-          console.warn(`Could not fetch ${candidate}:`, err);
-        }
+        /*
+          If you open index.html directly from your computer with file://,
+          most browsers block fetch() from reading assets/dnsinject.py.
+          This fallback still gives the browser a chance to display the file.
+          On GitHub Pages, fetch() should work as long as the file exists at:
+          assets/dnsinject.py
+        */
+        wrapper.innerHTML = `
+          <object class="code-frame" data="${escapeHtml(url)}" type="text/plain">
+            <div style="padding:28px;color:#f87171;font-family:var(--font-mono);font-size:.78rem;text-align:center">
+              Failed to load source file. Confirm the file exists at <strong>assets/dnsinject.py</strong>, then use the Download button above.
+            </div>
+          </object>
+        `;
+        $(`#pages-${index}`).textContent = 'source preview';
       }
-
-      // Fallback for local testing or stricter browser settings where fetch() cannot read local files.
-      // On GitHub Pages, fetch should work as long as assets/dnsinject.py exists and the filename matches exactly.
-      wrapper.innerHTML = `<iframe class="code-frame" src="${escapeHtml(url)}" title="Source preview for ${escapeHtml(entries[index].file)}"></iframe>`;
-      $(`#pages-${index}`).textContent = 'source preview';
     }
 
     async function copyText(text, btn) {
