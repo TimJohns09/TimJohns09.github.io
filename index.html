@@ -1,492 +1,410 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Tim Johns — security research, cryptography, malware analysis, and network security reports." />
   <title>Tim Johns — Security Research</title>
-  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="icon" href="assets/logo.png" type="image/png" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Swapped VT323 → Fira Code: clean, readable, unmistakably terminal -->
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  </script>
 
   <style>
-    /* ─── TOKENS ─── */
     :root {
-      --bg:           #080b10;
-      --surface-0:    #0d1117;
-      --surface-1:    #111827;
-      --surface-2:    #161d2a;
-      --border:       rgba(255,255,255,0.07);
-      --border-hover: rgba(255,255,255,0.13);
-      --text:         #e2e8f0;
-      --text-muted:   #7d8fa3;
-      --text-faint:   #3d4f63;
-      --accent:       #3b82f6;
-      --accent-dim:   rgba(59,130,246,0.12);
-      --green:        #22c55e;
-      --green-glow:   rgba(34,197,94,0.25);
-      --tag-crypto:   #a78bfa;
-      --tag-crypto-bg:rgba(167,139,250,0.1);
-      --tag-malware:  #fb923c;
-      --tag-malware-bg:rgba(251,146,60,0.1);
-      --tag-network:  #34d399;
-      --tag-network-bg:rgba(52,211,153,0.1);
-      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+      color-scheme: dark;
+      --bg: #080b10;
+      --surface-0: #0d1117;
+      --surface-1: #111827;
+      --surface-2: #161d2a;
+      --border: rgba(255,255,255,.07);
+      --border-hover: rgba(255,255,255,.14);
+      --text: #e2e8f0;
+      --muted: #7d8fa3;
+      --faint: #405064;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59,130,246,.12);
+      --green: #22c55e;
+      --green-soft: rgba(34,197,94,.25);
+      --crypto: #a78bfa;
+      --crypto-soft: rgba(167,139,250,.11);
+      --malware: #fb923c;
+      --malware-soft: rgba(251,146,60,.11);
+      --network: #34d399;
+      --network-soft: rgba(52,211,153,.11);
+      --radius-sm: 5px;
+      --radius-md: 9px;
+      --radius-lg: 14px;
       --font-body: 'Inter', system-ui, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-      --font-term: 'Fira Code', 'Consolas', monospace;
-      --ease: 160ms cubic-bezier(0.16,1,0.3,1);
+      --font-term: 'Fira Code', Consolas, monospace;
+      --ease: 160ms cubic-bezier(.16,1,.3,1);
     }
+
     [data-theme="light"] {
-      --bg: #f8fafc; --surface-0: #ffffff; --surface-1: #f1f5f9; --surface-2: #e8eef5;
-      --border: rgba(0,0,0,0.08); --border-hover: rgba(0,0,0,0.14);
-      --text: #1e293b; --text-muted: #64748b; --text-faint: #94a3b8;
-      --accent: #2563eb; --accent-dim: rgba(37,99,235,0.08);
-      --green: #16a34a; --green-glow: rgba(22,163,74,0.18);
+      color-scheme: light;
+      --bg: #f8fafc;
+      --surface-0: #fff;
+      --surface-1: #f1f5f9;
+      --surface-2: #e8eef5;
+      --border: rgba(15,23,42,.08);
+      --border-hover: rgba(15,23,42,.16);
+      --text: #1e293b;
+      --muted: #64748b;
+      --faint: #94a3b8;
+      --accent: #2563eb;
+      --accent-soft: rgba(37,99,235,.08);
+      --green: #16a34a;
+      --green-soft: rgba(22,163,74,.18);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 15px;
-      line-height: 1.7;
-      min-height: 100dvh;
-    }
+    body { min-height: 100dvh; background: var(--bg); color: var(--text); font: 15px/1.7 var(--font-body); }
     body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+      content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,.025) 1px, transparent 1px);
       background-size: 28px 28px;
-      pointer-events: none; z-index: 0;
     }
-    .page { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 0 1.5rem 6rem; }
 
-    /* ─── NAV ─── */
+    .page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 1.5rem 6rem; }
+    .icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+
     nav {
+      position: sticky; top: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 1.4rem 1.5rem; border-bottom: 1px solid var(--border);
-      margin-bottom: 3.5rem;
-      position: sticky; top: 0;
-      background: rgba(8,11,16,0.88);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      z-index: 100;
-      margin-left: -1.5rem; margin-right: -1.5rem;
-    }
-    [data-theme="light"] nav { background: rgba(248,250,252,0.88); }
-
-    .nav-left { display: flex; align-items: center; gap: 11px; }
-    .nav-logo-icon {
-      width: 29px; height: 29px; border-radius: var(--radius-sm);
-      border: 1px solid var(--border); background: var(--surface-1);
-      display: flex; align-items: center; justify-content: center; color: var(--accent);
-    }
-    .nav-logo-text { font-family: var(--font-mono); font-weight: 700; font-size: 0.88rem; color: var(--text); }
-    .nav-logo-text span { color: var(--text-muted); font-weight: 400; }
-    .nav-right { display: flex; align-items: center; gap: 2px; }
-    .nav-link {
-      color: var(--text-muted); font-size: 0.875rem; text-decoration: none;
-      padding: 5px 11px; border-radius: var(--radius-sm);
-      transition: color var(--ease), background var(--ease);
-    }
-    .nav-link:hover { color: var(--text); background: var(--surface-1); }
-    .theme-toggle {
-      background: none; border: 1px solid var(--border); color: var(--text-muted);
-      cursor: pointer; width: 31px; height: 31px; border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center; margin-left: 6px;
-      transition: color var(--ease), background var(--ease), border-color var(--ease);
-    }
-    .theme-toggle:hover { color: var(--text); background: var(--surface-1); border-color: var(--border-hover); }
-
-    /* ─── TERMINAL ─── */
-    .terminal {
-      background: var(--surface-0);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      margin-bottom: 3.5rem;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.03);
-      overflow: hidden;
-    }
-
-    /* Title bar */
-    .term-titlebar {
-      background: var(--surface-2);
-      padding: 0 14px;
-      display: flex;
-      align-items: center;
+      margin: 0 -1.5rem 3.5rem; padding: 1.4rem 1.5rem;
       border-bottom: 1px solid var(--border);
-      min-height: 38px;
-      gap: 0;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     }
-    .term-dots { display: flex; gap: 6px; margin-right: 14px; flex-shrink: 0; }
-    .dot { width: 11px; height: 11px; border-radius: 50%; }
-    .dot-r { background: #ff5f57; } .dot-y { background: #ffbd2e; } .dot-g { background: #27c93f; }
+    .nav-left, .nav-right, .contact-links, .pdf-actions, .meta, .section-header, footer { display: flex; align-items: center; }
+    .nav-left { gap: 11px; }
+    .nav-right { gap: 3px; }
+    .logo-icon {
+      width: 30px; height: 30px; display: grid; place-items: center;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface-1); color: var(--accent);
+    }
+    .logo { font: 700 .88rem var(--font-mono); color: var(--text); }
+    .logo span { color: var(--muted); font-weight: 400; }
+    .nav-link, .theme-toggle {
+      color: var(--muted); border-radius: var(--radius-sm); transition: var(--ease);
+    }
+    .nav-link { padding: 5px 11px; text-decoration: none; font-size: .875rem; }
+    .nav-link:hover, .theme-toggle:hover { color: var(--text); background: var(--surface-1); }
+    .theme-toggle {
+      width: 32px; height: 32px; display: grid; place-items: center; margin-left: 6px;
+      border: 1px solid var(--border); background: none; cursor: pointer;
+    }
+    .theme-toggle:hover { border-color: var(--border-hover); }
 
-    /* Tabs */
-    .term-tabs { display: flex; gap: 0; flex: 1; overflow-x: auto; }
-    .term-tab {
-      font-family: var(--font-term);
-      font-size: 0.75rem;
-      color: var(--text-faint);
-      padding: 0 16px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      cursor: pointer;
-      border-right: 1px solid var(--border);
-      border-bottom: 2px solid transparent;
-      background: none;
-      border-top: none;
-      border-left: none;
-      white-space: nowrap;
-      transition: color var(--ease), background var(--ease), border-color var(--ease);
-      position: relative;
-      top: 1px; /* sit flush on bottom border */
-    }
-    .term-tab:first-of-type { border-left: 1px solid var(--border); }
-    .term-tab:hover { color: var(--text-muted); background: rgba(255,255,255,0.03); }
-    .term-tab.active {
-      color: var(--text);
+    .terminal {
+      margin-bottom: 3.5rem; overflow: hidden;
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
       background: var(--surface-0);
-      border-bottom-color: var(--surface-0);
+      box-shadow: 0 24px 64px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.03);
     }
-    [data-theme="light"] .term-tab.active { border-bottom-color: var(--surface-0); }
-    .term-tab svg { width: 11px; height: 11px; opacity: 0.7; }
-
-    /* Tab panels */
-    .term-panel { display: none; }
-    .term-panel.active { display: block; }
-
-    .term-body {
-      padding: 1.5rem 1.75rem 1.6rem;
-      font-family: var(--font-term);
-      font-size: 0.875rem;
-      line-height: 1.75;
+    .term-titlebar {
+      min-height: 38px; display: flex; align-items: center; padding: 0 14px;
+      background: var(--surface-2); border-bottom: 1px solid var(--border);
     }
-
-    .t-line { display: flex; flex-wrap: wrap; gap: 0; }
-    .t-prompt { color: var(--green); text-shadow: 0 0 10px var(--green-glow); white-space: nowrap; }
-    .t-sep { color: var(--text-faint); margin: 0 1px; }
-    .t-cmd { color: #93c5fd; }
-    .t-arg { color: #fbbf24; }
-    .t-out { color: var(--text-muted); padding-left: 0; margin-top: 2px; display: block; width: 100%; }
-    .t-val { color: var(--text); }
-    .t-key { color: var(--tag-crypto); }
-    .t-comment { color: var(--text-faint); font-style: italic; }
-    .t-gap { height: 10px; display: block; }
-
-    .cursor {
-      display: inline-block; width: 8px; height: 0.9em;
-      background: var(--green); vertical-align: text-bottom;
-      animation: blink 1.1s step-end infinite; margin-left: 3px;
-      opacity: 0.85;
+    .dots { display: flex; gap: 6px; margin-right: 14px; flex: 0 0 auto; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .r { background: #ff5f57; } .y { background: #ffbd2e; } .g { background: #27c93f; }
+    .tabs { display: flex; flex: 1; overflow-x: auto; }
+    .tab {
+      position: relative; top: 1px; height: 38px; display: flex; align-items: center; gap: 7px;
+      padding: 0 16px; white-space: nowrap; cursor: pointer;
+      border: 0; border-right: 1px solid var(--border); border-bottom: 2px solid transparent;
+      background: none; color: var(--faint); font: .75rem var(--font-term); transition: var(--ease);
     }
+    .tab:first-child { border-left: 1px solid var(--border); }
+    .tab:hover { color: var(--muted); background: rgba(255,255,255,.03); }
+    .tab.active { color: var(--text); background: var(--surface-0); border-bottom-color: var(--surface-0); }
+    .tab .icon { width: 12px; height: 12px; opacity: .75; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .term-body { padding: 1.5rem 1.75rem 1.6rem; font: .875rem/1.75 var(--font-term); }
+    .line { display: flex; flex-wrap: wrap; }
+    .prompt { color: var(--green); text-shadow: 0 0 10px var(--green-soft); white-space: nowrap; }
+    .sep { color: var(--faint); margin: 0 1px; }
+    .cmd { color: #93c5fd; }
+    .arg { color: #fbbf24; }
+    .out { display: block; width: 100%; color: var(--muted); }
+    .val { color: var(--text); }
+    .crypto { color: var(--crypto); }
+    .malware { color: var(--malware); }
+    .network { color: var(--network); }
+    .comment, .faint { color: var(--faint); font-style: italic; }
+    .gap { display: block; height: 10px; }
+    .cursor { display: inline-block; width: 8px; height: .9em; margin-left: 3px; vertical-align: text-bottom; background: var(--green); opacity: .85; animation: blink 1.1s step-end infinite; }
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* PGP block */
-    .pgp-block {
-      margin-top: 1rem;
-      background: rgba(0,0,0,0.25);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-    }
-    [data-theme="light"] .pgp-block { background: rgba(0,0,0,0.04); }
-    .pgp-header {
-      background: rgba(255,255,255,0.03);
-      border-bottom: 1px solid var(--border);
-      padding: 7px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    [data-theme="light"] .pgp-header { background: rgba(0,0,0,0.03); }
-    .pgp-label {
+    .contact-links { flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+    .chip, .pdf-btn, .copy-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.02); color: var(--muted); text-decoration: none; cursor: pointer; transition: var(--ease);
       font-family: var(--font-term);
-      font-size: 0.72rem;
-      color: var(--text-faint);
-      letter-spacing: 0.4px;
     }
-    .pgp-copy-btn {
-      font-family: var(--font-term);
-      font-size: 0.72rem;
-      padding: 3px 9px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex; align-items: center; gap: 5px;
-      transition: all var(--ease);
-    }
-    .pgp-copy-btn:hover { color: var(--accent); border-color: rgba(59,130,246,0.3); background: var(--accent-dim); }
-    .pgp-copy-btn.copied { color: var(--green); border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.08); }
-    .pgp-text {
-      font-family: var(--font-term);
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      padding: 14px;
-      white-space: pre;
-      overflow-x: auto;
-      line-height: 1.6;
-      scrollbar-width: thin;
-      scrollbar-color: #2d3748 transparent;
-    }
-    .pgp-text::-webkit-scrollbar { height: 5px; }
-    .pgp-text::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 3px; }
+    .chip { padding: 6px 13px; font-size: .78rem; }
+    .chip:hover, .pdf-btn:hover, .copy-btn:hover { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-soft); }
+    .chip .icon { width: 13px; height: 13px; }
 
-    /* Contact links in terminal */
-    .contact-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
-    .contact-chip {
-      font-family: var(--font-term);
-      font-size: 0.78rem;
-      padding: 6px 13px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-muted);
-      text-decoration: none;
-      display: flex; align-items: center; gap: 7px;
-      transition: all var(--ease);
-      background: rgba(255,255,255,0.02);
+    .pgp { margin-top: 1rem; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-md); background: rgba(0,0,0,.24); }
+    [data-theme="light"] .pgp { background: rgba(0,0,0,.04); }
+    .pgp-head {
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      padding: 8px 14px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,.03);
     }
-    .contact-chip:hover { color: var(--accent); border-color: rgba(59,130,246,0.3); background: var(--accent-dim); }
-    .contact-chip svg { width: 13px; height: 13px; }
+    [data-theme="light"] .pgp-head { background: rgba(0,0,0,.03); }
+    .pgp-title { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .pgp-label { font: .72rem var(--font-term); color: var(--faint); letter-spacing: .4px; }
+    .fingerprint { font: .72rem var(--font-term); letter-spacing: 1.2px; color: var(--crypto); }
+    .copy-btn { padding: 4px 9px; font-size: .72rem; background: none; flex: 0 0 auto; }
+    .copy-btn.copied { color: var(--green); border-color: color-mix(in srgb, var(--green) 35%, transparent); background: rgba(34,197,94,.08); }
+    .pgp-text { padding: 14px; overflow-x: auto; white-space: pre; color: var(--muted); font: .72rem/1.6 var(--font-term); scrollbar-width: thin; }
 
-    /* ─── SECTION HEADER ─── */
-    .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.75rem; }
-    .section-title { font-size: 1.05rem; font-weight: 600; color: var(--text); letter-spacing: -0.2px; }
-    .section-count { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-faint); }
-
-    /* ─── FILTER BAR ─── */
-    .filter-bar { display: flex; gap: 7px; margin-bottom: 1.75rem; flex-wrap: wrap; }
-    .filter-btn {
-      font-family: var(--font-mono); font-size: 0.73rem; letter-spacing: 0.3px;
-      padding: 5px 12px; border-radius: 99px; border: 1px solid var(--border);
-      background: transparent; color: var(--text-muted); cursor: pointer;
-      transition: all var(--ease);
+    .section-header { justify-content: space-between; margin-bottom: 1.2rem; gap: 1rem; }
+    .section-title { font-size: 1.05rem; font-weight: 700; letter-spacing: -.2px; }
+    .section-count { color: var(--faint); font: .75rem var(--font-mono); }
+    .controls { display: grid; grid-template-columns: 1fr auto; gap: .8rem; margin-bottom: 1.75rem; }
+    .search {
+      min-width: 0; width: 100%; padding: 8px 12px;
+      border: 1px solid var(--border); border-radius: 999px; outline: none;
+      background: var(--surface-0); color: var(--text); font: .78rem var(--font-mono); transition: var(--ease);
     }
-    .filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
-    .filter-btn.active { background: var(--accent-dim); border-color: rgba(59,130,246,0.3); color: var(--accent); }
+    .search:focus { border-color: color-mix(in srgb, var(--accent) 40%, transparent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .filters { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+    .filter {
+      padding: 5px 12px; border: 1px solid var(--border); border-radius: 999px;
+      background: transparent; color: var(--muted); cursor: pointer;
+      font: 700 .73rem var(--font-mono); letter-spacing: .3px; transition: var(--ease);
+    }
+    .filter:hover { color: var(--text); border-color: var(--border-hover); }
+    .filter.active { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-soft); }
 
-    /* ─── ARTICLES ─── */
-    .article-list { display: flex; flex-direction: column; gap: 1.25rem; }
+    .articles { display: grid; gap: 1.25rem; }
     article {
-      background: var(--surface-0); border: 1px solid var(--border); border-radius: var(--radius-lg);
-      overflow: hidden;
+      overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface-0);
       transition: border-color var(--ease), box-shadow var(--ease), transform var(--ease);
     }
-    article:hover { border-color: var(--border-hover); box-shadow: 0 8px 32px rgba(0,0,0,0.22); transform: translateY(-1px); }
-
-    .article-header { padding: 1.4rem 1.6rem 1.1rem; cursor: pointer; user-select: none; }
-    .article-meta { display: flex; align-items: center; gap: 9px; margin-bottom: 0.65rem; flex-wrap: wrap; }
-    .meta-date { font-family: var(--font-mono); font-size: 0.73rem; color: var(--text-faint); }
-    .tag {
-      font-family: var(--font-mono); font-size: 0.67rem; font-weight: 700;
-      letter-spacing: 0.5px; text-transform: uppercase; padding: 3px 9px;
-      border-radius: 99px; border: 1px solid;
-    }
-    .tag-CRYPTOGRAPHY { color: var(--tag-crypto); background: var(--tag-crypto-bg); border-color: rgba(167,139,250,0.2); }
-    .tag-MALWARE      { color: var(--tag-malware); background: var(--tag-malware-bg); border-color: rgba(251,146,60,0.2); }
-    .tag-NETWORK      { color: var(--tag-network); background: var(--tag-network-bg); border-color: rgba(52,211,153,0.2); }
-
-    .article-title { font-size: 1.1rem; font-weight: 600; color: var(--text); line-height: 1.4; margin-bottom: 0.5rem; letter-spacing: -0.2px; }
-    .article-desc  { font-size: 0.875rem; color: var(--text-muted); line-height: 1.65; max-width: 68ch; }
-
+    article:hover { transform: translateY(-1px); border-color: var(--border-hover); box-shadow: 0 8px 32px rgba(0,0,0,.22); }
+    .article-head { padding: 1.4rem 1.6rem 1.1rem; cursor: pointer; user-select: none; }
+    .meta { flex-wrap: wrap; gap: 9px; margin-bottom: .65rem; }
+    .date { color: var(--faint); font: .73rem var(--font-mono); }
+    .tag { padding: 3px 9px; border: 1px solid; border-radius: 999px; text-transform: uppercase; letter-spacing: .5px; font: 700 .67rem var(--font-mono); }
+    .tag.CRYPTOGRAPHY { color: var(--crypto); background: var(--crypto-soft); border-color: rgba(167,139,250,.22); }
+    .tag.MALWARE { color: var(--malware); background: var(--malware-soft); border-color: rgba(251,146,60,.22); }
+    .tag.NETWORK { color: var(--network); background: var(--network-soft); border-color: rgba(52,211,153,.22); }
+    .article-title { margin-bottom: .5rem; color: var(--text); font-size: 1.1rem; font-weight: 700; line-height: 1.4; letter-spacing: -.2px; }
+    .desc { max-width: 70ch; color: var(--muted); font-size: .875rem; line-height: 1.65; }
     .article-toggle {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.8rem 1.6rem; border-top: 1px solid var(--border);
-      background: var(--surface-1); cursor: pointer;
-      transition: background var(--ease);
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      padding: .8rem 1.6rem; border-top: 1px solid var(--border); background: var(--surface-1); cursor: pointer; transition: var(--ease);
     }
     .article-toggle:hover { background: var(--surface-2); }
-    .toggle-label { font-family: var(--font-mono); font-size: 0.77rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
-    .toggle-icon {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 19px; height: 19px; border-radius: var(--radius-sm);
-      background: var(--accent-dim); color: var(--accent);
-      transition: transform var(--ease);
+    .toggle-label { display: flex; align-items: center; gap: 8px; color: var(--muted); font: .77rem var(--font-mono); }
+    .chev { display: grid; place-items: center; width: 19px; height: 19px; border-radius: var(--radius-sm); background: var(--accent-soft); color: var(--accent); transition: transform var(--ease); }
+    .chev .icon { width: 12px; height: 12px; }
+    article.expanded .chev { transform: rotate(180deg); }
+    .pdf { display: none; border-top: 1px solid var(--border); }
+    article.expanded .pdf { display: block; }
+    .pdf-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      padding: 9px 13px; border-bottom: 1px solid var(--border); background: var(--surface-2);
+      color: var(--muted); font: .77rem var(--font-mono);
     }
-    .toggle-icon svg { width: 11px; height: 11px; }
-    article.expanded .toggle-icon { transform: rotate(180deg); }
-    .article-pdf { display: none; border-top: 1px solid var(--border); }
-    article.expanded .article-pdf { display: block; }
-
-    /* ─── PDF VIEWER ─── */
-    .pdf-toolbar {
-      background: var(--surface-2); padding: 9px 13px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid var(--border);
-      font-family: var(--font-mono); font-size: 0.77rem; color: var(--text-muted);
+    .file-name, .pdf-actions { display: flex; align-items: center; gap: 6px; }
+    .pages { color: var(--faint); }
+    .pdf-btn { padding: 4px 10px; font-size: .73rem; background: none; }
+    .pdf-viewer {
+      position: relative; width: 100%; height: 480px; overflow-y: auto; overflow-x: hidden; text-align: center;
+      padding: 18px 0 8px; background: #0a0e15; scrollbar-width: thin;
     }
-    .pdf-file-name { display: flex; align-items: center; gap: 6px; }
-    .pdf-page-info { color: var(--text-faint); }
-    .pdf-toolbar-actions { display: flex; gap: 7px; align-items: center; }
-    .pdf-btn {
-      background: none; border: 1px solid var(--border); color: var(--text-muted);
-      padding: 4px 10px; border-radius: var(--radius-sm);
-      font-family: var(--font-mono); font-size: 0.73rem; cursor: pointer;
-      transition: all var(--ease); text-decoration: none;
-      display: inline-flex; align-items: center; gap: 5px;
-    }
-    .pdf-btn:hover { color: var(--accent); border-color: rgba(59,130,246,0.3); background: var(--accent-dim); }
-    .pdf-canvas-wrapper {
-      width: 100%; height: 480px; overflow-y: auto; overflow-x: hidden;
-      background: #0a0e15; text-align: center; padding: 18px 0 8px;
-      position: relative; scrollbar-width: thin; scrollbar-color: #2d3748 transparent;
-    }
-    [data-theme="light"] .pdf-canvas-wrapper { background: #e8eef5; }
-    .pdf-canvas-wrapper::-webkit-scrollbar { width: 5px; }
-    .pdf-canvas-wrapper::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 3px; }
-    .pdf-loading {
-      position: absolute; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 13px;
-      color: var(--text-muted); font-family: var(--font-mono); font-size: 0.78rem;
-    }
-    .spinner { width: 26px; height: 26px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    [data-theme="light"] .pdf-viewer { background: #e8eef5; }
+    .loading { position: absolute; inset: 0; display: grid; place-content: center; gap: 13px; color: var(--muted); font: .78rem var(--font-mono); }
+    .spinner { justify-self: center; width: 26px; height: 26px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    canvas { display: block; margin: 0 auto 12px; max-width: 94%; box-shadow: 0 4px 20px rgba(0,0,0,0.4); border-radius: 2px; }
+    canvas { display: block; max-width: 94%; margin: 0 auto 12px; border-radius: 2px; box-shadow: 0 4px 20px rgba(0,0,0,.4); }
+    .empty { display: none; padding: 2rem; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: var(--radius-lg); background: var(--surface-0); }
 
-    /* ─── FOOTER ─── */
-    footer {
-      border-top: 1px solid var(--border); padding: 2.25rem 0; margin-top: 1.5rem;
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
-    }
-    .footer-left { font-family: var(--font-mono); font-size: 0.77rem; color: var(--text-faint); }
-    .footer-left strong { color: var(--text-muted); }
+    footer { justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; padding: 2.25rem 0; border-top: 1px solid var(--border); }
+    .footer-left { color: var(--faint); font: .77rem var(--font-mono); }
+    .footer-left strong { color: var(--muted); }
     .footer-right { display: flex; gap: 1.25rem; }
-    .footer-link { font-size: 0.8rem; color: var(--text-faint); text-decoration: none; transition: color var(--ease); }
+    .footer-link { color: var(--faint); text-decoration: none; font-size: .8rem; transition: var(--ease); }
     .footer-link:hover { color: var(--accent); }
 
-    /* ─── RESPONSIVE ─── */
+    @media (max-width: 700px) {
+      .controls { grid-template-columns: 1fr; }
+      .filters { justify-content: flex-start; }
+    }
     @media (max-width: 600px) {
       .page { padding: 0 1rem 4rem; }
       nav { margin-left: -1rem; margin-right: -1rem; padding-left: 1rem; padding-right: 1rem; }
-      .term-body { padding: 1.1rem; font-size: 0.8rem; }
-      .article-header { padding: 1.1rem; }
-      .article-toggle { padding: 0.7rem 1.1rem; }
-      .pdf-canvas-wrapper { height: 340px; }
+      .nav-link[href="#"] { display: none; }
+      .term-body { padding: 1.1rem; font-size: .8rem; }
+      .article-head, .article-toggle { padding-left: 1.1rem; padding-right: 1.1rem; }
+      .pdf-viewer { height: 340px; }
+      .pgp-head { align-items: flex-start; flex-direction: column; }
     }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
     }
   </style>
 </head>
 <body>
-<div class="page">
-
-  <!-- NAV -->
-  <nav>
-    <div class="nav-left">
-      <div class="nav-logo-icon" aria-hidden="true">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-          <path d="M7 8l2 2-2 2M11 12h4"/>
-        </svg>
-      </div>
-      <span class="nav-logo-text">tim<span>.</span>research</span>
-    </div>
-    <div class="nav-right">
-      <a href="#" class="nav-link">Home</a>
-      <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer" class="nav-link">GitHub ↗</a>
-      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme"></button>
-    </div>
-  </nav>
-
-  <!-- TERMINAL HERO -->
-  <div class="terminal" role="region" aria-label="About me">
-    <!-- Title bar with tabs -->
-    <div class="term-titlebar">
-      <div class="term-dots">
-        <div class="dot dot-r"></div>
-        <div class="dot dot-y"></div>
-        <div class="dot dot-g"></div>
-      </div>
-      <!-- Tab buttons -->
-      <div class="term-tabs" role="tablist">
-        <button class="term-tab active" role="tab" aria-selected="true"  data-tab="whoami" onclick="switchTab('whoami')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-          whoami
-        </button>
-        <button class="term-tab" role="tab" aria-selected="false" data-tab="research" onclick="switchTab('research')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-          research
-        </button>
-        <button class="term-tab" role="tab" aria-selected="false" data-tab="contact" onclick="switchTab('contact')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          contact
-        </button>
-      </div>
-    </div>
-
-    <!-- TAB: whoami -->
-    <div class="term-panel active" id="tab-whoami">
-      <div class="term-body">
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="t-cmd">whoami</span></div>
-        <span class="t-out"><span class="t-val">Tim Johns</span> — Security Researcher &amp; CS Student</span>
-        <span class="t-gap"></span>
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="t-cmd">cat</span> <span class="t-arg">interests.txt</span></div>
-        <span class="t-out"><span class="t-key">cryptography</span>  · breaking and building things that keep secrets</span>
-        <span class="t-out"><span style="color:var(--tag-malware)">malware analysis</span> · understanding what hostile code does and why</span>
-        <span class="t-out"><span style="color:var(--tag-network)">network security</span> · everything in transit</span>
-        <span class="t-gap"></span>
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="cursor"></span></div>
-      </div>
-    </div>
-
-    <!-- TAB: research -->
-    <div class="term-panel" id="tab-research">
-      <div class="term-body">
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="t-cmd">ls</span> <span class="t-arg">-la papers/</span></div>
-        <span class="t-out"><span class="t-comment"># 3 papers published · 1 forthcoming</span></span>
-        <span class="t-gap"></span>
-        <span class="t-out"><span class="t-val">Merkle_Root.pdf</span>                  <span class="t-comment">Jan 2026 · cryptography</span></span>
-        <span class="t-out"><span class="t-val">MS_Symbolic_Analysis.pdf</span>         <span class="t-comment">Dec 2025 · cryptography / poli-sci</span></span>
-        <span class="t-out"><span class="t-val">Dual_EC-1.pdf</span>                    <span class="t-comment">Dec 2025 · cryptography</span></span>
-        <span class="t-out"><span style="color:var(--text-faint)">MS_Exploit_Analysis.pdf</span>          <span class="t-comment">in progress…</span></span>
-        <span class="t-gap"></span>
-        <div class="t-line"><span class="t-prompt">tim@research</span><span class="t-sep"> ~ % </span><span class="cursor"></span></div>
-      </div>
-    </div>
-
-    <!-- TAB: contact -->
-    <div class="term-panel" id="tab-contact">
-      <div class="term-body">
-        <span class="t-out" style="margin-bottom:12px;">Reach me via email. For encrypted messages, use one of the PGP keys below.</span>
-
-        <div class="contact-links">
-          <a href="mailto:tjohns917@outlook.com" class="contact-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            tjohns917@outlook.com
-          </a>
-          <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer" class="contact-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-            TimJohns09
-          </a>
+  <div class="page">
+    <nav>
+      <div class="nav-left">
+        <div class="logo-icon" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8l2 2-2 2M11 12h4"/></svg>
         </div>
+        <span class="logo">tim<span>.</span>research</span>
+      </div>
+      <div class="nav-right">
+        <a href="#" class="nav-link">Home</a>
+        <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer" class="nav-link">GitHub ↗</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+      </div>
+    </nav>
 
-        <span class="t-gap"></span>
+    <section class="terminal" aria-label="About Tim Johns">
+      <div class="term-titlebar">
+        <div class="dots" aria-hidden="true"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+        <div class="tabs" role="tablist" aria-label="Profile sections">
+          <button class="tab active" role="tab" aria-selected="true" data-tab="whoami">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>whoami
+          </button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="research">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>research
+          </button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="contact">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></svg>contact
+          </button>
+        </div>
+      </div>
 
-        <!-- KEY 1 -->
-        <div class="pgp-block">
-          <div class="pgp-header">
-            <div style="display:flex;flex-direction:column;gap:4px;">
-              <span class="pgp-label">KEY 1 &mdash; Ed25519 / cv25519 &middot; <span style="color:var(--green);">Thunderbird compatible</span></span>
-              <span style="font-family:var(--font-term);font-size:0.72rem;letter-spacing:1.2px;color:var(--tag-crypto);">17F0 4688 2E5B 32AD FE22 &nbsp;03E9 4270 2802 EB0C DFA7</span>
-            </div>
-            <button class="pgp-copy-btn" id="pgpCopyBtn1" onclick="copyPgp('pgpText1','pgpCopyBtn1','pgpCopyLabel1')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <span id="pgpCopyLabel1">Copy</span>
-            </button>
+      <div class="panel active" id="tab-whoami" role="tabpanel">
+        <div class="term-body">
+          <div class="line"><span class="prompt">tim@research</span><span class="sep"> ~ % </span><span class="cmd">whoami</span></div>
+          <span class="out"><span class="val">Tim Johns</span> — Security Researcher &amp; CS Student</span>
+          <span class="gap"></span>
+          <div class="line"><span class="prompt">tim@research</span><span class="sep"> ~ % </span><span class="cmd">cat</span> <span class="arg">interests.txt</span></div>
+          <span class="out"><span class="crypto">cryptography</span> · breaking and building things that keep secrets</span>
+          <span class="out"><span class="malware">malware analysis</span> · understanding what hostile code does and why</span>
+          <span class="out"><span class="network">network security</span> · everything in transit</span>
+          <span class="gap"></span>
+          <div class="line"><span class="prompt">tim@research</span><span class="sep"> ~ % </span><span class="cursor"></span></div>
+        </div>
+      </div>
+
+      <div class="panel" id="tab-research" role="tabpanel">
+        <div class="term-body">
+          <div class="line"><span class="prompt">tim@research</span><span class="sep"> ~ % </span><span class="cmd">ls</span> <span class="arg">-la papers/</span></div>
+          <span class="out"><span class="comment"># 3 papers published · 1 forthcoming</span></span>
+          <span class="gap"></span>
+          <span class="out"><span class="val">Merkle_Root.pdf</span> <span class="comment">Jan 2026 · cryptography</span></span>
+          <span class="out"><span class="val">MS_Symbolic_Analysis.pdf</span> <span class="comment">Dec 2025 · cryptography / poli-sci</span></span>
+          <span class="out"><span class="val">Dual_EC-1.pdf</span> <span class="comment">Dec 2025 · cryptography</span></span>
+          <span class="out"><span class="faint">MS_Exploit_Analysis.pdf</span> <span class="comment">in progress…</span></span>
+          <span class="gap"></span>
+          <div class="line"><span class="prompt">tim@research</span><span class="sep"> ~ % </span><span class="cursor"></span></div>
+        </div>
+      </div>
+
+      <div class="panel" id="tab-contact" role="tabpanel">
+        <div class="term-body">
+          <span class="out" style="margin-bottom:12px">Reach me via email. For encrypted messages, use one of the PGP keys below.</span>
+
+          <div class="contact-links">
+            <a href="mailto:tjohns917@outlook.com" class="chip">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+              tjohns917@outlook.com
+            </a>
+            <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer" class="chip">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              TimJohns09
+            </a>
           </div>
-          <div class="pgp-text" id="pgpText1">-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+          <div id="pgpKeys"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-header">
+      <h1 class="section-title">Latest Reports</h1>
+      <span class="section-count" id="reportCount">3 papers</span>
+    </div>
+
+    <div class="controls" aria-label="Report controls">
+      <input class="search" id="searchInput" type="search" placeholder="Search reports…" autocomplete="off" />
+      <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
+    </div>
+
+    <main class="articles" id="articleList"></main>
+    <div class="empty" id="emptyState">No reports match that filter.</div>
+
+    <footer>
+      <div class="footer-left"><strong>Tim Johns</strong> — Security Research &amp; CS</div>
+      <div class="footer-right">
+        <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub ↗</a>
+        <a href="mailto:tjohns917@outlook.com" class="footer-link">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const ICONS = {
+      moon: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+      sun: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
+      file: '<svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+      download: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>',
+      copy: '<svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+      chev: '<svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>'
+    };
+
+    const papers = [
+      {
+        date: 'Jan 16, 2026',
+        tags: ['CRYPTOGRAPHY'],
+        title: 'Understanding Merkle Roots',
+        desc: 'A basic introduction to Merkle roots — how they work, why they matter in blockchain and distributed systems, and an intuitive breakdown of the underlying data structure.',
+        file: 'Merkle_Root.pdf',
+        url: 'assets/Merkle_Root.pdf'
+      },
+      {
+        date: 'Dec 26, 2025',
+        tags: ['CRYPTOGRAPHY'],
+        title: "Digital Sovereignty and Symbolism in al-Qaeda's Mujahideen Secrets v2.0",
+        desc: 'A political-science analysis of the graphical user interface of the Mujahideen Secrets v2.0 encryption program — examining how interface design was used as a vehicle for ideological communication. A follow-up paper on cryptographic vulnerabilities is forthcoming.',
+        file: 'MS_Symbolic_Analysis.pdf',
+        url: 'assets/MS_Symbolic_Analysis.pdf'
+      },
+      {
+        date: 'Dec 26, 2025',
+        tags: ['CRYPTOGRAPHY'],
+        title: 'An Analysis of the Suspected Backdoor in Dual_EC_DRBG',
+        desc: 'A deep dive into the Dual_EC_DRBG pseudorandom number generator and its suspected NSA-planted backdoor — covering how the algorithm works, why the backdoor is plausible, and how it could be exploited in practice.',
+        file: 'Dual_EC-1.pdf',
+        url: 'assets/Dual_EC-1.pdf'
+      }
+    ];
+
+    const pgpKeys = [
+      {
+        label: 'KEY 1 — Ed25519 / cv25519 · Thunderbird compatible',
+        fingerprint: '17F0 4688 2E5B 32AD FE22  03E9 4270 2802 EB0C DFA7',
+        key: `-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mDMEacrEyRYJKwYBBAHaRw8BAQdAZBdv/6KG7mUzwtBt3c7LTOY/eSMb+TPYTRBU
 Ig7UiOO0IVRpbSBKb2hucyA8dGpvaG5zOTE3QG91dGxvb2suY29tPoi1BBMWCgBd
@@ -500,24 +418,12 @@ NSsxLjEyLDAsMwIbDAUJA8JnAAAKCRBCcCgC6wzfp/7lAP9FnXoN0VjQ9xlvI2Yq
 ePB8iAK6RFT8S8xc50XJIKAqxAEAv9GHAur3hRYGAyhWPT1PMXrz5Ce7Bc3GjQ+T
 YJ5dsQw=
 =fLkd
------END PGP PUBLIC KEY BLOCK-----</div>
-        </div>
-
-        <span class="t-gap"></span>
-
-        <!-- KEY 2 -->
-        <div class="pgp-block">
-          <div class="pgp-header">
-            <div style="display:flex;flex-direction:column;gap:4px;">
-              <span class="pgp-label">KEY 2 &mdash; ML-KEM (ky768_cv25519) &middot; <span style="color:var(--tag-crypto);">Quantum-resistant</span> &middot; <span style="color:var(--tag-malware);">GPG 2.5+ only, not Thunderbird compatible</span></span>
-              <span style="font-family:var(--font-term);font-size:0.72rem;letter-spacing:1.2px;color:var(--tag-crypto);">280B C76D 616C 6F86 843E &nbsp;96E2 26FF FF48 0466 81E4</span>
-            </div>
-            <button class="pgp-copy-btn" id="pgpCopyBtn2" onclick="copyPgp('pgpText2','pgpCopyBtn2','pgpCopyLabel2')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              <span id="pgpCopyLabel2">Copy</span>
-            </button>
-          </div>
-          <div class="pgp-text" id="pgpText2">-----BEGIN PGP PUBLIC KEY BLOCK-----
+-----END PGP PUBLIC KEY BLOCK-----`
+      },
+      {
+        label: 'KEY 2 — ML-KEM (ky768_cv25519) · Quantum-resistant · GPG 2.5+ only, not Thunderbird compatible',
+        fingerprint: '280B C76D 616C 6F86 843E  96E2 26FF FF48 0466 81E4',
+        key: `-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mDMEaclyIhYJKwYBBAHaRw8BAQdAsZ5annNVFePL8vEpWueNWQqifNGrv53fx3jt
 R1v5jaG0IVRpbSBKb2hucyA8dGpvaG5zOTE3QG91dGxvb2suY29tPoi1BBMWCgBd
@@ -555,261 +461,178 @@ P/33syDefJv8LSVRpv4lsFBCd66jH3+ImgQYFgoAQhYhBCgLx21hbG+GhD6W4ib/
 AAAKCRAm//9IBGaB5LqpAP938gsHaNJnB6TitZFUwYyXIPgfN4PcnnlkCx4SD1g1
 OQD+LWZVSs3Fb+5MA2daucg0FO08l+mNCRlbptxlK58lwAU=
 =R7uN
------END PGP PUBLIC KEY BLOCK-----</div>
-        </div>
+-----END PGP PUBLIC KEY BLOCK-----`
+      }
+    ];
 
-        <span class="t-gap"></span>
-      </div>
-    </div>
-    </div>
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+    const escapeHtml = str => String(str).replace(/[&<>'"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[c]));
 
-  <!-- REPORTS SECTION -->
-  <div class="section-header">
-    <h1 class="section-title">Latest Reports</h1>
-    <span class="section-count" id="reportCount">3 papers</span>
-  </div>
+    const state = {
+      theme: localStorage.getItem('theme') || 'dark',
+      filter: 'ALL',
+      search: '',
+      renderedPdfs: new Set()
+    };
 
-  <div class="filter-bar" role="group" aria-label="Filter by tag">
-    <button class="filter-btn active" data-filter="ALL"          onclick="filterArticles(this)">ALL</button>
-    <button class="filter-btn"        data-filter="CRYPTOGRAPHY" onclick="filterArticles(this)">CRYPTOGRAPHY</button>
-    <button class="filter-btn"        data-filter="MALWARE"      onclick="filterArticles(this)">MALWARE</button>
-    <button class="filter-btn"        data-filter="NETWORK"      onclick="filterArticles(this)">NETWORK</button>
-  </div>
-
-  <div class="article-list" id="articleList">
-
-    <!-- PAPER 1 -->
-    <article data-tags="CRYPTOGRAPHY">
-      <div class="article-header" onclick="toggleArticle(this.closest('article'))">
-        <div class="article-meta">
-          <span class="meta-date">Jan 16, 2026</span>
-          <span class="tag tag-CRYPTOGRAPHY">Cryptography</span>
-        </div>
-        <div class="article-title">Understanding Merkle Roots</div>
-        <p class="article-desc">A basic introduction to Merkle roots — how they work, why they matter in blockchain and distributed systems, and an intuitive breakdown of the underlying data structure.</p>
-      </div>
-      <div class="article-toggle" onclick="toggleArticle(this.closest('article'))">
-        <span class="toggle-label">
-          <span class="toggle-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
-          View paper
-        </span>
-        <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-faint)">PDF</span>
-      </div>
-      <div class="article-pdf">
-        <div class="pdf-toolbar">
-          <div class="pdf-file-name">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Merkle_Root.pdf
-          </div>
-          <div class="pdf-toolbar-actions">
-            <span class="pdf-page-info" id="pages-1"></span>
-            <a href="assets/Merkle_Root.pdf" class="pdf-btn" download>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Download
-            </a>
-          </div>
-        </div>
-        <div class="pdf-canvas-wrapper" id="pdf-1">
-          <div class="pdf-loading"><div class="spinner"></div><span>Loading document…</span></div>
-        </div>
-      </div>
-    </article>
-
-    <!-- PAPER 2 -->
-    <article data-tags="CRYPTOGRAPHY">
-      <div class="article-header" onclick="toggleArticle(this.closest('article'))">
-        <div class="article-meta">
-          <span class="meta-date">Dec 26, 2025</span>
-          <span class="tag tag-CRYPTOGRAPHY">Cryptography</span>
-        </div>
-        <div class="article-title">Digital Sovereignty and Symbolism in al-Qaeda's Mujahideen Secrets v2.0</div>
-        <p class="article-desc">A political-science analysis of the graphical user interface of the Mujahideen Secrets v2.0 encryption program — examining how interface design was used as a vehicle for ideological communication. A follow-up paper on cryptographic vulnerabilities is forthcoming.</p>
-      </div>
-      <div class="article-toggle" onclick="toggleArticle(this.closest('article'))">
-        <span class="toggle-label">
-          <span class="toggle-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
-          View paper
-        </span>
-        <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-faint)">PDF</span>
-      </div>
-      <div class="article-pdf">
-        <div class="pdf-toolbar">
-          <div class="pdf-file-name">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            MS_Symbolic_Analysis.pdf
-          </div>
-          <div class="pdf-toolbar-actions">
-            <span class="pdf-page-info" id="pages-2"></span>
-            <a href="assets/MS_Symbolic_Analysis.pdf" class="pdf-btn" download>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Download
-            </a>
-          </div>
-        </div>
-        <div class="pdf-canvas-wrapper" id="pdf-2">
-          <div class="pdf-loading"><div class="spinner"></div><span>Loading document…</span></div>
-        </div>
-      </div>
-    </article>
-
-    <!-- PAPER 3 -->
-    <article data-tags="CRYPTOGRAPHY">
-      <div class="article-header" onclick="toggleArticle(this.closest('article'))">
-        <div class="article-meta">
-          <span class="meta-date">Dec 26, 2025</span>
-          <span class="tag tag-CRYPTOGRAPHY">Cryptography</span>
-        </div>
-        <div class="article-title">An Analysis of the Suspected Backdoor in Dual_EC_DRBG</div>
-        <p class="article-desc">A deep dive into the DUAL_EC_DRBG pseudorandom number generator and its suspected NSA-planted backdoor — covering how the algorithm works, why the backdoor is plausible, and how it could be exploited in practice.</p>
-      </div>
-      <div class="article-toggle" onclick="toggleArticle(this.closest('article'))">
-        <span class="toggle-label">
-          <span class="toggle-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
-          View paper
-        </span>
-        <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-faint)">PDF</span>
-      </div>
-      <div class="article-pdf">
-        <div class="pdf-toolbar">
-          <div class="pdf-file-name">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Dual_EC-1.pdf
-          </div>
-          <div class="pdf-toolbar-actions">
-            <span class="pdf-page-info" id="pages-3"></span>
-            <a href="assets/Dual_EC-1.pdf" class="pdf-btn" download>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Download
-            </a>
-          </div>
-        </div>
-        <div class="pdf-canvas-wrapper" id="pdf-3">
-          <div class="pdf-loading"><div class="spinner"></div><span>Loading document…</span></div>
-        </div>
-      </div>
-    </article>
-
-  </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-left"><strong>Tim Johns</strong> — Security Research &amp; CS</div>
-    <div class="footer-right">
-      <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub ↗</a>
-      <a href="mailto:tjohns917@outlook.com" class="footer-link">Contact</a>
-    </div>
-  </footer>
-
-</div>
-
-<script>
-  /* ── THEME TOGGLE ── */
-  (function(){
-    const html = document.documentElement;
-    const btn  = document.querySelector('[data-theme-toggle]');
-    let theme  = 'dark';
-    html.setAttribute('data-theme', theme);
-    function icon(t) {
-      return t === 'dark'
-        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
-        : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+    function setTheme(theme) {
+      state.theme = theme;
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem('theme', theme);
+      $('#themeToggle').innerHTML = ICONS[theme === 'dark' ? 'moon' : 'sun'];
     }
-    btn.innerHTML = icon(theme);
-    btn.addEventListener('click', () => {
-      theme = theme === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', theme);
-      btn.innerHTML = icon(theme);
-    });
-  })();
 
-  /* ── TERMINAL TABS ── */
-  function switchTab(id) {
-    document.querySelectorAll('.term-tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.tab === id);
-      t.setAttribute('aria-selected', t.dataset.tab === id);
-    });
-    document.querySelectorAll('.term-panel').forEach(p => {
-      p.classList.toggle('active', p.id === 'tab-' + id);
-    });
-  }
+    function renderFilters() {
+      const tags = ['ALL', ...new Set(papers.flatMap(p => p.tags))];
+      $('#filters').innerHTML = tags.map(tag => `<button class="filter ${tag === state.filter ? 'active' : ''}" data-filter="${tag}">${tag}</button>`).join('');
+    }
 
-  /* ── PGP COPY ── */
-  function copyPgp(textId, btnId, lblId) {
-    const text = document.getElementById(textId).textContent;
-    const btn  = document.getElementById(btnId);
-    const lbl  = document.getElementById(lblId);
-    navigator.clipboard.writeText(text).then(() => {
-      btn.classList.add('copied');
-      lbl.textContent = 'Copied!';
-      setTimeout(() => { btn.classList.remove('copied'); lbl.textContent = 'Copy'; }, 2200);
-    }).catch(() => {
-      lbl.textContent = 'Failed';
-      setTimeout(() => { lbl.textContent = 'Copy'; }, 2000);
-    });
-  }
+    function renderPgpKeys() {
+      $('#pgpKeys').innerHTML = pgpKeys.map((key, i) => `
+        <div class="pgp">
+          <div class="pgp-head">
+            <div class="pgp-title">
+              <span class="pgp-label">${escapeHtml(key.label)}</span>
+              <span class="fingerprint">${escapeHtml(key.fingerprint)}</span>
+            </div>
+            <button class="copy-btn" data-copy-key="${i}">${ICONS.copy}<span>Copy</span></button>
+          </div>
+          <pre class="pgp-text" id="pgp-${i}">${escapeHtml(key.key)}</pre>
+        </div>`).join('<span class="gap"></span>');
+    }
 
-  /* ── ARTICLE EXPAND / PDF RENDER ── */
-  const renderedPdfs = new Set();
+    function paperMatches(paper) {
+      const haystack = [paper.title, paper.desc, paper.date, paper.file, paper.tags.join(' ')].join(' ').toLowerCase();
+      const tagMatch = state.filter === 'ALL' || paper.tags.includes(state.filter);
+      const searchMatch = !state.search || haystack.includes(state.search.toLowerCase());
+      return tagMatch && searchMatch;
+    }
 
-  function toggleArticle(article) {
-    const wasExpanded = article.classList.contains('expanded');
-    article.classList.toggle('expanded');
-    if (!wasExpanded) {
-      const wrapper     = article.querySelector('.pdf-canvas-wrapper');
-      const downloadBtn = article.querySelector('.pdf-btn[download]');
-      const url         = downloadBtn?.getAttribute('href');
-      if (wrapper && url && !renderedPdfs.has(wrapper.id)) {
-        renderedPdfs.add(wrapper.id);
-        renderPdf(url, wrapper, wrapper.id);
+    function renderPapers() {
+      const visible = papers.map((paper, i) => ({ paper, i })).filter(({ paper }) => paperMatches(paper));
+      $('#articleList').innerHTML = visible.map(({ paper, i }) => `
+        <article data-index="${i}">
+          <div class="article-head" role="button" tabindex="0" aria-expanded="false">
+            <div class="meta">
+              <span class="date">${paper.date}</span>
+              ${paper.tags.map(tag => `<span class="tag ${tag}">${tag.toLowerCase()}</span>`).join('')}
+            </div>
+            <h2 class="article-title">${escapeHtml(paper.title)}</h2>
+            <p class="desc">${escapeHtml(paper.desc)}</p>
+          </div>
+          <div class="article-toggle" role="button" tabindex="0" aria-label="Toggle PDF preview">
+            <span class="toggle-label"><span class="chev">${ICONS.chev}</span>View paper</span>
+            <span class="date">PDF</span>
+          </div>
+          <div class="pdf">
+            <div class="pdf-bar">
+              <div class="file-name">${ICONS.file}${escapeHtml(paper.file)}</div>
+              <div class="pdf-actions">
+                <span class="pages" id="pages-${i}"></span>
+                <a href="${paper.url}" class="pdf-btn" download>${ICONS.download}Download</a>
+              </div>
+            </div>
+            <div class="pdf-viewer" id="pdf-${i}">
+              <div class="loading"><div class="spinner"></div><span>Loading document…</span></div>
+            </div>
+          </div>
+        </article>`).join('');
+
+      $('#reportCount').textContent = `${visible.length} paper${visible.length === 1 ? '' : 's'}`;
+      $('#emptyState').style.display = visible.length ? 'none' : 'block';
+    }
+
+    function toggleArticle(article) {
+      const head = $('.article-head', article);
+      const index = Number(article.dataset.index);
+      const expanded = article.classList.toggle('expanded');
+      head.setAttribute('aria-expanded', String(expanded));
+
+      if (expanded && !state.renderedPdfs.has(index)) {
+        state.renderedPdfs.add(index);
+        renderPdf(papers[index].url, $(`#pdf-${index}`), index);
       }
     }
-  }
 
-  async function renderPdf(url, wrapper, id) {
-    try {
-      const pdf = await pdfjsLib.getDocument(url).promise;
-      wrapper.innerHTML = '';
-      const idx = id.replace('pdf-', '');
-      const el  = document.getElementById('pages-' + idx);
-      if (el) el.textContent = pdf.numPages + ' page' + (pdf.numPages !== 1 ? 's' : '');
+    async function renderPdf(url, wrapper, index) {
+      try {
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        wrapper.innerHTML = '';
+        $(`#pages-${index}`).textContent = `${pdf.numPages} page${pdf.numPages === 1 ? '' : 's'}`;
 
-      for (let n = 1; n <= pdf.numPages; n++) {
-        const page     = await pdf.getPage(n);
-        const w        = wrapper.clientWidth * 0.92;
-        const unscaled = page.getViewport({ scale: 1 });
-        const vp       = page.getViewport({ scale: w / unscaled.width });
-        const canvas   = document.createElement('canvas');
-        canvas.height  = vp.height;
-        canvas.width   = vp.width;
-        canvas.style.maxWidth = '94%';
-        wrapper.appendChild(canvas);
-        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-        if (n < pdf.numPages) {
-          const gap = document.createElement('div');
-          gap.style.height = '12px';
-          wrapper.appendChild(gap);
+        for (let n = 1; n <= pdf.numPages; n++) {
+          const page = await pdf.getPage(n);
+          const base = page.getViewport({ scale: 1 });
+          const viewport = page.getViewport({ scale: (wrapper.clientWidth * .92) / base.width });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          wrapper.appendChild(canvas);
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
         }
+      } catch (err) {
+        console.error(err);
+        wrapper.innerHTML = '<div style="padding:28px;color:#f87171;font-family:var(--font-mono);font-size:.78rem;text-align:center">Failed to load document. Use the Download button above.</div>';
       }
-    } catch (e) {
-      console.error(e);
-      wrapper.innerHTML = '<div style="padding:28px;color:#f87171;font-family:var(--font-mono);font-size:0.78rem;text-align:center;">Failed to load document. Use the Download button above.</div>';
     }
-  }
 
-  /* ── FILTER ── */
-  function filterArticles(btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const filter   = btn.dataset.filter;
-    const articles = document.querySelectorAll('#articleList article');
-    let visible = 0;
-    articles.forEach(a => {
-      const match = filter === 'ALL' || (a.dataset.tags || '').includes(filter);
-      a.style.display = match ? '' : 'none';
-      if (match) visible++;
+    async function copyText(text, btn) {
+      const label = $('span', btn);
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.classList.add('copied');
+        label.textContent = 'Copied!';
+      } catch {
+        label.textContent = 'Failed';
+      } finally {
+        setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copy'; }, 2200);
+      }
+    }
+
+    document.addEventListener('click', e => {
+      const tab = e.target.closest('.tab');
+      if (tab) {
+        $$('.tab').forEach(t => {
+          const active = t === tab;
+          t.classList.toggle('active', active);
+          t.setAttribute('aria-selected', active);
+        });
+        $$('.panel').forEach(p => p.classList.toggle('active', p.id === `tab-${tab.dataset.tab}`));
+      }
+
+      const filter = e.target.closest('.filter');
+      if (filter) {
+        state.filter = filter.dataset.filter;
+        renderFilters();
+        renderPapers();
+      }
+
+      const articleToggle = e.target.closest('.article-head, .article-toggle');
+      if (articleToggle) toggleArticle(articleToggle.closest('article'));
+
+      const copyBtn = e.target.closest('[data-copy-key]');
+      if (copyBtn) copyText(pgpKeys[copyBtn.dataset.copyKey].key, copyBtn);
     });
-    document.getElementById('reportCount').textContent = visible + ' paper' + (visible !== 1 ? 's' : '');
-  }
-</script>
+
+    document.addEventListener('keydown', e => {
+      const target = e.target.closest('.article-head, .article-toggle');
+      if (target && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        toggleArticle(target.closest('article'));
+      }
+    });
+
+    $('#themeToggle').addEventListener('click', () => setTheme(state.theme === 'dark' ? 'light' : 'dark'));
+    $('#searchInput').addEventListener('input', e => {
+      state.search = e.target.value.trim();
+      renderPapers();
+    });
+
+    setTheme(state.theme);
+    renderFilters();
+    renderPgpKeys();
+    renderPapers();
+  </script>
 </body>
 </html>
