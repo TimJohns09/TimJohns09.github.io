@@ -235,7 +235,7 @@ function renderPapers() {
     `;
   }).join('');
 
-  $('#reportCount').textContent = `${visible.length} entr${visible.length === 1 ? 'y' : 'ies'}`;
+  $('#reportCount').textContent = `${visible.length} published entr${visible.length === 1 ? 'y' : 'ies'}`;
   $('#emptyState').style.display = visible.length ? 'none' : 'block';
 }
 
