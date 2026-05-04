@@ -859,8 +859,14 @@ footer {
     padding-right: 1rem;
   }
 
-  .nav-link[href="#"] {
-    display: none;
+  .nav-right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-link {
+    padding: 5px 8px;
+    font-size: .8rem;
   }
 
   .term-body {
