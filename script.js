@@ -136,7 +136,7 @@ const escapeHtml = str =>
   }[c]));
 
 const state = {
-  theme: localStorage.getItem('theme') || 'dark',
+  theme: localStorage.getItem('theme') || 'light',
   filter: 'ALL',
   search: '',
   renderedItems: new Set()
@@ -159,15 +159,18 @@ function renderFilters() {
 
 function renderPgpKeys() {
   $('#pgpKeys').innerHTML = pgpKeys.map((key, i) => `
-    <div class="pgp">
+    <div class="pgp" data-key-panel="${i}">
       <div class="pgp-head">
         <div class="pgp-title">
           <span class="pgp-label">${escapeHtml(key.label)}</span>
           <span class="fingerprint">${escapeHtml(key.fingerprint)}</span>
         </div>
-        <button class="copy-btn" data-copy-key="${i}">${ICONS.copy}<span>Copy</span></button>
+        <div class="pgp-actions">
+          <button class="copy-btn key-toggle" data-toggle-key="${i}" aria-expanded="false" aria-controls="pgp-${i}"><span class="chev">${ICONS.chev}</span><span class="key-toggle-label">Show key</span></button>
+          <button class="copy-btn" data-copy-key="${i}">${ICONS.copy}<span>Copy</span></button>
+        </div>
       </div>
-      <pre class="pgp-text" id="pgp-${i}">${escapeHtml(key.key)}</pre>
+      <pre class="pgp-text" id="pgp-${i}" hidden>${escapeHtml(key.key)}</pre>
     </div>
   `).join('<span class="gap"></span>');
 }
@@ -378,6 +381,18 @@ document.addEventListener('click', e => {
 
   if (articleToggle) {
     toggleArticle(articleToggle.closest('article'));
+  }
+
+  const keyToggle = e.target.closest('[data-toggle-key]');
+
+  if (keyToggle) {
+    const panel = keyToggle.closest('.pgp');
+    const keyText = $(`#pgp-${keyToggle.dataset.toggleKey}`);
+    const expanded = panel.classList.toggle('open');
+
+    keyText.hidden = !expanded;
+    keyToggle.setAttribute('aria-expanded', String(expanded));
+    $('.key-toggle-label', keyToggle).textContent = expanded ? 'Hide key' : 'Show key';
   }
 
   const copyBtn = e.target.closest('[data-copy-key]');
