@@ -29,6 +29,7 @@
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-term: 'Fira Code', Consolas, monospace;
+  --font-display: 'JetBrains Mono', 'Fira Code', monospace;
   --ease: 160ms cubic-bezier(.16,1,.3,1);
 }
 
@@ -105,7 +106,7 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 -1.5rem 4.75rem;
+  margin: 0 -1.5rem 4.25rem;
   padding: 1.4rem 1.5rem;
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--bg) 90%, transparent);
@@ -206,8 +207,7 @@ footer {
 .hero h1 {
   margin: .75rem 0 0;
   color: var(--text);
-  font-size: clamp(3rem, 7vw, 5.6rem);
-  line-height: 1;
+  font: 700 clamp(2.8rem, 6.4vw, 5.15rem)/1.04 var(--font-display);
   letter-spacing: 0;
 }
 
@@ -217,14 +217,14 @@ footer {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface-0);
-  box-shadow: 0 24px 70px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.035);
+  box-shadow: 0 24px 70px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.035);
 }
 
 .term-titlebar {
-  min-height: 38px;
+  min-height: 48px;
   display: flex;
   align-items: center;
-  padding: 0 14px;
+  padding: 0 18px;
   background: var(--surface-2);
   border-bottom: 1px solid var(--border);
 }
@@ -232,7 +232,7 @@ footer {
 .dots {
   display: flex;
   gap: 6px;
-  margin-right: 14px;
+  margin-right: 18px;
   flex: 0 0 auto;
 }
 
@@ -263,11 +263,11 @@ footer {
 .tab {
   position: relative;
   top: 1px;
-  height: 38px;
+  height: 48px;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 0 16px;
+  gap: 8px;
+  padding: 0 22px;
   white-space: nowrap;
   cursor: pointer;
   border: 0;
@@ -275,7 +275,7 @@ footer {
   border-bottom: 2px solid transparent;
   background: none;
   color: var(--faint);
-  font: .75rem var(--font-term);
+  font: .85rem var(--font-term);
   transition: var(--ease);
 }
 
@@ -309,8 +309,8 @@ footer {
 }
 
 .term-body {
-  padding: 1.5rem 1.75rem 1.6rem;
-  font: .9rem/1.8 var(--font-term);
+  padding: 2.1rem 2.35rem 2.25rem;
+  font: .96rem/2 var(--font-term);
 }
 
 .line {
@@ -367,15 +367,15 @@ footer {
 
 .gap {
   display: block;
-  height: 10px;
+  height: 14px;
 }
 
 .cursor {
   display: inline-block;
   width: 8px;
-  height: .9em;
+  height: 1em;
   margin-left: 3px;
-  vertical-align: text-bottom;
+  vertical-align: -0.14em;
   background: var(--green);
   opacity: .85;
   animation: blink 1.1s step-end infinite;
@@ -448,7 +448,7 @@ footer {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 8px 14px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   background: rgba(255,255,255,.03);
 }
@@ -464,9 +464,28 @@ footer {
   min-width: 0;
 }
 
+.pgp-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex: 0 0 auto;
+}
+
+.key-toggle .chev {
+  background: transparent;
+}
+
+.pgp.open .key-toggle .chev {
+  transform: rotate(180deg);
+}
+
+.pgp-text[hidden] {
+  display: none;
+}
+
 .pgp-label {
-  font: .72rem var(--font-term);
-  color: var(--faint);
+  font: .78rem var(--font-term);
+  color: var(--muted);
   letter-spacing: .4px;
 }
 
@@ -490,7 +509,7 @@ footer {
 }
 
 .pgp-text {
-  padding: 14px;
+  padding: 16px;
   overflow-x: auto;
   white-space: pre;
   color: var(--muted);
@@ -505,9 +524,8 @@ footer {
 }
 
 .section-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: -.2px;
+  font: 700 1.45rem/1.2 var(--font-display);
+  letter-spacing: 0;
 }
 
 .section-count {
@@ -636,10 +654,8 @@ article:hover {
 .article-title {
   margin-bottom: .5rem;
   color: var(--text);
-  font-size: 1.24rem;
-  font-weight: 700;
-  line-height: 1.35;
-  letter-spacing: -.2px;
+  font: 700 1.2rem/1.38 var(--font-display);
+  letter-spacing: 0;
 }
 
 .desc {
@@ -908,12 +924,13 @@ footer {
   }
 
   .hero h1 {
-    font-size: 2.85rem;
+    font-size: 2.45rem;
   }
 
   .term-body {
-    padding: 1.1rem;
-    font-size: .8rem;
+    padding: 1.35rem;
+    font-size: .82rem;
+    line-height: 1.9;
   }
 
   .article-head,
@@ -934,6 +951,11 @@ footer {
   .pgp-head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .pgp-actions {
+    width: 100%;
+    flex-wrap: wrap;
   }
 }
 
