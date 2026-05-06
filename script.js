@@ -1,13 +1,15 @@
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
 
 const ICONS = {
-  moon: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
-  sun: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',
-  file: '<svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
-  download: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>',
-  copy: '<svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
-  chev: '<svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>'
+  moon: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
+  sun: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>',
+  file: '<svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>',
+  download: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5M12 15V3"></path></svg>',
+  copy: '<svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+  chev: '<svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg>'
 };
 
 const entries = [
@@ -28,6 +30,24 @@ const entries = [
     desc: 'A basic introduction to Merkle roots — how they work, why they matter in blockchain and distributed systems, and an intuitive breakdown of the underlying data structure.',
     file: 'Merkle_Root.pdf',
     url: 'assets/Merkle_Root.pdf'
+  },
+  {
+    kind: 'pdf',
+    date: 'Jan 2026',
+    tags: ['NETWORK'],
+    title: 'Privacy Node Build: Running Bitcoin, Monero, and Tor on a $264 Machine',
+    desc: 'A build report documenting a low-cost privacy node architecture for running Bitcoin Core, a pruned Monero node, and a Tor Snowflake proxy on compact hardware.',
+    file: 'node.pdf',
+    url: 'assets/node.pdf'
+  },
+  {
+    kind: 'pdf',
+    date: 'Jan 2026',
+    tags: ['MALWARE', 'AI/ML'],
+    title: 'Malware Obfuscation using Kanerva’s Sparse Distributed Memory',
+    desc: 'A research paper exploring how Sparse Distributed Memory-style encoding and retrieval can be adapted as a malware obfuscation strategy, distributing payload bytes across memory locations and reconstructing them only at runtime.',
+    file: 'sdm_obfuscation.pdf',
+    url: 'assets/sdm_obfuscation.pdf'
   },
   {
     kind: 'pdf',
@@ -126,95 +146,123 @@ OQD+LWZVSs3Fb+5MA2daucg0FO08l+mNCRlbptxlK58lwAU=
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-const escapeHtml = str =>
-  String(str).replace(/[&<>'"]/g, c => ({
+const escapeHtml = value =>
+  String(value).replace(/[&<>'"]/g, char => ({
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     "'": '&#39;',
     '"': '&quot;'
-  }[c]));
+  }[char]));
+
+const tagClass = tag => `tag-${tag.replace(/[^a-z0-9]+/gi, '-')}`;
+const tagLabel = tag => tag.toLowerCase();
 
 const state = {
-  theme: localStorage.getItem('theme') || 'light',
+  theme: localStorage.getItem('theme') || document.documentElement.dataset.theme || 'light',
   filter: 'ALL',
   search: '',
   renderedItems: new Set()
 };
 
+const PY_KEYWORDS = new Set([
+  'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break', 'class',
+  'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from',
+  'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass',
+  'raise', 'return', 'try', 'while', 'with', 'yield'
+]);
+
+const PY_BUILTINS = new Set([
+  'bytes', 'dict', 'enumerate', 'Exception', 'filter', 'float', 'int', 'len', 'list',
+  'map', 'open', 'print', 'range', 'set', 'str', 'sum', 'tuple', 'type', 'zip'
+]);
+
 function setTheme(theme) {
   state.theme = theme;
   document.documentElement.dataset.theme = theme;
   localStorage.setItem('theme', theme);
-  $('#themeToggle').innerHTML = ICONS[theme === 'dark' ? 'moon' : 'sun'];
+
+  const toggle = $('#themeToggle');
+  toggle.innerHTML = ICONS[theme === 'dark' ? 'moon' : 'sun'];
+  toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+}
+
+function renderTerminalIndex() {
+  const reports = entries.filter(entry => entry.kind === 'pdf').length;
+  const code = entries.filter(entry => entry.kind === 'code').length;
+
+  $('#terminalSummary').textContent = `# ${entries.length} published entries · ${reports} research reports · ${code} code project · 1 forthcoming`;
+  $('#terminalIndex').innerHTML = entries.map(entry => `
+    <div class="terminal-entry">
+      <span class="file">${escapeHtml(entry.file)}</span>
+    </div>
+  `).join('') + `
+    <div class="terminal-entry">
+      <span class="file faint">MS_Exploit_Analysis.pdf</span>
+    </div>
+  `;
 }
 
 function renderFilters() {
-  const tags = ['ALL', ...new Set(entries.flatMap(p => p.tags))];
+  const tags = ['ALL', ...new Set(entries.flatMap(entry => entry.tags))];
 
   $('#filters').innerHTML = tags
-    .map(tag => `<button class="filter ${tag === state.filter ? 'active' : ''}" data-filter="${tag}">${tag}</button>`)
+    .map(tag => `<button class="filter ${tag === state.filter ? 'active' : ''}" type="button" data-filter="${escapeHtml(tag)}">${escapeHtml(tag)}</button>`)
     .join('');
 }
 
 function renderPgpKeys() {
-  $('#pgpKeys').innerHTML = pgpKeys.map((key, i) => `
-    <div class="pgp" data-key-panel="${i}">
+  $('#pgpKeys').innerHTML = pgpKeys.map((key, index) => `
+    <div class="pgp" data-key-panel="${index}">
       <div class="pgp-head">
         <div class="pgp-title">
           <span class="pgp-label">${escapeHtml(key.label)}</span>
           <span class="fingerprint">${escapeHtml(key.fingerprint)}</span>
         </div>
         <div class="pgp-actions">
-          <button class="copy-btn key-toggle" data-toggle-key="${i}" aria-expanded="false" aria-controls="pgp-${i}"><span class="chev">${ICONS.chev}</span><span class="key-toggle-label">Show key</span></button>
-          <button class="copy-btn" data-copy-key="${i}">${ICONS.copy}<span>Copy</span></button>
+          <button class="copy-btn key-toggle" type="button" data-toggle-key="${index}" aria-expanded="false" aria-controls="pgp-${index}">
+            <span class="chev">${ICONS.chev}</span><span class="key-toggle-label">Show key</span>
+          </button>
+          <button class="copy-btn" type="button" data-copy-key="${index}">${ICONS.copy}<span>Copy</span></button>
         </div>
       </div>
-      <pre class="pgp-text" id="pgp-${i}" hidden>${escapeHtml(key.key)}</pre>
+      <pre class="pgp-text" id="pgp-${index}" hidden>${escapeHtml(key.key)}</pre>
     </div>
-  `).join('<span class="gap"></span>');
+  `).join('');
 }
 
 function entryMatches(entry) {
-  const haystack = [
-    entry.title,
-    entry.desc,
-    entry.date,
-    entry.file,
-    entry.kind,
-    entry.tags.join(' ')
-  ].join(' ').toLowerCase();
+  const haystack = [entry.title, entry.desc, entry.date, entry.file, entry.kind, entry.tags.join(' ')]
+    .join(' ')
+    .toLowerCase();
 
-  const tagMatch = state.filter === 'ALL' || entry.tags.includes(state.filter);
-  const searchMatch = !state.search || haystack.includes(state.search.toLowerCase());
-
-  return tagMatch && searchMatch;
+  return (state.filter === 'ALL' || entry.tags.includes(state.filter)) &&
+    (!state.search || haystack.includes(state.search.toLowerCase()));
 }
 
 function renderPapers() {
   state.renderedItems.clear();
 
   const visible = entries
-    .map((entry, i) => ({ entry, i }))
+    .map((entry, index) => ({ entry, index }))
     .filter(({ entry }) => entryMatches(entry));
 
-  $('#articleList').innerHTML = visible.map(({ entry, i }) => {
+  $('#articleList').innerHTML = visible.map(({ entry, index }) => {
     const isCode = entry.kind === 'code';
     const viewerClass = isCode ? 'code-viewer' : 'pdf-viewer';
     const typeLabel = isCode ? 'PYTHON' : 'PDF';
     const actionLabel = isCode ? 'View code' : 'View paper';
-    const downloadLabel = 'Download';
 
     return `
-      <article data-index="${i}">
-        <div class="article-head" role="button" tabindex="0" aria-expanded="false">
-          <div class="meta">
+      <article class="entry-card" data-index="${index}">
+        <button class="entry-head" type="button" aria-expanded="false">
+          <div class="entry-meta">
             <span class="date">${escapeHtml(entry.date)}</span>
-            ${entry.tags.map(tag => `<span class="tag ${tag}">${tag.toLowerCase()}</span>`).join('')}
+            ${entry.tags.map(tag => `<span class="tag ${tagClass(tag)}">${escapeHtml(tagLabel(tag))}</span>`).join('')}
           </div>
-          <h2 class="article-title">${escapeHtml(entry.title)}</h2>
+          <h3 class="entry-title">${escapeHtml(entry.title)}</h3>
           <p class="desc">${escapeHtml(entry.desc).replace(/\n\n/g, '<br><br>')}</p>
-        </div>
+        </button>
 
         <div class="article-toggle" role="button" tabindex="0" aria-label="Toggle preview">
           <span class="toggle-label"><span class="chev">${ICONS.chev}</span>${actionLabel}</span>
@@ -223,15 +271,14 @@ function renderPapers() {
 
         <div class="pdf">
           <div class="pdf-bar">
-            <div class="file-name">${ICONS.file}${escapeHtml(entry.file)}</div>
+            <div class="file-name">${ICONS.file}<span>${escapeHtml(entry.file)}</span></div>
             <div class="pdf-actions">
-              <span class="pages" id="pages-${i}"></span>
-              <a href="${escapeHtml(entry.url)}" class="pdf-btn" download>${ICONS.download}${downloadLabel}</a>
+              <span class="pages" id="pages-${index}"></span>
+              <a href="${escapeHtml(entry.url)}" class="pdf-btn" download>${ICONS.download}<span>Download</span></a>
             </div>
           </div>
-
-          <div class="${viewerClass}" id="viewer-${i}">
-            <div class="loading"><div class="spinner"></div><span>Loading document…</span></div>
+          <div class="${viewerClass}" id="viewer-${index}">
+            <div class="loading"><div class="spinner"></div><span>Loading document...</span></div>
           </div>
         </div>
       </article>
@@ -243,8 +290,8 @@ function renderPapers() {
 }
 
 function toggleArticle(article) {
-  const head = $('.article-head', article);
   const index = Number(article.dataset.index);
+  const head = $('.entry-head', article);
   const expanded = article.classList.toggle('expanded');
 
   head.setAttribute('aria-expanded', String(expanded));
@@ -264,37 +311,78 @@ function toggleArticle(article) {
 }
 
 async function renderPdf(url, wrapper, index) {
+  if (!window.pdfjsLib) {
+    wrapper.innerHTML = '<div class="loading"><span>PDF renderer unavailable. Use the Download link above.</span></div>';
+    $(`#pages-${index}`).textContent = 'preview unavailable';
+    return;
+  }
+
   try {
     const pdf = await pdfjsLib.getDocument(url).promise;
+    const maxWidth = Math.min(Math.max(wrapper.clientWidth - 44, 260), 980);
 
     wrapper.innerHTML = '';
     $(`#pages-${index}`).textContent = `${pdf.numPages} page${pdf.numPages === 1 ? '' : 's'}`;
 
-    for (let n = 1; n <= pdf.numPages; n++) {
-      const page = await pdf.getPage(n);
-      const base = page.getViewport({ scale: 1 });
-      const viewport = page.getViewport({ scale: (wrapper.clientWidth * .92) / base.width });
-
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+      const page = await pdf.getPage(pageNumber);
+      const baseViewport = page.getViewport({ scale: 1 });
+      const viewport = page.getViewport({ scale: maxWidth / baseViewport.width });
+      const scale = window.devicePixelRatio || 1;
       const canvas = document.createElement('canvas');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+      const context = canvas.getContext('2d');
 
-      wrapper.appendChild(canvas);
+      canvas.width = Math.floor(viewport.width * scale);
+      canvas.height = Math.floor(viewport.height * scale);
+      canvas.style.width = `${Math.floor(viewport.width)}px`;
+      canvas.style.height = `${Math.floor(viewport.height)}px`;
 
       await page.render({
-        canvasContext: canvas.getContext('2d'),
+        canvasContext: context,
+        transform: scale !== 1 ? [scale, 0, 0, scale, 0, 0] : null,
         viewport
       }).promise;
+
+      wrapper.appendChild(canvas);
     }
   } catch (err) {
     console.error(err);
-
-    wrapper.innerHTML = `
-      <div style="padding:28px;color:#f87171;font-family:var(--font-mono);font-size:.78rem;text-align:center">
-        Failed to load document. Use the Download button above.
-      </div>
-    `;
+    wrapper.innerHTML = '<div class="loading"><span>Failed to load document. Use the Download link above.</span></div>';
+    $(`#pages-${index}`).textContent = 'preview failed';
   }
+}
+
+function highlightPython(code) {
+  const tokenPattern = /(@[A-Za-z_]\w*|#[^\n]*|[rRuUbBfF]{0,2}(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b[A-Za-z_]\w*\b|\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)/g;
+  let html = '';
+  let lastIndex = 0;
+
+  code.replace(tokenPattern, (token, ...args) => {
+    const offset = args[args.length - 2];
+    html += escapeHtml(code.slice(lastIndex, offset));
+
+    let className = '';
+
+    if (token.startsWith('#')) {
+      className = 'py-comment';
+    } else if (token.startsWith('@')) {
+      className = 'py-decorator';
+    } else if (/^[rRuUbBfF]{0,2}["']/.test(token)) {
+      className = 'py-string';
+    } else if (/^\d/.test(token)) {
+      className = 'py-number';
+    } else if (PY_KEYWORDS.has(token)) {
+      className = 'py-keyword';
+    } else if (PY_BUILTINS.has(token)) {
+      className = 'py-builtin';
+    }
+
+    html += className ? `<span class="${className}">${escapeHtml(token)}</span>` : escapeHtml(token);
+    lastIndex = offset + token.length;
+    return token;
+  });
+
+  return html + escapeHtml(code.slice(lastIndex));
 }
 
 async function renderCode(url, wrapper, index) {
@@ -306,70 +394,56 @@ async function renderCode(url, wrapper, index) {
     }
 
     const code = await response.text();
+    const isPython = url.toLowerCase().endsWith('.py');
 
-    wrapper.textContent = code;
+    wrapper.classList.toggle('python-highlight', isPython);
+    wrapper.innerHTML = isPython ? highlightPython(code) : escapeHtml(code);
     $(`#pages-${index}`).textContent = `${code.split(/\r\n|\r|\n/).length} lines`;
-
-    return;
   } catch (err) {
     console.warn(`Could not fetch ${url}:`, err);
-
-    /*
-      If you open index.html directly from your computer with file://,
-      most browsers block fetch() from reading assets/dnsinject.py.
-
-      This fallback still gives the browser a chance to display the file.
-
-      On GitHub Pages, fetch() should work as long as the file exists at:
-      assets/dnsinject.py
-    */
     wrapper.innerHTML = `
       <object class="code-frame" data="${escapeHtml(url)}" type="text/plain">
-        <div style="padding:28px;color:#f87171;font-family:var(--font-mono);font-size:.78rem;text-align:center">
-          Failed to load source file. Confirm the file exists at <strong>assets/dnsinject.py</strong>, then use the Download button above.
-        </div>
+        <div class="loading"><span>Failed to load source. Use the Download link above.</span></div>
       </object>
     `;
-
     $(`#pages-${index}`).textContent = 'source preview';
   }
 }
 
 async function copyText(text, btn) {
-  const label = $('span', btn);
+  const label = btn.querySelector('span:last-child');
+  const original = label.textContent;
 
   try {
     await navigator.clipboard.writeText(text);
-
     btn.classList.add('copied');
-    label.textContent = 'Copied!';
+    label.textContent = 'Copied';
   } catch {
     label.textContent = 'Failed';
   } finally {
     setTimeout(() => {
       btn.classList.remove('copied');
-      label.textContent = 'Copy';
+      label.textContent = original;
     }, 2200);
   }
 }
 
-document.addEventListener('click', e => {
-  const tab = e.target.closest('.tab');
+document.addEventListener('click', event => {
+  const tab = event.target.closest('.tab');
 
   if (tab) {
-    $$('.tab').forEach(t => {
-      const active = t === tab;
-
-      t.classList.toggle('active', active);
-      t.setAttribute('aria-selected', active);
+    $$('.tab').forEach(item => {
+      const active = item === tab;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-selected', String(active));
     });
 
-    $$('.panel').forEach(p => {
-      p.classList.toggle('active', p.id === `tab-${tab.dataset.tab}`);
+    $$('.panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === `tab-${tab.dataset.tab}`);
     });
   }
 
-  const filter = e.target.closest('.filter');
+  const filter = event.target.closest('.filter');
 
   if (filter) {
     state.filter = filter.dataset.filter;
@@ -377,13 +451,13 @@ document.addEventListener('click', e => {
     renderPapers();
   }
 
-  const articleToggle = e.target.closest('.article-head, .article-toggle');
+  const articleToggle = event.target.closest('.entry-head, .article-toggle');
 
   if (articleToggle) {
-    toggleArticle(articleToggle.closest('article'));
+    toggleArticle(articleToggle.closest('.entry-card'));
   }
 
-  const keyToggle = e.target.closest('[data-toggle-key]');
+  const keyToggle = event.target.closest('[data-toggle-key]');
 
   if (keyToggle) {
     const panel = keyToggle.closest('.pgp');
@@ -395,19 +469,19 @@ document.addEventListener('click', e => {
     $('.key-toggle-label', keyToggle).textContent = expanded ? 'Hide key' : 'Show key';
   }
 
-  const copyBtn = e.target.closest('[data-copy-key]');
+  const copyBtn = event.target.closest('[data-copy-key]');
 
   if (copyBtn) {
     copyText(pgpKeys[copyBtn.dataset.copyKey].key, copyBtn);
   }
 });
 
-document.addEventListener('keydown', e => {
-  const target = e.target.closest('.article-head, .article-toggle');
+document.addEventListener('keydown', event => {
+  const target = event.target.closest('.article-toggle');
 
-  if (target && (e.key === 'Enter' || e.key === ' ')) {
-    e.preventDefault();
-    toggleArticle(target.closest('article'));
+  if (target && (event.key === 'Enter' || event.key === ' ')) {
+    event.preventDefault();
+    toggleArticle(target.closest('.entry-card'));
   }
 });
 
@@ -415,12 +489,13 @@ $('#themeToggle').addEventListener('click', () => {
   setTheme(state.theme === 'dark' ? 'light' : 'dark');
 });
 
-$('#searchInput').addEventListener('input', e => {
-  state.search = e.target.value.trim();
+$('#searchInput').addEventListener('input', event => {
+  state.search = event.target.value.trim();
   renderPapers();
 });
 
 setTheme(state.theme);
+renderTerminalIndex();
 renderFilters();
 renderPgpKeys();
 renderPapers();
