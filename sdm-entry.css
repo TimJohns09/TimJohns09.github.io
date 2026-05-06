@@ -1,0 +1,15 @@
+:root {
+  --ai: #38bdf8;
+  --ai-soft: rgba(56,189,248,.12);
+}
+
+[data-theme="light"] {
+  --ai: #0369a1;
+  --ai-soft: rgba(3,105,161,.1);
+}
+
+.tag.AI\/ML {
+  color: var(--ai);
+  background: var(--ai-soft);
+  border-color: color-mix(in srgb, var(--ai) 28%, transparent);
+}
