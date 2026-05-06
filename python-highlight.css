@@ -1,0 +1,53 @@
+.code-viewer.python-highlight {
+  color: #d7e2f0;
+}
+
+.code-viewer.python-highlight .py-keyword {
+  color: #93c5fd;
+  font-weight: 700;
+}
+
+.code-viewer.python-highlight .py-builtin {
+  color: #67e8f9;
+}
+
+.code-viewer.python-highlight .py-string {
+  color: #fbbf24;
+}
+
+.code-viewer.python-highlight .py-number {
+  color: #c084fc;
+}
+
+.code-viewer.python-highlight .py-comment {
+  color: #7f8ea3;
+  font-style: italic;
+}
+
+.code-viewer.python-highlight .py-decorator {
+  color: var(--accent);
+}
+
+[data-theme="light"] .code-viewer.python-highlight {
+  color: #172033;
+}
+
+[data-theme="light"] .code-viewer.python-highlight .py-keyword {
+  color: #1d4ed8;
+}
+
+[data-theme="light"] .code-viewer.python-highlight .py-builtin {
+  color: #0891b2;
+}
+
+[data-theme="light"] .code-viewer.python-highlight .py-string {
+  color: #a16207;
+}
+
+[data-theme="light"] .code-viewer.python-highlight .py-number {
+  color: #7e22ce;
+}
+
+[data-theme="light"] .code-viewer.python-highlight .py-comment {
+  color: #64748b;
+}
