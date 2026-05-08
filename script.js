@@ -14,6 +14,15 @@ const ICONS = {
 
 const entries = [
   {
+    kind: 'code',
+    date: 'May 2026',
+    tags: ['NETWORK'],
+    title: 'Tor TCP Reset Censorship Demonstration',
+    desc: 'For my Internet Freedom and Censorship final project, I built a lab simulation of how network censors can disrupt Tor by injecting forged TCP reset packets. China’s Great Firewall has historically blocked Tor through a mix of known relay blocking, traffic fingerprinting, active probing, and connection disruption. When traffic appears to be connecting to Tor infrastructure, a censor can interfere with the TCP session so the client and relay behave as if the connection was closed.\n\nI tested the project with two Ubuntu Server VMs. One VM was configured as the client, and the other was configured as a router. The client VM routed all of its traffic through the router VM, which ran this program and implemented the censorship logic. The program uses Scapy to sniff forwarded TCP traffic, checks for Tor-like indicators such as common relay ports and known relay IPs from a local list, then forges reverse-direction RST packets to tear down matching connections.\n\nThe goal was to make the mechanics of censorship visible in a controlled lab: observe traffic at a routing point, classify likely Tor connections, and inject reset packets to break the circuit. It is a small demonstration of how network-layer censorship can be implemented, and why censorship-resistant tools need to account for both blocking and active interference.',
+    file: 'tor_rst.py',
+    url: 'assets/tor_rst.py'
+  },
+  {
     kind: 'pdf',
     date: 'Apr 2026',
     tags: ['CRYPTOGRAPHY'],
@@ -190,8 +199,9 @@ function setTheme(theme) {
 function renderTerminalIndex() {
   const reports = entries.filter(entry => entry.kind === 'pdf').length;
   const code = entries.filter(entry => entry.kind === 'code').length;
+  const codeLabel = code === 1 ? 'code project' : 'code projects';
 
-  $('#terminalSummary').textContent = `# ${entries.length} published entries · ${reports} research reports · ${code} code project · 1 forthcoming`;
+  $('#terminalSummary').textContent = `# ${entries.length} published entries · ${reports} research reports · ${code} ${codeLabel} · 1 forthcoming`;
   $('#terminalIndex').innerHTML = entries.map(entry => `
     <div class="terminal-entry">
       <span class="file">${escapeHtml(entry.file)}</span>
