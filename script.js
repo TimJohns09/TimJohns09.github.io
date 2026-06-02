@@ -174,6 +174,38 @@ const state = {
   renderedItems: new Set()
 };
 
+const opening = $('.opening');
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function updateOpeningProgress() {
+  if (!opening) {
+    return;
+  }
+
+  const viewport = window.innerHeight || document.documentElement.clientHeight || 1;
+  const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+  const progress = clamp(scrollTop / (viewport * 0.56), 0, 1);
+  const eased = 1 - Math.pow(1 - progress, 2);
+
+  opening.style.setProperty('--opening-progress', eased.toFixed(3));
+  opening.style.setProperty('--masthead-blur', `${(eased * 12).toFixed(1)}px`);
+  opening.style.setProperty('--masthead-scale', (1 + eased * .018).toFixed(4));
+  opening.style.setProperty('--masthead-veil-opacity', (.08 + eased * .1).toFixed(3));
+  opening.style.setProperty('--masthead-veil-blur', `${(eased * 5).toFixed(1)}px`);
+  opening.style.setProperty('--masthead-light-opacity', (.96 - eased * .04).toFixed(3));
+  opening.style.setProperty('--masthead-dark-opacity', (.98 - eased * .08).toFixed(3));
+  opening.style.setProperty('--hero-veil-opacity', (.04 + eased * .1).toFixed(3));
+  opening.style.setProperty('--hero-veil-blur', `${(eased * 5).toFixed(1)}px`);
+  opening.style.setProperty('--copy-wash-opacity', (.05 + eased * .1).toFixed(3));
+}
+
+function requestOpeningProgressUpdate() {
+  updateOpeningProgress();
+}
+
 const PY_KEYWORDS = new Set([
   'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break', 'class',
   'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from',
@@ -504,8 +536,12 @@ $('#searchInput').addEventListener('input', event => {
   renderPapers();
 });
 
+window.addEventListener('scroll', requestOpeningProgressUpdate, { passive: true });
+window.addEventListener('resize', requestOpeningProgressUpdate);
+
 setTheme(state.theme);
 renderTerminalIndex();
 renderFilters();
 renderPgpKeys();
 renderPapers();
+updateOpeningProgress();

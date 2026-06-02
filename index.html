@@ -6,48 +6,82 @@
   <meta name="description" content="Tim Johns Cyber Blog and Portfolio — applied cryptography, malware analysis, network security, PDFs, code, and PGP keys." />
   <title>Tim Johns Cyber Blog and Portfolio</title>
 
-  <link rel="icon" href="assets/logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=proposal-v3-ink-flow" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
-  <script src="script.js" defer></script>
+  <script src="script.js?v=proposal-v3-ink-flow" defer></script>
 </head>
 
 <body id="top">
-  <div class="site-shell">
+  <div class="page-frame" aria-hidden="true"></div>
+
+  <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
       <a class="brand" href="#top" aria-label="Tim Johns Cyber Blog and Portfolio home">
         <span class="brand-mark" aria-hidden="true">
-          <svg class="icon" viewBox="0 0 24 24">
-            <rect x="3" y="4" width="18" height="13" rx="2"></rect>
-            <path d="M8 9l2 2-2 2M13 13h3M12 17v3M8 20h8"></path>
-          </svg>
+          <span>TJ</span>
         </span>
-        <span class="brand-text">tim<span>.</span>research</span>
+        <span class="brand-lockup">
+          <strong>Tim Johns</strong>
+          <span>Cybersecurity research</span>
+        </span>
       </a>
 
       <div class="nav-links">
-        <a href="#top">Home</a>
+        <a href="#terminal">Terminal</a>
         <a href="#reports">Reports</a>
         <a href="#contact">Contact</a>
-        <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer">GitHub</a>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme"></button>
       </div>
     </nav>
+  </header>
 
-    <main>
-      <section class="hero" aria-labelledby="heroTitle">
-        <div class="hero-copy">
-          <p class="eyebrow">Security research · Applied cryptography · Network defense</p>
-          <h1 id="heroTitle">Tim Johns Cyber Blog and Portfolio</h1>
-          <p class="hero-lede">A research portfolio for cryptography, malware obfuscation, privacy infrastructure, and practical network security work.</p>
-        </div>
+  <main>
+    <div class="opening">
+      <section class="visual-masthead" aria-label="Tim Research cryptography diagram header">
+        <img class="masthead-image masthead-image-light" src="assets/light_logo.png" alt="" width="1672" height="941" aria-hidden="true" />
+        <img class="masthead-image masthead-image-dark" src="assets/dark_logo.png" alt="" width="1672" height="941" aria-hidden="true" />
       </section>
 
-      <section class="terminal" id="contact" aria-label="Profile terminal">
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">Applied cryptography · network defense · adversarial systems</p>
+            <h1 id="heroTitle">Security research with a working lab attached.</h1>
+            <p class="hero-lede">A living portfolio of papers, code demonstrations, cryptographic keys, and field notes from Tim Johns. Built to read like a portfolio, behave like a toolkit, and stay close to the underlying work.</p>
+
+            <div class="hero-actions" aria-label="Primary actions">
+              <a class="button primary" href="#reports">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <path d="M14 2v6h6M8 13h8M8 17h5"></path>
+                </svg>
+                Browse reports
+              </a>
+              <a class="button" href="#terminal">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m4 17 6-6-6-6"></path>
+                  <path d="M12 19h8"></path>
+                </svg>
+                Open terminal
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="terminal-wrap" id="terminal" aria-labelledby="terminalTitle">
+      <div class="section-intro">
+        <p class="section-kicker">Profile terminal</p>
+        <h2 class="section-title" id="terminalTitle">A compact view of the operator.</h2>
+      </div>
+
+      <div class="terminal" id="contact" aria-label="Profile terminal">
         <div class="terminal-titlebar">
           <div class="window-dots" aria-hidden="true">
             <span class="dot red"></span>
@@ -129,34 +163,40 @@
             <div id="pgpKeys" class="pgp-list"></div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
-        <div class="section-header">
-          <div>
-            <p class="section-kicker">Research index</p>
-            <h2 class="section-title" id="reportsTitle">Latest Entries</h2>
-          </div>
-          <span class="section-count" id="reportCount">8 published entries</span>
+    <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
+      <div class="section-header">
+        <div class="section-intro">
+          <p class="section-kicker">Selected work</p>
+          <h2 class="section-title" id="reportsTitle">Reports, demos, and working notes.</h2>
         </div>
+        <span class="section-count" id="reportCount">8 published entries</span>
+      </div>
 
-        <div class="controls" aria-label="Report controls">
-          <input class="search" id="searchInput" type="search" placeholder="Search reports…" autocomplete="off" />
-          <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
-        </div>
+      <div class="controls" aria-label="Report controls">
+        <label class="search-wrap">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input class="search" id="searchInput" type="search" placeholder="Search reports, tags, files..." autocomplete="off" />
+        </label>
+        <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
+      </div>
 
-        <div class="articles" id="articleList"></div>
-        <div class="empty" id="emptyState">No entries match that filter.</div>
-      </section>
-    </main>
+      <div class="articles" id="articleList"></div>
+      <div class="empty" id="emptyState">No entries match that filter.</div>
+    </section>
+  </main>
 
-    <footer class="site-footer">
-      <span><strong>Tim Johns</strong> · Security research and applied cryptography</span>
-      <span class="footer-links">
-        <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-        <a href="mailto:tjohns917@outlook.com">Contact</a>
-      </span>
-    </footer>
-  </div>
+  <footer class="site-footer">
+    <span><strong>Tim Johns</strong> · Security research and applied cryptography</span>
+    <span class="footer-links">
+      <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="mailto:tjohns917@outlook.com">Contact</a>
+    </span>
+  </footer>
 </body>
 </html>
