@@ -9,18 +9,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=control-glass-v2" />
-  <link rel="stylesheet" href="liquid-glass.css?v=control-glass-v2" />
+  <link rel="stylesheet" href="styles.css?v=reference-scene" />
+  <link rel="stylesheet" href="glass-material.css?v=reference-scene" />
+  <link rel="stylesheet" href="liquid-glass.css?v=reference-scene" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
-  <script src="script.js?v=control-glass-v2" defer></script>
+  <script src="script.js?v=reference-scene" defer></script>
 </head>
 
 <body id="top">
   <div class="page-frame" aria-hidden="true"></div>
 
   <header class="site-header">
-    <nav class="site-nav" aria-label="Primary navigation">
+    <nav class="site-nav glass-surface" aria-label="Primary navigation">
       <a class="brand" href="#top" aria-label="Tim Johns Cyber Blog and Portfolio home">
         <span class="brand-mark" aria-hidden="true">
           <span>TJ</span>
@@ -73,24 +74,19 @@
             </div>
 
             <div class="hero-motifs" aria-label="Research themes">
-              <div class="motif-card motif-square">
+              <a class="motif-card motif-square glass-surface" href="#reports" aria-label="Research — browse reports">
                 <div class="motif-icon motif-icon-square" aria-hidden="true">
-                  <svg viewBox="0 0 64 64">
-                    <path d="M19.4 26.6c0-7 5.6-12.5 12.6-12.5s12.6 5.5 12.6 12.5c0 5.7-3.5 8.1-4.2 14.9-.1 1-.8 1.6-1.8 1.6H25.4c-1 0-1.7-.6-1.8-1.6-.7-6.8-4.2-9.2-4.2-14.9Z"/>
-                    <path d="M25.4 47.8h13.2M27.4 52.4h9.2M28.1 55.5h7.8"/>
-                  </svg>
+                  <img src="assets/reference-bulb.svg" alt="" width="36" height="46" />
                 </div>
                 <div class="motif-copy"><strong>Research</strong><span>Applied detail</span></div>
-              </div>
+              </a>
 
-              <div class="motif-card motif-pill">
+              <button class="motif-card motif-pill glass-surface" id="themeTile" type="button" aria-label="Toggle color theme">
                 <div class="motif-icon motif-icon-pill" aria-hidden="true">
-                  <svg viewBox="0 0 64 64">
-                    <path d="M45.2 44.6A20 20 0 0 1 25.5 12a20.4 20.4 0 1 0 28.7 28.7 19.8 19.8 0 0 1-9 3.9Z"/>
-                  </svg>
+                  <img src="assets/reference-moon.svg" alt="" width="41" height="41" />
                 </div>
-                <div class="motif-copy"><strong>Theme aware</strong><span>Light / dark</span></div>
-              </div>
+                <div class="motif-copy"><strong>Theme</strong><span>Light / dark</span></div>
+              </button>
             </div>
           </div>
         </div>
@@ -103,7 +99,7 @@
         <h2 class="section-title" id="terminalTitle">A compact view of the operator.</h2>
       </div>
 
-      <div class="terminal" id="contact" aria-label="Profile terminal">
+      <div class="terminal glass-surface" id="contact" aria-label="Profile terminal">
         <div class="terminal-titlebar">
           <div class="window-dots" aria-hidden="true">
             <span class="dot red"></span>
@@ -198,7 +194,7 @@
       </div>
 
       <div class="controls" aria-label="Report controls">
-        <label class="search-wrap">
+        <label class="search-wrap glass-surface">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.35-4.35"></path>
@@ -213,7 +209,7 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer glass-surface">
     <span><strong>Tim Johns</strong> · Security research and applied cryptography</span>
     <span class="footer-links">
       <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer">GitHub</a>
