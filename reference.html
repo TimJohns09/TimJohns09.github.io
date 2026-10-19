@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Liquid Glass Reference Scene</title>
+  <link rel="stylesheet" href="glass-material.css?v=reference-scene">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin:0; background:#282851; font-family:var(--sf-font); color:white; }
+    .viewport { width:100%; overflow:hidden; }
+    .scene { position:relative; width:2048px; height:1200px; transform-origin:top left; background:url('assets/glass-backdrop.svg') center / 100% 100%; }
+    h1 { position:absolute; width:1628px; height:434px; left:114px; top:78px; margin:0; font-size:224px; line-height:218px; letter-spacing:-.025em; font-weight:590; }
+    .tile { position:absolute; }
+    .now { left:26px; top:302px; width:408px; height:408px; border-radius:81.0596px; }
+    .art { position:absolute; left:37.83px; top:37.83px; width:140.5px; height:140.5px; border-radius:37.8278px; background:rgba(255,255,255,.12); }
+    .airplay { position:absolute; right:35.13px; top:35.13px; width:108.08px; height:108.08px; }
+    .track, .artist { position:absolute; left:37.83px; font-size:40.5298px; line-height:49px; font-weight:510; }
+    .track { top:194.54px; } .artist { top:243.18px; }
+    .transport { position:absolute; left:64.85px; right:64.85px; bottom:27.08px; display:flex; align-items:center; justify-content:space-between; height:81px; }
+    .transport svg { width:54px; height:38px; } .transport .play { width:64px; height:81px; }
+    .connect { left:1029px; top:360px; width:479px; height:479px; border-radius:95.1656px; }
+    .connect .symbol-well { position:absolute; width:177.64px; height:177.64px; }
+    .connect svg { width:80px; height:80px; }
+    .airplane { left:41.24px; top:41.24px; } .wifi { left:260.12px; top:41.24px; background:#0088ff; }
+    .drop { left:41.24px; top:260.12px; background:#0088ff; }
+    .connect .mini { width:80.36px; height:80.36px; } .mini svg { width:38px; height:38px; }
+    .cell { left:260.12px; top:260.12px; background:#34c759; }
+    .bt { left:357.4px; top:260.12px; background:#0088ff; }
+    .hotspot { left:260.12px; top:357.4px; } .network { left:357.4px; top:357.4px; }
+    .label { left:1315px; top:288px; width:386px; height:386px; padding:40.9007px; border-radius:76.6887px; display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between; gap:25.56px; }
+    .label .symbol-well { width:102.25px; height:102.25px; }
+    .label img { width:36px; height:46px; }
+    .label strong,.label span { display:block; font-size:35.7881px; line-height:43px; font-weight:590; }
+    .label span { font-weight:510; color:rgba(255,255,255,.33); }
+    .pill { left:905px; top:851px; width:346px; height:155.81px; padding:0 32.0795px; gap:22.91px; border-radius:229.139px; display:flex; align-items:center; }
+    .pill .symbol-well { width:91.66px; height:91.66px; flex-shrink:0; }
+    .pill img { width:41px; height:41px; }
+    .pill strong,.pill span { display:block; font-size:32.0795px; line-height:38px; font-weight:590; }
+    .pill span { font-weight:510; color:rgba(255,255,255,.33); }
+    .slider { left:602px; top:721px; width:150px; height:333.09px; border-radius:220.588px; }
+    .slider.volume { left:1830px; top:480px; width:151px; height:335.31px; }
+    .level { position:absolute; bottom:0; left:0; width:100%; height:74.83%; background:rgba(255,255,255,.64); }
+    .volume .level { height:50.33%; }
+    .slider svg { position:absolute; bottom:35.38px; left:48px; width:54px; height:54px; color:#161520; }
+    .toggle { width:164px; height:164px; border-radius:241.176px; display:grid; place-items:center; }
+    .toggle svg { width:60px; height:60px; }
+    .mute { left:780px; top:540px; } .lock { left:1283px; top:843px; } .camera { left:1479px; top:843px; } .battery { left:1675px; top:843px; } .mirror { left:213px; top:779px; }
+    .defs { position:absolute; width:0; height:0; overflow:hidden; }
+  </style>
+</head>
+<body>
+  <svg class="defs" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="play" viewBox="0 0 64 64"><path d="M16 6Q16 2 20 5L57 29Q61 32 57 35L20 59Q16 62 16 58Z"/></symbol>
+    <symbol id="next" viewBox="0 0 64 64"><path d="M4 12 32 30V12L60 30V12H64V52H60V34L32 52V34L4 52Z"/></symbol>
+    <symbol id="wifi" viewBox="0 0 64 64"><path d="M2 18Q32 -5 62 18L54 27Q32 10 10 27ZM15 32Q32 19 49 32L41 41Q32 34 23 41ZM25 46Q32 40 39 46L32 55Z"/></symbol>
+    <symbol id="plane" viewBox="0 0 64 64"><path d="M28 4Q32 -1 36 4L38 24 60 38V45L37 38 36 53 44 58V63L32 59 20 63V58L28 53 27 38 4 45V38L26 24Z"/></symbol>
+    <symbol id="drop" viewBox="0 0 64 64"><circle cx="32" cy="27" r="5"/><path d="m32 38 16 24H16Z"/><path d="M20 39a17 17 0 1 1 24 0M13 46a27 27 0 1 1 38 0" fill="none" stroke="currentColor" stroke-width="4"/></symbol>
+    <symbol id="bt" viewBox="0 0 64 64"><path d="M29 2 51 20 36 32 51 44 29 62V38L15 50 11 45 26 32 11 19 15 14 29 26ZM35 14V26L43 20ZM35 38V50L43 44Z"/></symbol>
+    <symbol id="cell" viewBox="0 0 64 64"><rect x="6" y="42" width="9" height="16" rx="2"/><rect x="20" y="32" width="9" height="26" rx="2"/><rect x="34" y="20" width="9" height="38" rx="2"/><rect x="48" y="6" width="9" height="52" rx="2"/></symbol>
+    <symbol id="link" viewBox="0 0 64 64"><path d="m26 22 8-8a14 14 0 0 1 20 20l-8 8M38 42l-8 8a14 14 0 0 1-20-20l8-8M22 42l20-20" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></symbol>
+    <symbol id="globe" viewBox="0 0 64 64"><circle cx="32" cy="32" r="25" fill="none" stroke="currentColor" stroke-width="5"/><path d="M7 32h50M32 7c-17 14-17 36 0 50M32 7c17 14 17 36 0 50" fill="none" stroke="currentColor" stroke-width="4"/></symbol>
+    <symbol id="sun" viewBox="0 0 64 64"><circle cx="32" cy="32" r="13"/><path d="M32 2v9M32 53v9M2 32h9M53 32h9M11 11l7 7M46 46l7 7M11 53l7-7M46 18l7-7" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></symbol>
+    <symbol id="speaker" viewBox="0 0 64 64"><path d="M6 24H18L35 10V54L18 40H6Z"/><path d="M43 22q14 10 0 20M49 13q25 19 0 38" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></symbol>
+    <symbol id="lock" viewBox="0 0 64 64"><rect x="14" y="27" width="36" height="30" rx="6"/><path d="M22 27V17a10 10 0 0 1 20 0v10" fill="none" stroke="currentColor" stroke-width="6"/></symbol>
+    <symbol id="camera" viewBox="0 0 64 64"><path d="M7 18h10l5-8h20l5 8h10v37H7Z"/><circle cx="32" cy="35" r="11" fill="#7e659b"/></symbol>
+    <symbol id="battery" viewBox="0 0 64 64"><rect x="4" y="19" width="50" height="28" rx="6" fill="none" stroke="currentColor" stroke-width="4"/><path d="M58 27h5v12h-5ZM10 25h23v16H10Z"/></symbol>
+    <symbol id="mirror" viewBox="0 0 64 64"><rect x="4" y="10" width="38" height="30" rx="4" fill="none" stroke="currentColor" stroke-width="4"/><rect x="22" y="25" width="38" height="30" rx="4" fill="none" stroke="currentColor" stroke-width="4"/></symbol>
+  </defs></svg>
+  <div class="viewport"><main class="scene" aria-label="Reference scene reconstructed from supplied CSS">
+    <h1>iOS 26 Liquid Glass UI Kit</h1>
+    <div class="tile now glass-surface"><div class="art"></div><div class="airplay symbol-well"><svg class="filled-symbol"><use href="#drop"/></svg></div><div class="track">Track</div><div class="artist">Artist</div><div class="transport"><svg class="filled-symbol" style="transform:rotate(180deg)"><use href="#next"/></svg><svg class="filled-symbol play"><use href="#play"/></svg><svg class="filled-symbol"><use href="#next"/></svg></div></div>
+    <div class="tile connect glass-surface"><div class="symbol-well airplane"><svg class="filled-symbol"><use href="#plane"/></svg></div><div class="symbol-well wifi"><svg class="filled-symbol"><use href="#wifi"/></svg></div><div class="symbol-well drop"><svg class="filled-symbol"><use href="#drop"/></svg></div><div class="symbol-well mini cell"><svg class="filled-symbol"><use href="#cell"/></svg></div><div class="symbol-well mini bt"><svg class="filled-symbol"><use href="#bt"/></svg></div><div class="symbol-well mini hotspot"><svg class="filled-symbol"><use href="#link"/></svg></div><div class="symbol-well mini network"><svg class="filled-symbol"><use href="#globe"/></svg></div></div>
+    <div class="tile label glass-surface"><div class="symbol-well"><img src="assets/reference-bulb.svg" alt=""></div><div><strong>Title</strong><span>Detail</span></div></div>
+    <div class="tile pill glass-surface"><div class="symbol-well"><img src="assets/reference-moon.svg" alt=""></div><div><strong>Title</strong><span>Detail</span></div></div>
+    <div class="tile slider glass-surface"><div class="level"></div><svg class="filled-symbol"><use href="#sun"/></svg></div>
+    <div class="tile slider volume glass-surface"><div class="level"></div><svg class="filled-symbol"><use href="#speaker"/></svg></div>
+    <div class="tile toggle mute glass-surface"><svg class="filled-symbol"><use href="#speaker"/></svg></div>
+    <div class="tile toggle lock glass-surface"><svg class="filled-symbol"><use href="#lock"/></svg></div>
+    <div class="tile toggle camera glass-surface"><svg class="filled-symbol"><use href="#camera"/></svg></div>
+    <div class="tile toggle battery glass-surface"><svg class="filled-symbol"><use href="#battery"/></svg></div>
+    <div class="tile toggle mirror glass-surface"><svg class="filled-symbol"><use href="#mirror"/></svg></div>
+  </main></div>
+  <script>
+    const scene = document.querySelector('.scene');
+    function sizeScene() { const scale = window.innerWidth / 2048; scene.style.transform = `scale(${scale})`; document.querySelector('.viewport').style.height = `${1200 * scale}px`; }
+    addEventListener('resize', sizeScene); sizeScene();
+  </script>
+</body>
+</html>
