@@ -296,7 +296,7 @@ function renderPapers() {
     const actionLabel = isCode ? 'View code' : 'View paper';
 
     return `
-      <article class="entry-card" data-index="${index}">
+      <article class="entry-card glass-surface" data-index="${index}">
         <button class="entry-head" type="button" aria-expanded="false">
           <div class="entry-meta">
             <span class="date">${escapeHtml(entry.date)}</span>
@@ -528,6 +528,9 @@ document.addEventListener('keydown', event => {
 });
 
 $('#themeToggle').addEventListener('click', () => {
+  setTheme(state.theme === 'dark' ? 'light' : 'dark');
+});
+$('#themeTile')?.addEventListener('click', () => {
   setTheme(state.theme === 'dark' ? 'light' : 'dark');
 });
 
