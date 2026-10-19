@@ -1,5 +1,5 @@
-/* Rebuild the supplied SVG effect at each element's actual pixel dimensions.
-   Only the faint texture is displaced. Text and the backdrop are not displaced. */
+/* Exported tint, texture and edge stack, layered over glass-refraction.js.
+   SVG backdrop blur remains the fallback when the lens renderer is unavailable. */
 (() => {
   const namespace = 'http://www.w3.org/2000/svg';
   const records = new WeakMap();
@@ -14,7 +14,8 @@
     const style = getComputedStyle(surface);
     const value = style.borderTopLeftRadius;
     const radius = Math.min(value.endsWith('%') ? parseFloat(value) / 100 * Math.min(width, height) : parseFloat(value) || 0, width / 2, height / 2);
-    const signature = `${width},${height},${radius}`;
+    const refracted = surface.dataset.refractionReady === 'true';
+    const signature = `${width},${height},${radius},${refracted}`;
     if (record.signature === signature) return;
     record.signature = signature;
     const id = record.id;
@@ -24,7 +25,7 @@
     const rect = (attrs = '') => `<rect width="${width}" height="${height}" rx="${radius}" ${attrs}/>`;
     // The original ellipse extends beyond the inner pill and is clipped by it.
     const ellipse = `M${width * 1.264999} ${height * .504857}C${width * 1.264999} ${height * .955833} ${width * .953837} ${height * 1.321429} ${width * .57} ${height * 1.321429}C${width * .186163} ${height * 1.321429} ${-width * .125} ${height * .955833} ${-width * .125} ${height * .504857}C${-width * .125} ${height * .053881} ${width * .186163} ${-height * .321429} ${width * .57} ${-height * .321429}C${width * .953837} ${-height * .321429} ${width * 1.264999} ${height * .053881} ${width * 1.264999} ${height * .504857}Z`;
-    const backdrop = (blur, clip, x, y, w, h) => `<foreignObject x="${x}" y="${y}" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;backdrop-filter:blur(${blur}px);-webkit-backdrop-filter:blur(${blur}px);clip-path:url(#${clip})"></div></foreignObject>`;
+    const backdrop = (blur, clip, x, y, w, h) => refracted ? '' : `<foreignObject x="${x}" y="${y}" width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;backdrop-filter:blur(${blur}px);-webkit-backdrop-filter:blur(${blur}px);clip-path:url(#${clip})"></div></foreignObject>`;
     record.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
     record.svg.innerHTML = `<defs>
       <clipPath id="${id}-outer">${rect()}</clipPath>
@@ -75,6 +76,7 @@
       surface.prepend(svg);
       surface.dataset.glassReady = 'true';
       records.set(surface, { svg, id: `exported-glass-${++nextId}` });
+      surface.addEventListener('glass-refraction-ready', () => render(surface));
       resize.observe(surface);
       render(surface);
     });

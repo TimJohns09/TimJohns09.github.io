@@ -26,6 +26,17 @@
   border-radius:inherit;
   overflow:hidden;
 }
+.glass-surface > .glass-refraction {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:-2;
+  visibility:hidden;
+  pointer-events:none;
+  border-radius:inherit;
+}
+.glass-surface[data-refraction-ready="true"] > .glass-refraction { visibility:visible; }
 .glass-surface:not([data-glass-ready]) { background:rgba(84,84,84,.10); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
 .symbol-well { display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.06); }
 .filled-symbol { display: block; width: 100%; height: 100%; fill: currentColor; stroke: none; }
