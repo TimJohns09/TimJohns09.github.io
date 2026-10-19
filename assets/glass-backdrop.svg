@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="1200" viewBox="0 0 2048 1200">
+  <defs>
+    <filter id="diffuse" x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="110"/></filter>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#475CFA"/><stop offset=".7143" stop-color="#B852EB"/></linearGradient>
+  </defs>
+  <rect width="2048" height="1200" fill="#282851"/>
+  <g filter="url(#diffuse)">
+    <circle cx="120.5" cy="166.5" r="381.5" fill="#a6d0ff" fill-opacity=".9"/>
+    <circle cx="1001.5" cy="-67.5" r="681.5" fill="url(#violet)"/>
+    <circle cx="1627.5" cy="1017.5" r="416.5" fill="#ffa6aa" fill-opacity=".95"/>
+    <circle cx="230" cy="920" r="490" fill="#2975f2" fill-opacity=".75"/>
+    <circle cx="740" cy="740" r="410" fill="#7547eb" fill-opacity=".62"/>
+    <circle cx="900" cy="1150" r="430" fill="#c757b8" fill-opacity=".58"/>
+    <circle cx="1280" cy="1020" r="380" fill="#f56b85" fill-opacity=".55"/>
+    <circle cx="1730" cy="90" r="450" fill="#994df2" fill-opacity=".7"/>
+    <circle cx="1970" cy="410" r="350" fill="#f27a9e" fill-opacity=".55"/>
+    <circle cx="2070" cy="610" r="310" fill="#ffa86b" fill-opacity=".42"/>
+  </g>
+</svg>
