@@ -8,11 +8,12 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=liquid-bento" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=original-liquid-glass" />
+  <link rel="stylesheet" href="liquid-glass.css?v=original-liquid-glass" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
-  <script src="script.js?v=liquid-bento" defer></script>
+  <script src="script.js?v=original-liquid-glass" defer></script>
 </head>
 
 <body id="top">
@@ -21,7 +22,9 @@
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
       <a class="brand" href="#top" aria-label="Tim Johns Cyber Blog and Portfolio home">
-        <span class="brand-mark" aria-hidden="true"><span class="brand-orbit"></span><span class="brand-dot"></span></span>
+        <span class="brand-mark" aria-hidden="true">
+          <span>TJ</span>
+        </span>
         <span class="brand-lockup">
           <strong>Tim Johns</strong>
           <span>Cybersecurity research</span>
@@ -39,58 +42,60 @@
   </header>
 
   <main>
-    <section class="opening" aria-labelledby="heroTitle">
-      <div class="ambient ambient-one" aria-hidden="true"></div>
-      <div class="ambient ambient-two" aria-hidden="true"></div>
+    <div class="opening">
+      <section class="visual-masthead" aria-label="Tim Research cryptography diagram header">
+        <img class="masthead-image masthead-image-light" src="assets/light_logo.png" alt="" width="1672" height="941" aria-hidden="true" />
+        <img class="masthead-image masthead-image-dark" src="assets/dark_logo.png" alt="" width="1672" height="941" aria-hidden="true" />
+      </section>
 
-      <div class="bento-hero">
-        <article class="glass-tile hero-main">
-          <div class="tile-glint" aria-hidden="true"></div>
-          <div class="hero-topline">
-            <span class="availability"><i></i> Denver, CO · applied cryptography</span>
-            <span class="micro-label">PORTFOLIO / 2026</span>
-          </div>
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-inner">
           <div class="hero-copy">
             <p class="eyebrow">Applied cryptography · network defense · adversarial systems</p>
-            <h1 id="heroTitle">Security research for an <em>uncertain</em> internet.</h1>
-            <p class="hero-lede">Papers, experiments, and field notes by Tim Johns—where privacy systems, cryptography, and adversarial infrastructure meet.</p>
+            <h1 id="heroTitle">Security research with a working lab attached.</h1>
+            <p class="hero-lede">A living portfolio of papers, code demonstrations, cryptographic keys, and field notes from Tim Johns. Built to read like a portfolio, behave like a toolkit, and stay close to the underlying work.</p>
+
             <div class="hero-actions" aria-label="Primary actions">
-              <a class="button primary" href="#reports">Explore the archive <span aria-hidden="true">↗</span></a>
-              <a class="button" href="#terminal">Meet the researcher <span aria-hidden="true">↓</span></a>
+              <a class="button primary" href="#reports">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <path d="M14 2v6h6M8 13h8M8 17h5"></path>
+                </svg>
+                Browse reports
+              </a>
+              <a class="button" href="#terminal">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m4 17 6-6-6-6"></path>
+                  <path d="M12 19h8"></path>
+                </svg>
+                Open terminal
+              </a>
+            </div>
+
+            <div class="hero-motifs" aria-label="Research themes">
+              <div class="motif-card motif-square">
+                <div class="motif-icon motif-icon-square" aria-hidden="true">
+                  <svg viewBox="0 0 64 64">
+                    <path d="M19.4 26.6c0-7 5.6-12.5 12.6-12.5s12.6 5.5 12.6 12.5c0 5.7-3.5 8.1-4.2 14.9-.1 1-.8 1.6-1.8 1.6H25.4c-1 0-1.7-.6-1.8-1.6-.7-6.8-4.2-9.2-4.2-14.9Z"/>
+                    <path d="M25.4 47.8h13.2M27.4 52.4h9.2M28.1 55.5h7.8"/>
+                  </svg>
+                </div>
+                <div class="motif-copy"><strong>Research</strong><span>Applied detail</span></div>
+              </div>
+
+              <div class="motif-card motif-pill">
+                <div class="motif-icon motif-icon-pill" aria-hidden="true">
+                  <svg viewBox="0 0 64 64">
+                    <path d="M45.2 44.6A20 20 0 0 1 25.5 12a20.4 20.4 0 1 0 28.7 28.7 19.8 19.8 0 0 1-9 3.9Z"/>
+                  </svg>
+                </div>
+                <div class="motif-copy"><strong>Theme aware</strong><span>Light / dark</span></div>
+              </div>
             </div>
           </div>
-          <div class="hero-index" aria-label="Portfolio highlights">
-            <span><strong>08</strong> published works</span>
-            <span><strong>04</strong> research lanes</span>
-            <span><strong>∞</strong> curiosity level</span>
-          </div>
-        </article>
-
-        <article class="glass-tile signal-tile" aria-label="Research signal graphic">
-          <div class="signal-grid" aria-hidden="true"></div>
-          <div class="signal-orbit orbit-a" aria-hidden="true"></div>
-          <div class="signal-orbit orbit-b" aria-hidden="true"></div>
-          <div class="signal-core" aria-hidden="true">
-            <svg viewBox="0 0 64 64"><path d="M21 28a11 11 0 1 1 22 0c0 8-6 9-7 16H28c-1-7-7-8-7-16Z"/><path d="M27 49h10M29 54h6"/></svg>
-          </div>
-          <div class="signal-caption"><span>01 / RESEARCH</span><strong>Look closely.<br>Question defaults.</strong></div>
-        </article>
-
-        <article class="glass-tile mode-tile">
-          <span class="micro-label">CURRENT MODE</span>
-          <div class="mode-icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64"><path d="M43 43A21 21 0 0 1 25 9a22 22 0 1 0 30 30 21 21 0 0 1-12 4Z"/></svg>
-          </div>
-          <div><strong>Deep work</strong><span>cryptography / privacy</span></div>
-        </article>
-
-        <article class="glass-tile note-tile">
-          <span class="micro-label">FIELD NOTE 26.10</span>
-          <p>“Good security begins where comfortable assumptions end.”</p>
-          <a href="#reports">Read the work <span aria-hidden="true">→</span></a>
-        </article>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
 
     <section class="terminal-wrap" id="terminal" aria-labelledby="terminalTitle">
       <div class="section-intro">
