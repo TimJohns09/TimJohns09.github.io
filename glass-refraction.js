@@ -101,10 +101,11 @@
   const wallpaperContext = wallpaperCanvas.getContext('2d', { alpha: false });
   if (!wallpaperContext) return;
   const wallpaper = new Image();
-  wallpaper.src = new URL('assets/glass-backdrop.svg?v=sharp-detail', document.baseURI).href;
+  wallpaper.src = new URL('assets/glass-backdrop.svg?v=color-field', document.baseURI).href;
+  const researchPattern = new Image();
+  researchPattern.src = new URL('assets/dark_logo.png', document.baseURI).href;
   const surfaces = new Map();
   const scene = document.querySelector('.scene');
-  const masthead = document.querySelector('.masthead-image-dark');
   let pending = 0;
   let lost = false;
   let textureWidth = 0;
@@ -191,17 +192,17 @@
         wallpaperContext.drawImage(wallpaper, (width-w)/2, 0, w, h);
       }
       sourceContext.drawImage(wallpaperCanvas,0,0);
-      if (masthead?.complete && masthead.naturalWidth) {
-        const rect = masthead.getBoundingClientRect();
-        const container = masthead.parentElement.getBoundingClientRect();
+      if (researchPattern.complete && researchPattern.naturalWidth) {
+        const patternWidth = width < 560 ? 760 : Math.min(1672, width);
+        const patternHeight = researchPattern.naturalHeight * patternWidth / researchPattern.naturalWidth;
+        const startY = -(window.scrollY % patternHeight);
         sourceContext.save();
-        sourceContext.beginPath();
-        sourceContext.rect(container.left, container.top, container.width, container.height);
-        sourceContext.clip();
         sourceContext.globalCompositeOperation = 'screen';
-        sourceContext.globalAlpha = parseFloat(getComputedStyle(masthead.parentElement).opacity) || 1;
+        sourceContext.globalAlpha = width < 560 ? .54 : .58;
         sourceContext.filter = 'saturate(1.12) contrast(1.12)';
-        sourceContext.drawImage(masthead, rect.left, rect.top, rect.width, rect.height);
+        for (let y = startY - patternHeight; y < height; y += patternHeight) {
+          sourceContext.drawImage(researchPattern, (width-patternWidth)/2, y, patternWidth, patternHeight);
+        }
         sourceContext.restore();
       }
     }
@@ -284,7 +285,7 @@
     }
   });
   wallpaper.addEventListener('load', schedule);
-  masthead?.addEventListener('load', schedule);
+  researchPattern.addEventListener('load', schedule);
   addEventListener('scroll', schedule, { passive:true });
   addEventListener('resize', schedule, { passive:true });
   addEventListener('pageshow', schedule);
