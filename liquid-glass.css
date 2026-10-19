@@ -22,7 +22,7 @@
   --terminal-panel:transparent;
   --terminal-rail:rgba(255,255,255,.06);
 }
-[data-theme="dark"] { --material-tint:rgba(15,12,35,.42); }
+[data-theme="dark"] { --glass-mode-shade:rgba(0,0,0,.10); }
 body, [data-theme="dark"] body {
   background:#282851 url('assets/glass-backdrop.svg') center top / cover fixed no-repeat;
   font-family:var(--sf-font);
@@ -30,9 +30,9 @@ body, [data-theme="dark"] body {
 body::before, [data-theme="dark"] body::before,.page-frame { display:none; }
 .site-nav { border-radius:32px; padding:12px 16px; }
 .site-nav.glass-surface,.terminal.glass-surface,.entry-card.glass-surface,.search-wrap.glass-surface,.site-footer.glass-surface {
-  border-color:var(--material-line);
-  background:var(--material-tint);
-  box-shadow:var(--material-shadow),inset 0 1px 1px rgba(255,255,255,.20);
+  border:0;
+  background:var(--glass-mode-shade);
+  box-shadow:none;
 }
 .brand-mark { border-radius:50%; color:white; background:rgba(255,255,255,.10); border:0; }
 .brand-lockup span { color:rgba(255,255,255,.7); }
@@ -56,7 +56,7 @@ body::before, [data-theme="dark"] body::before,.page-frame { display:none; }
 .button.primary,[data-theme="dark"] .button.primary { color:#fff; border-color:rgba(255,255,255,.3); background:rgba(36,36,36,.24); box-shadow:none; }
 .hero-motifs { display:flex; flex-wrap:wrap; align-items:flex-end; gap:25.56px; margin-top:40px; }
 .motif-card { color:white; font-family:var(--sf-font); text-decoration:none; text-align:left; flex:none; cursor:pointer; transition:box-shadow 160ms ease; }
-.motif-card:hover { box-shadow:0 14px 36px rgba(20,9,56,.2),inset 0 1px 1px rgba(255,255,255,.35); }
+.motif-card:hover { box-shadow:inset 0 0 0 1px rgba(255,255,255,.24); }
 .motif-square { width:386px; height:386px; padding:40.9007px; border-radius:76.6887px; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-start; gap:25.56px; }
 .motif-pill { width:346px; height:155.81px; border-radius:229.139px; padding:0 32.0795px; display:flex; align-items:center; gap:22.91px; }
 .motif-icon { display:grid; place-items:center; background:rgba(255,255,255,.06); border-radius:50%; flex:none; }
