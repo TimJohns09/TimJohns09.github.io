@@ -1,45 +1,34 @@
-/* Shared by the reference scene and the portfolio. The exported Glass Effect
-   contains no shader parameters; these are explicit browser material values. */
+/* Exported material from the supplied 258 x 84 SVG, adapted to each surface.
+   glass-effect.js supplies the original masks, filters and stroke gradients. */
 :root {
-  --material-tint: rgba(22, 20, 43, .24);
-  --material-blur: 28px;
-  --material-line: rgba(255, 255, 255, .30);
-  --material-shadow: 0 12px 32px rgba(20, 9, 56, .13);
+  --glass-mode-shade: transparent;
   --sf-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
 }
 .glass-surface {
   position: relative;
-  isolation: isolate;
+  z-index: 0;
   overflow: hidden;
   color: #fff;
-  background: var(--material-tint);
-  border: 1px solid var(--material-line);
-  box-shadow: var(--material-shadow), inset 0 1px 1px rgba(255,255,255,.25), inset 0 -1px 1px rgba(255,255,255,.08);
-  backdrop-filter: blur(var(--material-blur)) saturate(145%);
-  -webkit-backdrop-filter: blur(var(--material-blur)) saturate(145%);
+  background: var(--glass-mode-shade);
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
-.glass-surface::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  border-radius: inherit;
-  background: #242424;
-  mix-blend-mode: plus-lighter;
-  opacity: .45;
+.glass-surface::before,.glass-surface::after { content: none; }
+.glass-surface > .glass-effect {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+  pointer-events:none;
+  border-radius:inherit;
+  overflow:hidden;
 }
-.glass-surface::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255,255,255,.10), transparent 34%, transparent 68%, rgba(255,255,255,.035));
-  box-shadow: inset 1px 1px 0 rgba(255,255,255,.16);
-}
+.glass-surface:not([data-glass-ready]) { background:rgba(84,84,84,.10); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
 .symbol-well { display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.06); }
 .filled-symbol { display: block; width: 100%; height: 100%; fill: currentColor; stroke: none; }
-@supports not (backdrop-filter: blur(1px)) {
-  .glass-surface { background: rgba(32, 28, 65, .82); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-surface { background: rgba(32,28,65,.76); }
 }
