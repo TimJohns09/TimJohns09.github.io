@@ -91,6 +91,150 @@ body::before, [data-theme="dark"] body::before,.page-frame { display:none; }
 .pdf-viewer canvas { border-radius:8px; }
 .site-footer { margin-top:52px; padding:24px; border-radius:32px 32px 0 0; border-bottom:0; }
 a:focus-visible,button:focus-visible,input:focus-visible { outline:3px solid #fff; outline-offset:4px; }
+
+/* Compact workspace composition. The supplied control proportions remain the
+   visual basis; only their overall scale changes to improve information density. */
+@media (min-width:1100px) {
+  .site-header,main,.site-footer { width:min(1380px,calc(100% - 48px)); }
+  .site-nav { min-height:62px; padding:8px 12px; }
+  .brand-mark { width:42px; height:42px; }
+
+  main {
+    display:grid;
+    grid-template-columns:minmax(340px,.72fr) minmax(0,1.28fr);
+    column-gap:28px;
+    align-items:start;
+  }
+  .opening {
+    grid-column:1/-1;
+    position:relative;
+    min-height:clamp(610px,59vw,730px);
+    margin-top:8px;
+    padding:0;
+  }
+  .visual-masthead {
+    position:absolute;
+    top:0;
+    left:50%;
+    width:min(1380px,calc(100vw - 48px));
+    margin:0;
+    transform:translateX(-50%);
+  }
+  .hero {
+    min-height:clamp(610px,59vw,730px);
+    margin:0;
+    padding:clamp(70px,8vw,108px) 0 38px;
+  }
+  .hero-inner { width:100%; max-width:none; }
+  .hero-copy {
+    max-width:none;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 320px;
+    grid-template-rows:auto auto auto auto;
+    column-gap:clamp(34px,5vw,76px);
+    align-items:center;
+    padding:0;
+  }
+  .hero-copy > :not(.hero-motifs) { grid-column:1; }
+  .hero h1 { max-width:880px; font-size:clamp(3.7rem,5.4vw,5.7rem); line-height:.94; }
+  .hero-lede { max-width:680px; margin-top:22px; line-height:1.58; }
+  .hero-actions { margin-top:24px; }
+  .hero-motifs {
+    grid-column:2;
+    grid-row:1/-1;
+    display:grid;
+    grid-template-columns:1fr;
+    align-content:center;
+    justify-items:end;
+    gap:18px;
+    margin:0;
+  }
+  .motif-square {
+    width:320px;
+    height:320px;
+    padding:33.91px;
+    border-radius:63.58px;
+    gap:21.19px;
+  }
+  .motif-pill {
+    width:320px;
+    height:144.08px;
+    padding:0 29.67px;
+    border-radius:211.91px;
+    gap:21.19px;
+  }
+  .motif-icon-square { width:84.77px; height:84.77px; }
+  .motif-icon-pill { width:84.77px; height:84.77px; }
+  .motif-icon-square img { width:30px; height:auto; }
+  .motif-icon-pill img { width:38px; height:38px; }
+  .motif-copy strong,.motif-copy span { font-size:29.67px; line-height:35.65px; }
+  .motif-pill .motif-copy strong,.motif-pill .motif-copy span { font-size:29.67px; line-height:35.2px; }
+
+  .terminal-wrap,.reports-section { padding-top:42px; scroll-margin-top:84px; }
+  .terminal-wrap { position:sticky; top:72px; align-self:start; }
+  .section-kicker { margin-bottom:10px; }
+  .section-title { font-size:clamp(2rem,3vw,3rem); line-height:1; }
+  .terminal { margin-top:18px; border-radius:36px; }
+  .terminal-titlebar { min-height:52px; }
+  .window-dots { display:none; }
+  .tab { min-width:0; flex:1; min-height:52px; padding-inline:10px; font-size:.76rem; }
+  .term-body { min-height:310px; padding:24px; font-size:.78rem; line-height:1.75; }
+  .terminal-copy { margin-top:12px; }
+
+  .reports-section .section-header { margin-bottom:18px; }
+  .controls { grid-template-columns:1fr; gap:10px; margin-bottom:14px; }
+  .filters { justify-content:flex-start; gap:6px; }
+  .filter { height:36px; padding-inline:11px; font-size:.68rem; }
+  .search-wrap { height:44px; }
+  .articles { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .entry-card { display:flex; flex-direction:column; min-height:252px; border-radius:30px; }
+  .entry-card.expanded { grid-column:1/-1; }
+  .entry-head { padding:20px 20px 16px; }
+  .entry-title { font-size:clamp(1.12rem,1.45vw,1.45rem); line-height:1.16; }
+  .desc { margin-top:10px; font-size:.88rem; line-height:1.55; -webkit-line-clamp:2; }
+  .article-toggle { margin-top:auto; padding:11px 20px; }
+  .entry-card.expanded .desc { max-width:100ch; }
+  .site-footer { margin-top:40px; }
+}
+
+@media (min-width:761px) and (max-width:1099px) {
+  .opening { position:relative; min-height:700px; margin-top:8px; padding:0; }
+  .visual-masthead { position:absolute; top:0; width:calc(100vw - 24px); margin-top:0; }
+  .hero { min-height:700px; margin:0; padding:72px 0 36px; }
+  .hero-copy {
+    max-width:none;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 280px;
+    column-gap:30px;
+    align-items:center;
+    padding:0;
+  }
+  .hero-copy > :not(.hero-motifs) { grid-column:1; }
+  .hero h1 { font-size:clamp(3.2rem,6.5vw,4.5rem); }
+  .hero-lede { line-height:1.58; }
+  .hero-motifs { grid-column:2; grid-row:1/-1; display:grid; gap:16px; margin:0; }
+  .motif-square { width:280px; height:280px; padding:29.67px; border-radius:55.62px; }
+  .motif-pill { width:280px; height:126.07px; padding-inline:25.96px; gap:18.54px; }
+  .motif-icon-square,.motif-icon-pill { width:74.17px; height:74.17px; }
+  .motif-icon-square img { width:27px; height:auto; }
+  .motif-icon-pill img { width:34px; height:34px; }
+  .motif-copy strong,.motif-copy span,
+  .motif-pill .motif-copy strong,.motif-pill .motif-copy span { font-size:25.96px; line-height:31px; }
+}
+
+@media (min-width:560px) and (max-width:760px) {
+  .opening { position:relative; min-height:auto; padding-bottom:26px; }
+  .visual-masthead { position:absolute; top:0; width:calc(100vw - 16px); margin-top:0; }
+  .hero { min-height:auto; margin:0; padding:clamp(238px,38vw,290px) 0 24px; }
+  .hero-motifs { grid-template-columns:280px minmax(0,1fr); align-items:end; gap:14px; margin-top:28px; }
+  .motif-square { width:280px; height:280px; padding:30px; border-radius:56px; }
+  .motif-pill { width:100%; height:126px; padding-inline:22px; gap:14px; }
+  .motif-icon-square,.motif-icon-pill { width:74px; height:74px; }
+  .motif-icon-square img { width:27px; height:auto; }
+  .motif-icon-pill img { width:34px; height:34px; }
+  .motif-copy strong,.motif-copy span,
+  .motif-pill .motif-copy strong,.motif-pill .motif-copy span { font-size:25px; line-height:30px; }
+}
 @media(max-width:760px) {
   .hero-copy { padding:24px 6px; }
   .hero h1 { font-size:clamp(2.7rem,12vw,4rem); }
@@ -106,4 +250,26 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:3px solid #ff
   .motif-square { padding:28px; border-radius:55px; }
   .motif-pill .motif-icon { width:75px; height:75px; }
   .motif-pill .motif-copy strong,.motif-pill .motif-copy span { font-size:25px; }
+}
+@media(max-width:559px) {
+  .opening { position:relative; min-height:auto; padding-bottom:20px; }
+  .visual-masthead { position:absolute; top:0; margin-top:0; }
+  .hero { min-height:auto; margin:0; padding-top:clamp(210px,58vw,250px); }
+  .hero-copy .hero-motifs { grid-template-columns:1fr 1fr; align-items:end; gap:12px; margin-top:24px; }
+  .hero-motifs .motif-square { width:100%; height:auto; aspect-ratio:1; padding:18px; border-radius:36px; }
+  .hero-motifs .motif-pill { width:100%; height:82px; padding:0 13px; gap:10px; }
+  .hero-motifs .motif-icon-square { width:50px; height:50px; }
+  .hero-motifs .motif-icon-pill { width:48px; height:48px; }
+  .hero-motifs .motif-icon-square img { width:20px; height:auto; }
+  .hero-motifs .motif-icon-pill img { width:25px; height:25px; }
+  .hero-motifs .motif-copy strong,.hero-motifs .motif-copy span,
+  .hero-motifs .motif-pill .motif-copy strong,.hero-motifs .motif-pill .motif-copy span { font-size:16px; line-height:20px; }
+}
+@media (min-width:560px) and (max-width:760px) {
+  .hero-copy .hero-motifs { grid-template-columns:280px minmax(0,1fr); }
+  .hero-motifs .motif-square { width:280px; height:280px; aspect-ratio:auto; padding:30px; border-radius:56px; }
+  .hero-motifs .motif-pill { width:100%; height:126px; padding-inline:22px; gap:14px; }
+  .hero-motifs .motif-icon-square,.hero-motifs .motif-icon-pill { width:74px; height:74px; }
+  .hero-motifs .motif-copy strong,.hero-motifs .motif-copy span,
+  .hero-motifs .motif-pill .motif-copy strong,.hero-motifs .motif-pill .motif-copy span { font-size:25px; line-height:30px; }
 }

@@ -203,6 +203,9 @@ function updateOpeningProgress() {
 }
 
 function requestOpeningProgressUpdate() {
+  // The liquid-glass composition keeps its background crisp and static. Avoid
+  // style writes during scroll; the lens renderer owns the visual update.
+  if (document.documentElement.classList.contains('liquid-glass-site')) return;
   updateOpeningProgress();
 }
 

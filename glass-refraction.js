@@ -97,6 +97,9 @@
   const sourceCanvas = document.createElement('canvas');
   const sourceContext = sourceCanvas.getContext('2d', { alpha: false });
   if (!sourceContext) return;
+  const wallpaperCanvas = document.createElement('canvas');
+  const wallpaperContext = wallpaperCanvas.getContext('2d', { alpha: false });
+  if (!wallpaperContext) return;
   const wallpaper = new Image();
   wallpaper.src = new URL('assets/glass-backdrop.svg?v=sharp-detail', document.baseURI).href;
   const surfaces = new Map();
@@ -104,12 +107,20 @@
   const masthead = document.querySelector('.masthead-image-dark');
   let pending = 0;
   let lost = false;
+  let textureWidth = 0;
+  let textureHeight = 0;
 
   function schedule() {
     if (!pending && !lost && !document.hidden) pending = requestAnimationFrame(draw);
   }
   const resize = new ResizeObserver(schedule);
-  const visibility = new IntersectionObserver(schedule, { rootMargin: '80px' });
+  const visibility = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const record = surfaces.get(entry.target);
+      if (record) record.visible = entry.isIntersecting;
+    });
+    schedule();
+  }, { rootMargin: '80px' });
 
   function attach() {
     for (const [surface, record] of surfaces) {
@@ -127,7 +138,7 @@
       const context = canvas.getContext('2d', { alpha: false });
       if (!context) return;
       surface.prepend(canvas);
-      surfaces.set(surface, { canvas, context });
+      surfaces.set(surface, { canvas, context, visible: true });
       resize.observe(surface);
       visibility.observe(surface);
     });
@@ -169,10 +180,17 @@
       }
     } else {
       // Matches body background-size:cover and background-position:center top.
-      const scale = Math.max(width / wallpaper.naturalWidth, height / wallpaper.naturalHeight);
-      const w = wallpaper.naturalWidth * scale;
-      const h = wallpaper.naturalHeight * scale;
-      sourceContext.drawImage(wallpaper, (width-w)/2, 0, w, h);
+      if (wallpaperCanvas.width !== width || wallpaperCanvas.height !== height) {
+        wallpaperCanvas.width = width;
+        wallpaperCanvas.height = height;
+        wallpaperContext.fillStyle = '#282851';
+        wallpaperContext.fillRect(0,0,width,height);
+        const scale = Math.max(width / wallpaper.naturalWidth, height / wallpaper.naturalHeight);
+        const w = wallpaper.naturalWidth * scale;
+        const h = wallpaper.naturalHeight * scale;
+        wallpaperContext.drawImage(wallpaper, (width-w)/2, 0, w, h);
+      }
+      sourceContext.drawImage(wallpaperCanvas,0,0);
       if (masthead?.complete && masthead.naturalWidth) {
         const rect = masthead.getBoundingClientRect();
         const container = masthead.parentElement.getBoundingClientRect();
@@ -201,21 +219,42 @@
     }
     paintWallpaper(width, height);
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+    if (textureWidth !== width || textureHeight !== height) {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+      textureWidth = width;
+      textureHeight = height;
+    } else {
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+    }
     gl.uniform2f(uniforms.viewport, width, height);
     gl.uniform1f(uniforms.shade, document.documentElement.dataset.theme === 'dark' ? .94 : 1);
+    const visible = [];
     for (const [surface, record] of surfaces) {
+      if (!record.visible) continue;
       const rect = surface.getBoundingClientRect();
       if (rect.bottom < 0 || rect.top > height || rect.right < 0 || rect.left > width || !rect.width || !rect.height) continue;
       // Scaled reference tiles and mobile controls retain their lens proportions.
       const scale = rect.width / surface.clientWidth;
       const r = getComputedStyle(surface).borderTopLeftRadius;
       const radius = r.endsWith('%') ? parseFloat(r)/100 * Math.min(rect.width, rect.height) : parseFloat(r)*scale;
-      const ratio = Math.min(window.devicePixelRatio || 1, 1.5, limit/rect.width, limit/rect.height);
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.25, limit/rect.width, limit/rect.height);
       const w = Math.max(1, Math.round(rect.width * ratio));
       const h = Math.max(1, Math.round(rect.height * ratio));
-      if (output.width !== w || output.height !== h) { output.width = w; output.height = h; }
-      gl.viewport(0,0,w,h);
+      visible.push({ surface, record, rect, radius, w, h });
+    }
+    if (!visible.length) return;
+    const requiredWidth = Math.max(...visible.map(item => item.w));
+    const requiredHeight = Math.max(...visible.map(item => item.h));
+    if (output.width < requiredWidth || output.height < requiredHeight) {
+      output.width = Math.max(output.width, requiredWidth);
+      output.height = Math.max(output.height, requiredHeight);
+    }
+    gl.clearColor(0,0,0,1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    for (const { surface, record, rect, radius, w, h } of visible) {
+      // Reuse one drawing buffer for every surface. The old path resized this
+      // canvas for every tile on every frame, forcing repeated GPU allocations.
+      gl.viewport(0,output.height-h,w,h);
       gl.uniform2f(uniforms.origin, rect.left, rect.top);
       gl.uniform2f(uniforms.size, rect.width, rect.height);
       gl.uniform1f(uniforms.radius, Math.min(radius,rect.width/2,rect.height/2));
@@ -225,7 +264,7 @@
         record.canvas.width = w;
         record.canvas.height = h;
       }
-      record.context.drawImage(output,0,0);
+      record.context.drawImage(output,0,0,w,h,0,0,w,h);
       if (surface.dataset.refractionReady !== 'true') {
         surface.dataset.refractionReady = 'true';
         surface.dispatchEvent(new Event('glass-refraction-ready'));
