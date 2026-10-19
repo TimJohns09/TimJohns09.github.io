@@ -103,13 +103,14 @@
   const wallpaper = new Image();
   wallpaper.src = new URL('assets/glass-backdrop.svg?v=color-field', document.baseURI).href;
   const researchPattern = new Image();
-  researchPattern.src = new URL('assets/dark_logo.png', document.baseURI).href;
+  researchPattern.src = new URL('assets/research-pattern-v2.webp', document.baseURI).href;
   const surfaces = new Map();
   const scene = document.querySelector('.scene');
   let pending = 0;
   let lost = false;
   let textureWidth = 0;
   let textureHeight = 0;
+  let wallpaperDirty = true;
 
   function schedule() {
     if (!pending && !lost && !document.hidden) pending = requestAnimationFrame(draw);
@@ -180,8 +181,9 @@
         sourceContext.restore();
       }
     } else {
-      // Matches body background-size:cover and background-position:center top.
-      if (wallpaperCanvas.width !== width || wallpaperCanvas.height !== height) {
+      // Cache the fixed color field and technical artwork together. The page
+      // scroll only changes which part each glass tile samples, not the source.
+      if (wallpaperCanvas.width !== width || wallpaperCanvas.height !== height || wallpaperDirty) {
         wallpaperCanvas.width = width;
         wallpaperCanvas.height = height;
         wallpaperContext.fillStyle = '#282851';
@@ -190,21 +192,26 @@
         const w = wallpaper.naturalWidth * scale;
         const h = wallpaper.naturalHeight * scale;
         wallpaperContext.drawImage(wallpaper, (width-w)/2, 0, w, h);
+        if (researchPattern.complete && researchPattern.naturalWidth) {
+          const patternScale = Math.max(width / researchPattern.naturalWidth, height / researchPattern.naturalHeight);
+          const patternWidth = researchPattern.naturalWidth * patternScale;
+          const patternHeight = researchPattern.naturalHeight * patternScale;
+          wallpaperContext.save();
+          wallpaperContext.globalCompositeOperation = 'screen';
+          wallpaperContext.globalAlpha = width < 560 ? .54 : .58;
+          wallpaperContext.filter = 'saturate(1.12) contrast(1.12)';
+          wallpaperContext.drawImage(
+            researchPattern,
+            (width-patternWidth)/2,
+            (height-patternHeight)/2,
+            patternWidth,
+            patternHeight
+          );
+          wallpaperContext.restore();
+        }
+        wallpaperDirty = false;
       }
       sourceContext.drawImage(wallpaperCanvas,0,0);
-      if (researchPattern.complete && researchPattern.naturalWidth) {
-        const patternWidth = width < 560 ? 760 : Math.min(1672, width);
-        const patternHeight = researchPattern.naturalHeight * patternWidth / researchPattern.naturalWidth;
-        const startY = -(window.scrollY % patternHeight);
-        sourceContext.save();
-        sourceContext.globalCompositeOperation = 'screen';
-        sourceContext.globalAlpha = width < 560 ? .54 : .58;
-        sourceContext.filter = 'saturate(1.12) contrast(1.12)';
-        for (let y = startY - patternHeight; y < height; y += patternHeight) {
-          sourceContext.drawImage(researchPattern, (width-patternWidth)/2, y, patternWidth, patternHeight);
-        }
-        sourceContext.restore();
-      }
     }
   }
 
@@ -284,8 +291,8 @@
       surface.dispatchEvent(new Event('glass-refraction-ready'));
     }
   });
-  wallpaper.addEventListener('load', schedule);
-  researchPattern.addEventListener('load', schedule);
+  wallpaper.addEventListener('load', () => { wallpaperDirty = true; schedule(); });
+  researchPattern.addEventListener('load', () => { wallpaperDirty = true; schedule(); });
   addEventListener('scroll', schedule, { passive:true });
   addEventListener('resize', schedule, { passive:true });
   addEventListener('pageshow', schedule);

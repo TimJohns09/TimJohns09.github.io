@@ -31,11 +31,11 @@ body, [data-theme="dark"] body {
 }
 body::before, [data-theme="dark"] body::before,.page-frame { display:none; }
 .research-wallpaper {
-  position:absolute;
+  position:fixed;
   inset:0;
   z-index:0;
   pointer-events:none;
-  background:url('assets/dark_logo.png') center top / min(1672px,100vw) auto repeat-y;
+  background:url('assets/research-pattern-v2.webp') center center / cover no-repeat;
   mix-blend-mode:screen;
   opacity:.58;
 }
@@ -264,7 +264,7 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:3px solid #ff
   .motif-pill .motif-copy strong,.motif-pill .motif-copy span { font-size:25px; }
 }
 @media(max-width:559px) {
-  .research-wallpaper { background-size:760px auto; opacity:.54; }
+  .research-wallpaper { opacity:.54; }
   .opening { position:relative; min-height:auto; padding-bottom:20px; }
   .visual-masthead { position:absolute; top:0; margin-top:0; }
   .hero { min-height:auto; margin:0; padding-top:clamp(210px,58vw,250px); }
