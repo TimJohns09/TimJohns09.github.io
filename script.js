@@ -253,7 +253,7 @@ function renderFilters() {
   const tags = ['ALL', ...new Set(entries.flatMap(entry => entry.tags))];
 
   $('#filters').innerHTML = tags
-    .map(tag => `<button class="filter ${tag === state.filter ? 'active' : ''}" type="button" data-filter="${escapeHtml(tag)}">${escapeHtml(tag)}</button>`)
+    .map(tag => `<button class="filter ${tag === state.filter ? 'active' : ''}" type="button" data-filter="${escapeHtml(tag)}" aria-pressed="${tag === state.filter}">${escapeHtml(tag)}</button>`)
     .join('');
 }
 
@@ -342,7 +342,8 @@ function renderSelectedReport(index) {
       </div>
       <span class="report-preview-type">${typeLabel}</span>
       <h3>${escapeHtml(entry.title)}</h3>
-      <p>${escapeHtml(entry.desc).replace(/\n\n/g, '<br><br>')}</p>
+      <p>${escapeHtml(isCode ? entry.desc.split('\n\n')[0].split(/(?<=\.)\s/)[0] : entry.desc)}</p>
+      ${isCode ? `<details class="report-context"><summary>Read project notes</summary><p>${escapeHtml(entry.desc).replace(/\n\n/g, '<br><br>')}</p></details>` : ''}
     </div>
     <div class="pdf-bar report-preview-bar">
       <div class="file-name">${ICONS.file}<span>${escapeHtml(entry.file)}</span></div>
@@ -393,6 +394,7 @@ async function renderPdf(url, wrapper, index) {
 
   try {
     const pdf = await pdfjsLib.getDocument(url).promise;
+    if (!wrapper.isConnected) { pdf.destroy(); return; }
     const maxWidth = Math.min(Math.max(wrapper.clientWidth - 44, 260), 980);
 
     wrapper.innerHTML = '';
@@ -401,10 +403,11 @@ async function renderPdf(url, wrapper, index) {
     const previewPages = Math.min(pdf.numPages, 3);
 
     for (let pageNumber = 1; pageNumber <= previewPages; pageNumber++) {
+      if (!wrapper.isConnected) { pdf.destroy(); return; }
       const page = await pdf.getPage(pageNumber);
       const baseViewport = page.getViewport({ scale: 1 });
       const viewport = page.getViewport({ scale: maxWidth / baseViewport.width });
-      const scale = window.devicePixelRatio || 1;
+      const scale = Math.min(window.devicePixelRatio || 1, 2);
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
 
@@ -428,6 +431,7 @@ async function renderPdf(url, wrapper, index) {
       `);
     }
   } catch (err) {
+    if (!wrapper.isConnected) return;
     console.error(err);
     wrapper.innerHTML = '<div class="loading"><span>Failed to load document. Use the Download link above.</span></div>';
     $(`#pages-${index}`).textContent = 'preview failed';
@@ -476,12 +480,14 @@ async function renderCode(url, wrapper, index) {
     }
 
     const code = await response.text();
+    if (!wrapper.isConnected) return;
     const isPython = url.toLowerCase().endsWith('.py');
 
     wrapper.classList.toggle('python-highlight', isPython);
     wrapper.innerHTML = isPython ? highlightPython(code) : escapeHtml(code);
     $(`#pages-${index}`).textContent = `${code.split(/\r\n|\r|\n/).length} lines`;
   } catch (err) {
+    if (!wrapper.isConnected) return;
     console.warn(`Could not fetch ${url}:`, err);
     wrapper.innerHTML = `
       <object class="code-frame" data="${escapeHtml(url)}" type="text/plain">
@@ -518,6 +524,7 @@ document.addEventListener('click', event => {
       const active = item === tab;
       item.classList.toggle('active', active);
       item.setAttribute('aria-selected', String(active));
+      item.tabIndex = active ? 0 : -1;
     });
 
     $$('.panel').forEach(panel => {
@@ -539,6 +546,9 @@ document.addEventListener('click', event => {
     state.selectedIndex = Number(reportItem.dataset.selectEntry);
     $('#reportPreview').removeAttribute('data-index');
     renderPapers();
+    if (matchMedia('(max-width: 760px)').matches) {
+      $('#reportPreview').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    }
   }
 
   const articleToggle = event.target.closest('.entry-head, .article-toggle');
@@ -567,6 +577,15 @@ document.addEventListener('click', event => {
 });
 
 document.addEventListener('keydown', event => {
+  const tab = event.target.closest('.tab');
+  if (tab && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+    event.preventDefault();
+    const tabs = $$('.tab');
+    const offset = event.key === 'ArrowLeft' ? -1 : 1;
+    const index = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (tabs.indexOf(tab) + offset + tabs.length) % tabs.length;
+    tabs[index].click();
+    tabs[index].focus();
+  }
   const target = event.target.closest('.article-toggle');
 
   if (target && (event.key === 'Enter' || event.key === ' ')) {
@@ -596,3 +615,15 @@ renderFilters();
 renderPgpKeys();
 renderPapers();
 updateOpeningProgress();
+
+// Contact links open the contact panel before following their anchor.
+$$('a[href="#contact"]').forEach(link => link.addEventListener('click', () => {
+  $('[data-tab="contact"]').click();
+}));
+$$('.tab').forEach(tab => {
+  tab.id = `profile-${tab.dataset.tab}`;
+  tab.setAttribute('aria-controls', `tab-${tab.dataset.tab}`);
+  tab.tabIndex = tab.classList.contains('active') ? 0 : -1;
+  $(`#tab-${tab.dataset.tab}`).setAttribute('aria-labelledby', tab.id);
+});
+if (location.hash === '#contact') $('[data-tab="contact"]').click();

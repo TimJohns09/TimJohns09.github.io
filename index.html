@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" class="liquid-glass-site">
+<html lang="en" data-theme="dark" class="liquid-glass-site">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,19 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=reference-scene" />
-  <link rel="stylesheet" href="glass-material.css?v=lens-refraction" />
-  <link rel="stylesheet" href="liquid-glass.css?v=workspace-wireframe" />
+  <link rel="stylesheet" href="styles.css?v=research-workspace-2" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
-  <script src="script.js?v=master-detail-reports" defer></script>
-  <script src="glass-effect.js?v=workspace-layout" defer></script>
-  <script src="glass-refraction.js?v=fixed-technical-wallpaper" defer></script>
+  <script src="script.js?v=research-workspace-2" defer></script>
 </head>
 
 <body id="top">
-  <div class="page-frame" aria-hidden="true"></div>
-  <div class="research-wallpaper" aria-hidden="true"></div>
+  <a class="skip-link" href="#reports">Skip to research</a>
 
   <header class="site-header">
     <nav class="site-nav glass-surface" aria-label="Primary navigation">
@@ -50,9 +45,9 @@
       <section class="hero" aria-labelledby="heroTitle">
         <div class="hero-inner">
           <div class="hero-copy">
-            <p class="eyebrow">Applied cryptography · network defense · adversarial systems</p>
-            <h1 id="heroTitle">Security research with a working lab attached.</h1>
-            <p class="hero-lede">A living portfolio of papers, code demonstrations, cryptographic keys, and field notes from Tim Johns. Built to read like a portfolio, behave like a toolkit, and stay close to the underlying work.</p>
+            <p class="eyebrow">Independent research / Tim Johns</p>
+            <h1 id="heroTitle">Security research.<br><span>In practice.</span></h1>
+            <p class="hero-lede">Applied cryptography, network security, and the systems in between. Research papers, working code, and notes from the lab.</p>
 
             <div class="hero-actions" aria-label="Primary actions">
               <a class="button primary" href="#reports">
@@ -71,30 +66,12 @@
               </a>
             </div>
 
-            <div class="hero-motifs" aria-label="Research themes">
-              <a class="motif-card motif-square glass-surface" href="#reports" aria-label="Research — browse reports">
-                <div class="motif-icon motif-icon-square" aria-hidden="true">
-                  <img src="assets/reference-bulb.svg" alt="" width="36" height="46" />
-                </div>
-                <div class="motif-copy"><strong>Research</strong><span>Applied detail</span></div>
-              </a>
-
-              <button class="motif-card motif-pill glass-surface" id="themeTile" type="button" aria-label="Toggle color theme">
-                <div class="motif-icon motif-icon-pill" aria-hidden="true">
-                  <img src="assets/reference-moon.svg" alt="" width="41" height="41" />
-                </div>
-                <div class="motif-copy"><strong>Theme</strong><span>Light / dark</span></div>
-              </button>
-            </div>
+            <div class="hero-footnote"><span class="status-dot" aria-hidden="true"></span> Denver, CO <span class="footnote-divider">/</span> Cybersecurity analyst</div>
           </div>
         </div>
       </section>
 
-      <section class="terminal-wrap" id="terminal" aria-labelledby="terminalTitle">
-      <div class="section-intro">
-        <p class="section-kicker">Profile terminal</p>
-        <h2 class="section-title" id="terminalTitle">A compact view of the operator.</h2>
-      </div>
+      <section class="terminal-wrap" id="terminal" aria-label="Profile terminal">
 
       <div class="terminal glass-surface" id="contact" aria-label="Profile terminal">
         <div class="terminal-titlebar">
@@ -104,7 +81,10 @@
             <span class="dot green"></span>
           </div>
 
-          <div class="tabs" role="tablist" aria-label="Profile sections">
+          <span class="terminal-caption">tim@research: ~</span>
+          <span class="terminal-session">zsh</span>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Profile sections">
             <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="whoami">
               <svg class="icon" viewBox="0 0 24 24">
                 <circle cx="12" cy="8" r="4"></circle>
@@ -126,7 +106,6 @@
               </svg>
               contact
             </button>
-          </div>
         </div>
 
         <div class="panel active" id="tab-whoami" role="tabpanel">
@@ -183,25 +162,21 @@
     </section>
 
     <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
+      <div class="section-header">
+        <div><p class="section-kicker">01 / Research archive</p><h2 class="section-title" id="reportsTitle">The work.</h2></div>
+        <span class="section-count" id="reportCount">8 published entries</span>
+      </div>
       <div class="reports-workspace">
         <section class="report-preview glass-surface" id="reportPreview" aria-live="polite" aria-label="Selected report preview"></section>
 
         <div class="report-browser">
-          <div class="section-header">
-            <div class="section-intro">
-              <p class="section-kicker">Selected work</p>
-              <h2 class="section-title" id="reportsTitle">Reports, demos, and working notes.</h2>
-            </div>
-            <span class="section-count" id="reportCount">8 published entries</span>
-          </div>
-
           <div class="controls" aria-label="Report controls">
             <label class="search-wrap glass-surface">
               <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path d="m21 21-4.35-4.35"></path>
               </svg>
-              <input class="search" id="searchInput" type="search" placeholder="Search reports, tags, files..." autocomplete="off" />
+              <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search reports, topics, or files…" autocomplete="off" />
             </label>
             <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
           </div>
