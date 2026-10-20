@@ -287,100 +287,96 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:3px solid #ff
   .hero-motifs .motif-pill .motif-copy strong,.hero-motifs .motif-pill .motif-copy span { font-size:25px; line-height:30px; }
 }
 
-/* Milled-metal controls, sampled directly from the supplied Figma export.
-   Liquid-glass surfaces keep their refractive material; only their controls
-   receive this bright metal skin. */
-:is(.nav-links a,.theme-toggle,.button,.tab,.filter,.chip,.pdf-btn,.copy-btn,.article-toggle,.section-count) {
-  border-color:transparent;
-  border-radius:999px;
-  background-color:transparent;
-  background-image:url('assets/metal-control.png');
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:100% 100%;
-  color:#171b1e;
-  text-shadow:0 1px 0 rgba(255,255,255,.82);
+/* Tinted machined metal. These highlights follow each control's native box,
+   so no reference texture is stretched and no geometry is replaced. */
+:root {
+  --metal-layer:
+    linear-gradient(180deg,
+      rgba(255,255,255,.48) 0%,
+      rgba(255,255,255,.18) 17%,
+      rgba(255,255,255,.04) 48%,
+      rgba(0,0,0,.16) 78%,
+      rgba(0,0,0,.34) 100%),
+    linear-gradient(90deg,
+      rgba(255,255,255,.08) 0%,
+      rgba(255,255,255,.22) 46%,
+      rgba(255,255,255,.08) 62%,
+      rgba(0,0,0,.12) 100%);
+}
+
+:is(.nav-links a,.theme-toggle,.button,.tab,.filter,.chip,.pdf-btn,.copy-btn,.section-count) {
+  --metal-fill:rgba(255,255,255,.10);
+  background-color:var(--metal-fill);
+  background-image:var(--metal-layer);
+  background-blend-mode:screen,soft-light;
+  border-color:rgba(255,255,255,.28);
   box-shadow:
-    0 5px 12px rgba(3,5,8,.24),
-    0 1px 0 rgba(255,255,255,.72);
-  transition:transform var(--ease),filter var(--ease),box-shadow var(--ease);
+    inset 0 1px 0 rgba(255,255,255,.55),
+    inset 0 -1px 0 rgba(0,0,0,.38),
+    inset 1px 0 0 rgba(255,255,255,.12),
+    inset -1px 0 0 rgba(0,0,0,.14),
+    0 3px 8px rgba(8,5,24,.2);
+  transition:transform var(--ease),filter var(--ease),box-shadow var(--ease),background-color var(--ease);
 }
 
-:is(.nav-links a,.theme-toggle,.button,.tab,.filter,.chip,.pdf-btn,.copy-btn,.article-toggle):hover {
-  border-color:transparent;
-  background-color:transparent;
-  background-image:url('assets/metal-control.png');
-  color:#050708;
-  filter:brightness(1.07) contrast(1.03);
-  transform:translateY(-1px);
-  box-shadow:
-    0 8px 18px rgba(3,5,8,.3),
-    0 1px 0 rgba(255,255,255,.9);
+:is(.filter,.chip,.pdf-btn,.copy-btn,.section-count) {
+  --metal-fill:rgba(20,16,45,.20);
 }
 
-:is(.theme-toggle,.button,.tab,.filter,.copy-btn,.article-toggle):active {
-  filter:brightness(.9) contrast(1.08);
-  transform:translateY(1px) scale(.99);
-  box-shadow:0 2px 6px rgba(3,5,8,.3);
-}
-
-.tabs {
-  gap:6px;
-  padding:5px 7px;
-}
 .tab,
-[data-theme="dark"] .tab,
-.tab:hover,
-[data-theme="dark"] .tab:hover,
-.tab.active,
-[data-theme="dark"] .tab.active {
-  border:0;
-  color:#171b1e;
-  background-color:transparent;
-  background-image:url('assets/metal-control.png');
-  background-size:100% 100%;
+[data-theme="dark"] .tab {
+  --metal-fill:rgba(255,255,255,.045);
+  background-color:var(--metal-fill);
+  background-image:var(--metal-layer);
+  background-blend-mode:screen,soft-light;
 }
-.tab.active,
-[data-theme="dark"] .tab.active,
-.filter.active {
-  color:#050708;
-  outline:2px solid rgba(255,255,255,.78);
-  outline-offset:-4px;
-  box-shadow:
-    0 6px 14px rgba(3,5,8,.32),
-    inset 0 0 0 1px rgba(10,13,15,.48);
-}
-.filter.active {
-  border-color:transparent;
-  background-color:transparent;
-  background-image:url('assets/metal-control.png');
-}
-.article-toggle,
-.article-toggle:hover {
-  margin:auto 12px 12px;
-  padding:12px 18px;
-  border:0;
-  background-color:transparent;
-  background-image:url('assets/metal-control.png');
-  background-size:100% 100%;
-}
-.toggle-label,
-.article-toggle .toggle-kind,
-.article-toggle .chev,
-.copy-btn.copied {
-  color:#171b1e;
-}
-.article-toggle .chev {
-  background:rgba(255,255,255,.45);
-  box-shadow:inset 0 0 0 1px rgba(22,27,30,.22);
-}
+
 .button.primary,
 [data-theme="dark"] .button.primary {
-  border-color:transparent;
-  background-color:transparent;
-  background-image:url('assets/metal-control.png');
-  color:#171b1e;
+  --metal-fill:rgba(36,36,36,.28);
+  background-color:var(--metal-fill);
+  background-image:var(--metal-layer);
+  background-blend-mode:screen,soft-light;
+  color:#fff;
+  border-color:rgba(255,255,255,.34);
   box-shadow:
-    0 6px 16px rgba(3,5,8,.28),
-    0 1px 0 rgba(255,255,255,.8);
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 -1px 0 rgba(0,0,0,.48),
+    0 4px 10px rgba(8,5,24,.24);
+}
+
+.filter.active,
+.tab.active,
+[data-theme="dark"] .tab.active {
+  --metal-fill:rgba(255,255,255,.20);
+  background-color:var(--metal-fill);
+  background-image:var(--metal-layer);
+  background-blend-mode:screen,soft-light;
+  color:#fff;
+  border-color:rgba(255,255,255,.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.7),
+    inset 0 -1px 0 rgba(0,0,0,.42),
+    0 3px 9px rgba(8,5,24,.24);
+}
+
+:is(.nav-links a,.theme-toggle,.button,.tab,.filter,.chip,.pdf-btn,.copy-btn):hover {
+  background-image:var(--metal-layer);
+  filter:brightness(1.09) saturate(1.04);
+  transform:translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.7),
+    inset 0 -1px 0 rgba(0,0,0,.36),
+    0 5px 12px rgba(8,5,24,.28);
+}
+
+:is(.theme-toggle,.button,.tab,.filter,.copy-btn):active {
+  background-color:var(--metal-fill);
+  background-image:var(--metal-layer);
+  filter:brightness(.93);
+  transform:translateY(1px);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.38),
+    inset 0 -1px 0 rgba(255,255,255,.34),
+    0 1px 3px rgba(8,5,24,.2);
 }
