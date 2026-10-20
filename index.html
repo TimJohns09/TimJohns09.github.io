@@ -9,14 +9,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=research-workspace-2" />
+  <link rel="stylesheet" href="styles.css?v=glass-restored" />
+  <link rel="stylesheet" href="glass-material.css?v=lens-refraction" />
+  <link rel="stylesheet" href="liquid-glass.css?v=glass-restored" />
+  <link rel="stylesheet" href="workspace-layout.css?v=glass-restored" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
   <script src="script.js?v=research-workspace-2" defer></script>
+  <script src="glass-effect.js?v=workspace-layout" defer></script>
+  <script src="glass-refraction.js?v=fixed-technical-wallpaper" defer></script>
 </head>
 
 <body id="top">
-  <a class="skip-link" href="#reports">Skip to research</a>
+  <div class="page-frame" aria-hidden="true"></div>
+  <div class="research-wallpaper" aria-hidden="true"></div>
 
   <header class="site-header">
     <nav class="site-nav glass-surface" aria-label="Primary navigation">
@@ -45,9 +51,9 @@
       <section class="hero" aria-labelledby="heroTitle">
         <div class="hero-inner">
           <div class="hero-copy">
-            <p class="eyebrow">Independent research / Tim Johns</p>
-            <h1 id="heroTitle">Security research.<br><span>In practice.</span></h1>
-            <p class="hero-lede">Applied cryptography, network security, and the systems in between. Research papers, working code, and notes from the lab.</p>
+            <p class="eyebrow">Applied cryptography · network defense · adversarial systems</p>
+            <h1 id="heroTitle">Security research with a working lab attached.</h1>
+            <p class="hero-lede">A living portfolio of papers, code demonstrations, cryptographic keys, and field notes from Tim Johns. Built to read like a portfolio, behave like a toolkit, and stay close to the underlying work.</p>
 
             <div class="hero-actions" aria-label="Primary actions">
               <a class="button primary" href="#reports">
@@ -66,7 +72,7 @@
               </a>
             </div>
 
-            <div class="hero-footnote"><span class="status-dot" aria-hidden="true"></span> Denver, CO <span class="footnote-divider">/</span> Cybersecurity analyst</div>
+
           </div>
         </div>
       </section>
@@ -163,7 +169,7 @@
 
     <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
       <div class="section-header">
-        <div><p class="section-kicker">01 / Research archive</p><h2 class="section-title" id="reportsTitle">The work.</h2></div>
+        <div><p class="section-kicker">Selected work</p><h2 class="section-title" id="reportsTitle">Reports, demos, and working notes.</h2></div>
         <span class="section-count" id="reportCount">8 published entries</span>
       </div>
       <div class="reports-workspace">
