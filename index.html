@@ -11,10 +11,10 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=reference-scene" />
   <link rel="stylesheet" href="glass-material.css?v=lens-refraction" />
-  <link rel="stylesheet" href="liquid-glass.css?v=source-metal-controls" />
+  <link rel="stylesheet" href="liquid-glass.css?v=workspace-wireframe" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
-  <script src="script.js?v=workspace-layout" defer></script>
+  <script src="script.js?v=master-detail-reports" defer></script>
   <script src="glass-effect.js?v=workspace-layout" defer></script>
   <script src="glass-refraction.js?v=fixed-technical-wallpaper" defer></script>
 </head>
@@ -46,12 +46,7 @@
   </header>
 
   <main>
-    <div class="opening">
-      <section class="visual-masthead" aria-label="Tim Research cryptography diagram header">
-        <img class="masthead-image masthead-image-light" src="assets/light_logo.png" alt="" width="1672" height="941" aria-hidden="true" />
-        <img class="masthead-image masthead-image-dark" src="assets/dark_logo.png" alt="" width="1672" height="941" aria-hidden="true" />
-      </section>
-
+    <section class="profile-workspace">
       <section class="hero" aria-labelledby="heroTitle">
         <div class="hero-inner">
           <div class="hero-copy">
@@ -94,9 +89,8 @@
           </div>
         </div>
       </section>
-    </div>
 
-    <section class="terminal-wrap" id="terminal" aria-labelledby="terminalTitle">
+      <section class="terminal-wrap" id="terminal" aria-labelledby="terminalTitle">
       <div class="section-intro">
         <p class="section-kicker">Profile terminal</p>
         <h2 class="section-title" id="terminalTitle">A compact view of the operator.</h2>
@@ -185,30 +179,37 @@
           </div>
         </div>
       </div>
+      </section>
     </section>
 
     <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
-      <div class="section-header">
-        <div class="section-intro">
-          <p class="section-kicker">Selected work</p>
-          <h2 class="section-title" id="reportsTitle">Reports, demos, and working notes.</h2>
+      <div class="reports-workspace">
+        <section class="report-preview glass-surface" id="reportPreview" aria-live="polite" aria-label="Selected report preview"></section>
+
+        <div class="report-browser">
+          <div class="section-header">
+            <div class="section-intro">
+              <p class="section-kicker">Selected work</p>
+              <h2 class="section-title" id="reportsTitle">Reports, demos, and working notes.</h2>
+            </div>
+            <span class="section-count" id="reportCount">8 published entries</span>
+          </div>
+
+          <div class="controls" aria-label="Report controls">
+            <label class="search-wrap glass-surface">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input class="search" id="searchInput" type="search" placeholder="Search reports, tags, files..." autocomplete="off" />
+            </label>
+            <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
+          </div>
+
+          <div class="articles" id="articleList"></div>
+          <div class="empty" id="emptyState">No entries match that filter.</div>
         </div>
-        <span class="section-count" id="reportCount">8 published entries</span>
       </div>
-
-      <div class="controls" aria-label="Report controls">
-        <label class="search-wrap glass-surface">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <input class="search" id="searchInput" type="search" placeholder="Search reports, tags, files..." autocomplete="off" />
-        </label>
-        <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
-      </div>
-
-      <div class="articles" id="articleList"></div>
-      <div class="empty" id="emptyState">No entries match that filter.</div>
     </section>
   </main>
 

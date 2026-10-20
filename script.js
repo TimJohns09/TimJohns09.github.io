@@ -171,6 +171,7 @@ const state = {
   theme: localStorage.getItem('theme') || document.documentElement.dataset.theme || 'light',
   filter: 'ALL',
   search: '',
+  selectedIndex: 0,
   renderedItems: new Set()
 };
 
@@ -286,52 +287,80 @@ function entryMatches(entry) {
 }
 
 function renderPapers() {
-  state.renderedItems.clear();
-
   const visible = entries
     .map((entry, index) => ({ entry, index }))
     .filter(({ entry }) => entryMatches(entry));
 
-  $('#articleList').innerHTML = visible.map(({ entry, index }) => {
-    const isCode = entry.kind === 'code';
-    const viewerClass = isCode ? 'code-viewer' : 'pdf-viewer';
-    const typeLabel = isCode ? 'PYTHON' : 'PDF';
-    const actionLabel = isCode ? 'View code' : 'View paper';
+  if (visible.length && !visible.some(({ index }) => index === state.selectedIndex)) {
+    state.selectedIndex = visible[0].index;
+  }
 
+  $('#articleList').innerHTML = visible.map(({ entry, index }) => {
     return `
-      <article class="entry-card glass-surface" data-index="${index}">
-        <button class="entry-head" type="button" aria-expanded="false">
-          <div class="entry-meta">
+      <button class="report-list-item glass-surface ${index === state.selectedIndex ? 'active' : ''}" type="button" data-select-entry="${index}" ${index === state.selectedIndex ? 'aria-current="true"' : ''}>
+        <span class="report-list-index">${String(index + 1).padStart(2, '0')}</span>
+        <span class="report-list-copy">
+          <span class="entry-meta">
             <span class="date">${escapeHtml(entry.date)}</span>
             ${entry.tags.map(tag => `<span class="tag ${tagClass(tag)}">${escapeHtml(tagLabel(tag))}</span>`).join('')}
-          </div>
-          <h3 class="entry-title">${escapeHtml(entry.title)}</h3>
-          <p class="desc">${escapeHtml(entry.desc).replace(/\n\n/g, '<br><br>')}</p>
-        </button>
-
-        <div class="article-toggle" role="button" tabindex="0" aria-label="Toggle preview">
-          <span class="toggle-label"><span class="chev">${ICONS.chev}</span>${actionLabel}</span>
-          <span class="date">${typeLabel}</span>
-        </div>
-
-        <div class="pdf">
-          <div class="pdf-bar">
-            <div class="file-name">${ICONS.file}<span>${escapeHtml(entry.file)}</span></div>
-            <div class="pdf-actions">
-              <span class="pages" id="pages-${index}"></span>
-              <a href="${escapeHtml(entry.url)}" class="pdf-btn" download>${ICONS.download}<span>Download</span></a>
-            </div>
-          </div>
-          <div class="${viewerClass}" id="viewer-${index}">
-            <div class="loading"><div class="spinner"></div><span>Loading document...</span></div>
-          </div>
-        </div>
-      </article>
+          </span>
+          <strong>${escapeHtml(entry.title)}</strong>
+          <span class="report-list-file">${escapeHtml(entry.file)}</span>
+        </span>
+        <span class="report-list-arrow" aria-hidden="true">↗</span>
+      </button>
     `;
   }).join('');
 
   $('#reportCount').textContent = `${visible.length} published entr${visible.length === 1 ? 'y' : 'ies'}`;
   $('#emptyState').style.display = visible.length ? 'none' : 'block';
+
+  if (visible.length) {
+    renderSelectedReport(state.selectedIndex);
+  } else {
+    $('#reportPreview').innerHTML = '<div class="report-preview-empty"><span>NO MATCH</span><p>Adjust the search or select another filter.</p></div>';
+    $('#reportPreview').removeAttribute('data-index');
+  }
+}
+
+function renderSelectedReport(index) {
+  const preview = $('#reportPreview');
+  const entry = entries[index];
+
+  if (!entry || preview.dataset.index === String(index)) return;
+
+  const isCode = entry.kind === 'code';
+  const viewerClass = isCode ? 'code-viewer' : 'pdf-viewer';
+  const typeLabel = isCode ? 'PYTHON SOURCE' : 'PDF DOCUMENT';
+
+  preview.dataset.index = String(index);
+  preview.innerHTML = `
+    <div class="report-preview-head">
+      <div class="entry-meta">
+        <span class="date">${escapeHtml(entry.date)}</span>
+        ${entry.tags.map(tag => `<span class="tag ${tagClass(tag)}">${escapeHtml(tagLabel(tag))}</span>`).join('')}
+      </div>
+      <span class="report-preview-type">${typeLabel}</span>
+      <h3>${escapeHtml(entry.title)}</h3>
+      <p>${escapeHtml(entry.desc).replace(/\n\n/g, '<br><br>')}</p>
+    </div>
+    <div class="pdf-bar report-preview-bar">
+      <div class="file-name">${ICONS.file}<span>${escapeHtml(entry.file)}</span></div>
+      <div class="pdf-actions">
+        <span class="pages" id="pages-${index}"></span>
+        <a href="${escapeHtml(entry.url)}" class="pdf-btn" download>${ICONS.download}<span>Download</span></a>
+      </div>
+    </div>
+    <div class="report-preview-document ${viewerClass}" id="viewer-${index}">
+      <div class="loading"><div class="spinner"></div><span>Opening report...</span></div>
+    </div>
+  `;
+
+  if (isCode) {
+    renderCode(entry.url, $(`#viewer-${index}`), index);
+  } else {
+    renderPdf(entry.url, $(`#viewer-${index}`), index);
+  }
 }
 
 function toggleArticle(article) {
@@ -369,7 +398,9 @@ async function renderPdf(url, wrapper, index) {
     wrapper.innerHTML = '';
     $(`#pages-${index}`).textContent = `${pdf.numPages} page${pdf.numPages === 1 ? '' : 's'}`;
 
-    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+    const previewPages = Math.min(pdf.numPages, 3);
+
+    for (let pageNumber = 1; pageNumber <= previewPages; pageNumber++) {
       const page = await pdf.getPage(pageNumber);
       const baseViewport = page.getViewport({ scale: 1 });
       const viewport = page.getViewport({ scale: maxWidth / baseViewport.width });
@@ -389,6 +420,12 @@ async function renderPdf(url, wrapper, index) {
       }).promise;
 
       wrapper.appendChild(canvas);
+    }
+
+    if (pdf.numPages > previewPages) {
+      wrapper.insertAdjacentHTML('beforeend', `
+        <div class="preview-limit">Previewing the first ${previewPages} of ${pdf.numPages} pages. Use Download for the complete paper.</div>
+      `);
     }
   } catch (err) {
     console.error(err);
@@ -493,6 +530,14 @@ document.addEventListener('click', event => {
   if (filter) {
     state.filter = filter.dataset.filter;
     renderFilters();
+    renderPapers();
+  }
+
+  const reportItem = event.target.closest('[data-select-entry]');
+
+  if (reportItem) {
+    state.selectedIndex = Number(reportItem.dataset.selectEntry);
+    $('#reportPreview').removeAttribute('data-index');
     renderPapers();
   }
 
