@@ -111,6 +111,9 @@
   let textureWidth = 0;
   let textureHeight = 0;
   let wallpaperDirty = true;
+  let textureRevision = 0;
+  const stats = { frames: 0, textureUploads: 0, surfaceCopies: 0, lastFrameMs: 0 };
+  const debug = options.has('glassDebug');
 
   function schedule() {
     if (!pending && !lost && !document.hidden) pending = requestAnimationFrame(draw);
@@ -132,7 +135,7 @@
       record.canvas.remove();
       surfaces.delete(surface);
     }
-    document.querySelectorAll('.glass-surface').forEach(surface => {
+    document.querySelectorAll('.glass-surface:not([data-glass-native])').forEach(surface => {
       if (surfaces.has(surface)) return;
       const canvas = document.createElement('canvas');
       canvas.className = 'glass-refraction';
@@ -225,14 +228,20 @@
       sourceCanvas.width = width;
       sourceCanvas.height = height;
     }
-    paintWallpaper(width, height);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    if (textureWidth !== width || textureHeight !== height) {
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
-      textureWidth = width;
-      textureHeight = height;
-    } else {
-      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+    const frameStart = debug ? performance.now() : 0;
+    const upload = wallpaperDirty || textureWidth !== width || textureHeight !== height || Boolean(scene);
+    if (upload) {
+      paintWallpaper(width, height);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      if (textureWidth !== width || textureHeight !== height) {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+        textureWidth = width;
+        textureHeight = height;
+      } else {
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+      }
+      textureRevision++;
+      stats.textureUploads++;
     }
     gl.uniform2f(uniforms.viewport, width, height);
     gl.uniform1f(uniforms.shade, document.documentElement.dataset.theme === 'dark' ? .94 : 1);
@@ -248,7 +257,9 @@
       const ratio = Math.min(window.devicePixelRatio || 1, 1.25, limit/rect.width, limit/rect.height);
       const w = Math.max(1, Math.round(rect.width * ratio));
       const h = Math.max(1, Math.round(rect.height * ratio));
-      visible.push({ surface, record, rect, radius, w, h });
+      const signature = [rect.left.toFixed(1), rect.top.toFixed(1), w, h, radius, textureRevision, document.documentElement.dataset.theme].join(',');
+      if (signature === record.signature && record.canvas.isConnected) continue;
+      visible.push({ surface, record, rect, radius, w, h, signature });
     }
     if (!visible.length) return;
     const requiredWidth = Math.max(...visible.map(item => item.w));
@@ -259,7 +270,7 @@
     }
     gl.clearColor(0,0,0,1);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    for (const { surface, record, rect, radius, w, h } of visible) {
+    for (const { surface, record, rect, radius, w, h, signature } of visible) {
       // Reuse one drawing buffer for every surface. The old path resized this
       // canvas for every tile on every frame, forcing repeated GPU allocations.
       gl.viewport(0,output.height-h,w,h);
@@ -273,12 +284,19 @@
         record.canvas.height = h;
       }
       record.context.drawImage(output,0,0,w,h,0,0,w,h);
+      record.signature = signature;
+      stats.surfaceCopies++;
       if (surface.dataset.refractionReady !== 'true') {
         surface.dataset.refractionReady = 'true';
         surface.dispatchEvent(new Event('glass-refraction-ready'));
       }
     }
     document.documentElement.dataset.refraction = flat ? 'flat' : 'active';
+    stats.frames++;
+    if (debug) {
+      stats.lastFrameMs = Math.round((performance.now() - frameStart) * 10) / 10;
+      document.documentElement.dataset.glassStats = JSON.stringify(stats);
+    }
   }
 
   output.addEventListener('webglcontextlost', event => {
@@ -297,6 +315,7 @@
   addEventListener('resize', schedule, { passive:true });
   addEventListener('pageshow', schedule);
   document.addEventListener('visibilitychange', schedule);
+  document.addEventListener('glass-layout-change', schedule);
   document.fonts?.ready.then(schedule);
   new MutationObserver(schedule).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
   const list = document.querySelector('#articleList');

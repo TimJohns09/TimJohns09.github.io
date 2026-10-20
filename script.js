@@ -252,9 +252,14 @@ function renderTerminalIndex() {
 function renderFilters() {
   const tags = ['ALL', ...new Set(entries.flatMap(entry => entry.tags))];
 
-  $('#filters').innerHTML = tags
+  if (!$('#filters').children.length) $('#filters').innerHTML = tags
     .map(tag => `<button class="filter ${tag === state.filter ? 'active' : ''}" type="button" data-filter="${escapeHtml(tag)}" aria-pressed="${tag === state.filter}">${escapeHtml(tag)}</button>`)
     .join('');
+  $$('.filter').forEach(button => {
+    const active = button.dataset.filter === state.filter;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
 }
 
 function renderPgpKeys() {
@@ -295,7 +300,7 @@ function renderPapers() {
     state.selectedIndex = visible[0].index;
   }
 
-  $('#articleList').innerHTML = visible.map(({ entry, index }) => {
+  if (!$('#articleList').children.length) $('#articleList').innerHTML = entries.map((entry, index) => {
     return `
       <button class="report-list-item glass-surface ${index === state.selectedIndex ? 'active' : ''}" type="button" data-select-entry="${index}" ${index === state.selectedIndex ? 'aria-current="true"' : ''}>
         <span class="report-list-index">${String(index + 1).padStart(2, '0')}</span>
@@ -312,15 +317,36 @@ function renderPapers() {
     `;
   }).join('');
 
+  $$('.report-list-item').forEach(button => {
+    const index = Number(button.dataset.selectEntry);
+    button.hidden = !entryMatches(entries[index]);
+    button.classList.toggle('active', index === state.selectedIndex);
+    if (index === state.selectedIndex) button.setAttribute('aria-current', 'true');
+    else button.removeAttribute('aria-current');
+  });
+  document.dispatchEvent(new Event('glass-layout-change'));
+
   $('#reportCount').textContent = `${visible.length} published entr${visible.length === 1 ? 'y' : 'ies'}`;
   $('#emptyState').style.display = visible.length ? 'none' : 'block';
 
   if (visible.length) {
     renderSelectedReport(state.selectedIndex);
   } else {
-    $('#reportPreview').innerHTML = '<div class="report-preview-empty"><span>NO MATCH</span><p>Adjust the search or select another filter.</p></div>';
+    cancelPreview();
+    setPreviewMarkup($('#reportPreview'), '<div class="report-preview-empty"><span>NO MATCH</span><p>Adjust the search or select another filter.</p></div>');
     $('#reportPreview').removeAttribute('data-index');
   }
+}
+
+let previewTask = null;
+function cancelPreview() {
+  previewTask?.destroy().catch(() => {});
+  previewTask = null;
+}
+function setPreviewMarkup(preview, markup) {
+  const glassLayers = [...preview.children].filter(node => node.matches('.glass-effect, .glass-refraction'));
+  preview.innerHTML = markup;
+  preview.prepend(...glassLayers);
 }
 
 function renderSelectedReport(index) {
@@ -333,8 +359,9 @@ function renderSelectedReport(index) {
   const viewerClass = isCode ? 'code-viewer' : 'pdf-viewer';
   const typeLabel = isCode ? 'PYTHON SOURCE' : 'PDF DOCUMENT';
 
+  cancelPreview();
   preview.dataset.index = String(index);
-  preview.innerHTML = `
+  setPreviewMarkup(preview, `
     <div class="report-preview-head">
       <div class="entry-meta">
         <span class="date">${escapeHtml(entry.date)}</span>
@@ -355,7 +382,7 @@ function renderSelectedReport(index) {
     <div class="report-preview-document ${viewerClass}" id="viewer-${index}">
       <div class="loading"><div class="spinner"></div><span>Opening report...</span></div>
     </div>
-  `;
+  `);
 
   if (isCode) {
     renderCode(entry.url, $(`#viewer-${index}`), index);
@@ -393,7 +420,9 @@ async function renderPdf(url, wrapper, index) {
   }
 
   try {
-    const pdf = await pdfjsLib.getDocument(url).promise;
+    const task = pdfjsLib.getDocument(url);
+    previewTask = task;
+    const pdf = await task.promise;
     if (!wrapper.isConnected) { pdf.destroy(); return; }
     const maxWidth = Math.min(Math.max(wrapper.clientWidth - 44, 260), 980);
 
@@ -430,6 +459,8 @@ async function renderPdf(url, wrapper, index) {
         <div class="preview-limit">Previewing the first ${previewPages} of ${pdf.numPages} pages. Use Download for the complete paper.</div>
       `);
     }
+    pdf.destroy();
+    if (previewTask === task) previewTask = null;
   } catch (err) {
     if (!wrapper.isConnected) return;
     console.error(err);
@@ -473,7 +504,7 @@ function highlightPython(code) {
 
 async function renderCode(url, wrapper, index) {
   try {
-    const response = await fetch(url, { cache: 'no-store' });
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
@@ -544,7 +575,6 @@ document.addEventListener('click', event => {
 
   if (reportItem) {
     state.selectedIndex = Number(reportItem.dataset.selectEntry);
-    $('#reportPreview').removeAttribute('data-index');
     renderPapers();
     if (matchMedia('(max-width: 760px)').matches) {
       $('#reportPreview').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });

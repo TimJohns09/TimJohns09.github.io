@@ -37,7 +37,7 @@
   border-radius:inherit;
 }
 .glass-surface[data-refraction-ready="true"] > .glass-refraction { visibility:visible; }
-.glass-surface:not([data-glass-ready]) { background:rgba(84,84,84,.10); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+.glass-surface:not([data-glass-native]):not([data-glass-ready]) { background:rgba(84,84,84,.10); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
 .symbol-well { display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.06); }
 .filled-symbol { display: block; width: 100%; height: 100%; fill: currentColor; stroke: none; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {

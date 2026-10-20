@@ -10,14 +10,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=glass-restored" />
-  <link rel="stylesheet" href="glass-material.css?v=lens-refraction" />
+  <link rel="stylesheet" href="glass-material.css?v=glass-polish-1" />
   <link rel="stylesheet" href="liquid-glass.css?v=glass-restored" />
-  <link rel="stylesheet" href="workspace-layout.css?v=glass-restored" />
+  <link rel="stylesheet" href="workspace-layout.css?v=glass-polish-1" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
-  <script src="script.js?v=research-workspace-2" defer></script>
-  <script src="glass-effect.js?v=workspace-layout" defer></script>
-  <script src="glass-refraction.js?v=fixed-technical-wallpaper" defer></script>
+  <script src="script.js?v=glass-polish-1" defer></script>
+  <script src="glass-effect.js?v=glass-polish-1" defer></script>
+  <script src="glass-refraction.js?v=glass-polish-1" defer></script>
 </head>
 
 <body id="top">
@@ -79,7 +79,7 @@
 
       <section class="terminal-wrap" id="terminal" aria-label="Profile terminal">
 
-      <div class="terminal glass-surface" id="contact" aria-label="Profile terminal">
+      <div class="terminal glass-surface" data-glass-native id="contact" aria-label="Profile terminal">
         <div class="terminal-titlebar">
           <div class="window-dots" aria-hidden="true">
             <span class="dot red"></span>
@@ -87,8 +87,8 @@
             <span class="dot green"></span>
           </div>
 
-          <span class="terminal-caption">tim@research: ~</span>
-          <span class="terminal-session">zsh</span>
+          <span class="terminal-caption">tim — zsh — ~/research</span>
+          <span class="terminal-session" aria-hidden="true">⌘</span>
         </div>
         <div class="tabs" role="tablist" aria-label="Profile sections">
             <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="whoami">
@@ -177,7 +177,7 @@
 
         <div class="report-browser">
           <div class="controls" aria-label="Report controls">
-            <label class="search-wrap glass-surface">
+            <label class="search-wrap glass-surface" data-glass-native>
               <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="11" cy="11" r="8"></circle>
                 <path d="m21 21-4.35-4.35"></path>

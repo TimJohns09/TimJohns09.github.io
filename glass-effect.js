@@ -50,7 +50,7 @@
     <g clip-path="url(#${id}-outer)">
       ${rect('fill="white" fill-opacity=".01"')}
       ${backdrop(2, `${id}-blur2`, -65, -56, width+131, height+112)}
-      <g filter="url(#${id}-texture)"><rect x="-33" y="-24" width="${width+67}" height="${height+48}" fill="white" fill-opacity=".01"/></g>
+      ${refracted ? '' : `<g filter="url(#${id}-texture)"><rect x="-33" y="-24" width="${width+67}" height="${height+48}" fill="white" fill-opacity=".01"/></g>`}
       <g mask="url(#${id}-half)">
         ${backdrop(45, `${id}-blur45`, -90, -90, width+180, height+180)}
         ${rect('fill="#545454" fill-opacity=".1"')}
@@ -68,7 +68,7 @@
 
   const resize = new ResizeObserver(entries => entries.forEach(({ target }) => render(target)));
   function attach() {
-    document.querySelectorAll('.glass-surface:not([data-glass-ready])').forEach(surface => {
+    document.querySelectorAll('.glass-surface:not([data-glass-native]):not([data-glass-ready])').forEach(surface => {
       const svg = document.createElementNS(namespace, 'svg');
       svg.classList.add('glass-effect');
       svg.setAttribute('aria-hidden', 'true');
