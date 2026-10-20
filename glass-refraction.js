@@ -102,6 +102,9 @@
   if (!wallpaperContext) return;
   const wallpaper = new Image();
   wallpaper.src = new URL('assets/glass-backdrop.svg?v=color-field', document.baseURI).href;
+  const darkWallpaper = new Image();
+  darkWallpaper.src = new URL('assets/glass-backdrop-dark.svg', document.baseURI).href;
+  const activeWallpaper = () => !scene && document.documentElement.dataset.theme === 'dark' ? darkWallpaper : wallpaper;
   const researchPattern = new Image();
   researchPattern.src = new URL('assets/research-pattern-v2.webp', document.baseURI).href;
   const surfaces = new Map();
@@ -151,10 +154,12 @@
   }
 
   function paintWallpaper(width, height) {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    const field = activeWallpaper();
     sourceContext.setTransform(1,0,0,1,0,0);
     sourceContext.globalAlpha = 1;
     sourceContext.globalCompositeOperation = 'source-over';
-    sourceContext.fillStyle = '#282851';
+    sourceContext.fillStyle = dark ? '#070d1b' : '#282851';
     sourceContext.fillRect(0,0,width,height);
     if (scene) {
       const r = scene.getBoundingClientRect();
@@ -189,19 +194,19 @@
       if (wallpaperCanvas.width !== width || wallpaperCanvas.height !== height || wallpaperDirty) {
         wallpaperCanvas.width = width;
         wallpaperCanvas.height = height;
-        wallpaperContext.fillStyle = '#282851';
+        wallpaperContext.fillStyle = dark ? '#070d1b' : '#282851';
         wallpaperContext.fillRect(0,0,width,height);
-        const scale = Math.max(width / wallpaper.naturalWidth, height / wallpaper.naturalHeight);
-        const w = wallpaper.naturalWidth * scale;
-        const h = wallpaper.naturalHeight * scale;
-        wallpaperContext.drawImage(wallpaper, (width-w)/2, 0, w, h);
+        const scale = Math.max(width / field.naturalWidth, height / field.naturalHeight);
+        const w = field.naturalWidth * scale;
+        const h = field.naturalHeight * scale;
+        wallpaperContext.drawImage(field, (width-w)/2, 0, w, h);
         if (researchPattern.complete && researchPattern.naturalWidth) {
           const patternScale = Math.max(width / researchPattern.naturalWidth, height / researchPattern.naturalHeight);
           const patternWidth = researchPattern.naturalWidth * patternScale;
           const patternHeight = researchPattern.naturalHeight * patternScale;
           wallpaperContext.save();
           wallpaperContext.globalCompositeOperation = 'screen';
-          wallpaperContext.globalAlpha = width < 560 ? .54 : .58;
+          wallpaperContext.globalAlpha = dark ? .19 : (width < 560 ? .54 : .58);
           wallpaperContext.filter = 'saturate(1.12) contrast(1.12)';
           wallpaperContext.drawImage(
             researchPattern,
@@ -214,13 +219,19 @@
         }
         wallpaperDirty = false;
       }
+      // Diffuse the cached backdrop once, keeping text and the lens edge sharp.
+      // Scrolling reuses this texture; it does not run a blur for every tile.
+      sourceContext.save();
+      sourceContext.filter = 'blur(8px)';
       sourceContext.drawImage(wallpaperCanvas,0,0);
+      sourceContext.restore();
     }
   }
 
   function draw() {
     pending = 0;
-    if (lost || !wallpaper.complete || !wallpaper.naturalWidth || document.hidden) return;
+    const field = activeWallpaper();
+    if (lost || !field.complete || !field.naturalWidth || document.hidden) return;
     const width = window.innerWidth;
     const height = window.innerHeight;
     if (width > limit || height > limit) return;
@@ -310,6 +321,7 @@
     }
   });
   wallpaper.addEventListener('load', () => { wallpaperDirty = true; schedule(); });
+  darkWallpaper.addEventListener('load', () => { wallpaperDirty = true; schedule(); });
   researchPattern.addEventListener('load', () => { wallpaperDirty = true; schedule(); });
   addEventListener('scroll', schedule, { passive:true });
   addEventListener('resize', schedule, { passive:true });
@@ -317,7 +329,8 @@
   document.addEventListener('visibilitychange', schedule);
   document.addEventListener('glass-layout-change', schedule);
   document.fonts?.ready.then(schedule);
-  new MutationObserver(schedule).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+  new MutationObserver(() => { wallpaperDirty = true; schedule(); })
+    .observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
   const list = document.querySelector('#articleList');
   if (list) new MutationObserver(attach).observe(list, { childList:true });
   attach();
