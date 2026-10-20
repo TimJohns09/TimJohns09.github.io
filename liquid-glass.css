@@ -287,96 +287,88 @@ a:focus-visible,button:focus-visible,input:focus-visible { outline:3px solid #ff
   .hero-motifs .motif-pill .motif-copy strong,.hero-motifs .motif-pill .motif-copy span { font-size:25px; line-height:30px; }
 }
 
-/* Tinted machined metal. These highlights follow each control's native box,
-   so no reference texture is stretched and no geometry is replaced. */
-:root {
-  --metal-layer:
-    linear-gradient(180deg,
-      rgba(255,255,255,.48) 0%,
-      rgba(255,255,255,.18) 17%,
-      rgba(255,255,255,.04) 48%,
-      rgba(0,0,0,.16) 78%,
-      rgba(0,0,0,.34) 100%),
-    linear-gradient(90deg,
-      rgba(255,255,255,.08) 0%,
-      rgba(255,255,255,.22) 46%,
-      rgba(255,255,255,.08) 62%,
-      rgba(0,0,0,.12) 100%);
-}
-
+/* The supplied metal SVG is four embedded reference surfaces. The pill below
+   is used as a nine-slice: its end caps stay pixel-perfect while only the
+   broad center field expands. Each control keeps its original silhouette and
+   color underneath the authentic metal lighting. */
 :is(.nav-links a,.theme-toggle,.button,.tab,.filter,.chip,.pdf-btn,.copy-btn,.section-count) {
   --metal-fill:rgba(255,255,255,.10);
-  background-color:var(--metal-fill);
-  background-image:var(--metal-layer);
-  background-blend-mode:screen,soft-light;
+  --metal-cap:22px;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:var(--metal-fill);
   border-color:rgba(255,255,255,.28);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.55),
-    inset 0 -1px 0 rgba(0,0,0,.38),
-    inset 1px 0 0 rgba(255,255,255,.12),
-    inset -1px 0 0 rgba(0,0,0,.14),
-    0 3px 8px rgba(8,5,24,.2);
-  transition:transform var(--ease),filter var(--ease),box-shadow var(--ease),background-color var(--ease);
+  color:inherit;
+  box-shadow:0 3px 8px rgba(8,5,24,.20);
+  transition:transform var(--ease),box-shadow var(--ease),background-color var(--ease);
+}
+
+:is(.nav-links a,.theme-toggle,.button,.tab,.filter,.chip,.pdf-btn,.copy-btn,.section-count)::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  box-sizing:border-box;
+  border:var(--metal-cap) solid transparent;
+  border-radius:inherit;
+  border-image-source:url('assets/metal-pill-reference.png');
+  border-image-slice:192 192 fill;
+  border-image-width:var(--metal-cap);
+  border-image-repeat:stretch;
+  mix-blend-mode:soft-light;
+  opacity:.66;
+  pointer-events:none;
 }
 
 :is(.filter,.chip,.pdf-btn,.copy-btn,.section-count) {
   --metal-fill:rgba(20,16,45,.20);
 }
 
-.tab,
-[data-theme="dark"] .tab {
-  --metal-fill:rgba(255,255,255,.045);
-  background-color:var(--metal-fill);
-  background-image:var(--metal-layer);
-  background-blend-mode:screen,soft-light;
-}
+.chip,.pdf-btn,.copy-btn { --metal-cap:17px; }
+.tab,[data-theme="dark"] .tab { --metal-fill:rgba(255,255,255,.10); --metal-cap:30px; }
+.tab::before,[data-theme="dark"] .tab::before { inset:-14px -8px; }
 
 .button.primary,
 [data-theme="dark"] .button.primary {
   --metal-fill:rgba(36,36,36,.28);
-  background-color:var(--metal-fill);
-  background-image:var(--metal-layer);
-  background-blend-mode:screen,soft-light;
   color:#fff;
   border-color:rgba(255,255,255,.34);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.5),
-    inset 0 -1px 0 rgba(0,0,0,.48),
-    0 4px 10px rgba(8,5,24,.24);
+  box-shadow:0 4px 10px rgba(8,5,24,.24);
 }
 
 .filter.active,
 .tab.active,
 [data-theme="dark"] .tab.active {
   --metal-fill:rgba(255,255,255,.20);
-  background-color:var(--metal-fill);
-  background-image:var(--metal-layer);
-  background-blend-mode:screen,soft-light;
   color:#fff;
   border-color:rgba(255,255,255,.42);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.7),
-    inset 0 -1px 0 rgba(0,0,0,.42),
-    0 3px 9px rgba(8,5,24,.24);
+  box-shadow:0 3px 9px rgba(8,5,24,.24);
 }
 
 :is(.nav-links a,.theme-toggle,.button,.tab,.filter,.chip,.pdf-btn,.copy-btn):hover {
-  background-image:var(--metal-layer);
-  filter:brightness(1.09) saturate(1.04);
+  background:var(--metal-fill);
   transform:translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.7),
-    inset 0 -1px 0 rgba(0,0,0,.36),
-    0 5px 12px rgba(8,5,24,.28);
+  box-shadow:0 5px 12px rgba(8,5,24,.28);
+}
+
+:is(.nav-links a,.theme-toggle,.button,.tab,.filter,.chip,.pdf-btn,.copy-btn):hover::before {
+  opacity:.78;
 }
 
 :is(.theme-toggle,.button,.tab,.filter,.copy-btn):active {
-  background-color:var(--metal-fill);
-  background-image:var(--metal-layer);
-  filter:brightness(.93);
+  background:var(--metal-fill);
   transform:translateY(1px);
   box-shadow:
     inset 0 2px 4px rgba(0,0,0,.38),
-    inset 0 -1px 0 rgba(255,255,255,.34),
-    0 1px 3px rgba(8,5,24,.2);
+    0 1px 3px rgba(8,5,24,.20);
+}
+
+:is(.theme-toggle,.button,.tab,.filter,.copy-btn):active::before {
+  opacity:.58;
+}
+
+@media (max-width:760px) {
+  .filter { --metal-cap:18px; }
+  .tab { --metal-cap:22px; }
 }
