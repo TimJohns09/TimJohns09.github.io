@@ -168,7 +168,7 @@ const tagClass = tag => `tag-${tag.replace(/[^a-z0-9]+/gi, '-')}`;
 const tagLabel = tag => tag.toLowerCase();
 
 const state = {
-  theme: document.documentElement.dataset.theme || 'dark',
+  theme: localStorage.getItem('theme') || document.documentElement.dataset.theme || 'light',
   filter: 'ALL',
   search: '',
   selectedIndex: 0,
@@ -225,12 +225,11 @@ const PY_BUILTINS = new Set([
 function setTheme(theme) {
   state.theme = theme;
   document.documentElement.dataset.theme = theme;
-  try { localStorage.setItem('theme', theme); } catch {}
+  localStorage.setItem('theme', theme);
 
   const toggle = $('#themeToggle');
-  toggle.innerHTML = ICONS[theme === 'dark' ? 'sun' : 'moon'];
+  toggle.innerHTML = ICONS[theme === 'dark' ? 'moon' : 'sun'];
   toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
-  toggle.title = theme === 'dark' ? 'Switch to colorful glass' : 'Switch to cyber dark';
 }
 
 function renderTerminalIndex() {
