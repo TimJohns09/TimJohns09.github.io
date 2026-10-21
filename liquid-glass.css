@@ -1,7 +1,7 @@
 /* Portfolio adaptation of reference.html, using the same background and material. */
 :root, [data-theme="dark"] {
   color-scheme: dark;
-  --bg:#282851;
+  --bg:#020704;
   --surface:rgba(27,22,60,.28);
   --surface-muted:rgba(255,255,255,.08);
   --surface-strong:rgba(255,255,255,.16);
@@ -26,8 +26,11 @@
 body, [data-theme="dark"] body {
   position:relative;
   isolation:isolate;
-  background:#282851 url('assets/glass-backdrop.svg?v=color-field') center top / cover fixed no-repeat;
+  background:#020704 url('assets/glass-backdrop-green-dark.svg') center top / cover fixed no-repeat;
   font-family:var(--sf-font);
+}
+[data-theme="light"] body {
+  background:#233f2c url('assets/glass-backdrop-green-light.svg') center top / cover fixed no-repeat;
 }
 body::before, [data-theme="dark"] body::before,.page-frame { display:none; }
 .research-wallpaper {

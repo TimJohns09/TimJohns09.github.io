@@ -101,7 +101,11 @@
   const wallpaperContext = wallpaperCanvas.getContext('2d', { alpha: false });
   if (!wallpaperContext) return;
   const wallpaper = new Image();
-  wallpaper.src = new URL('assets/glass-backdrop.svg?v=color-field', document.baseURI).href;
+  function updateWallpaper() {
+    const theme = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    wallpaper.src = new URL(`assets/glass-backdrop-green-${theme}.svg`, document.baseURI).href;
+  }
+  updateWallpaper();
   const researchPattern = new Image();
   researchPattern.src = new URL('assets/research-pattern-v2.webp', document.baseURI).href;
   const surfaces = new Map();
@@ -317,7 +321,11 @@
   document.addEventListener('visibilitychange', schedule);
   document.addEventListener('glass-layout-change', schedule);
   document.fonts?.ready.then(schedule);
-  new MutationObserver(schedule).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+  new MutationObserver(() => {
+    updateWallpaper();
+    wallpaperDirty = true;
+    schedule();
+  }).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
   const list = document.querySelector('#articleList');
   if (list) new MutationObserver(attach).observe(list, { childList:true });
   attach();

@@ -5,19 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Tim Johns Cyber Blog and Portfolio — applied cryptography, malware analysis, network security, PDFs, code, and PGP keys." />
   <title>Tim Johns Cyber Blog and Portfolio</title>
+  <script>
+    try {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+    } catch {}
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=glass-restored" />
   <link rel="stylesheet" href="glass-material.css?v=glass-polish-1" />
-  <link rel="stylesheet" href="liquid-glass.css?v=glass-restored" />
+  <link rel="stylesheet" href="liquid-glass.css?v=green-backgrounds-1" />
   <link rel="stylesheet" href="workspace-layout.css?v=glass-polish-1" />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
   <script src="script.js?v=glass-polish-1" defer></script>
   <script src="glass-effect.js?v=glass-polish-1" defer></script>
-  <script src="glass-refraction.js?v=glass-polish-1" defer></script>
+  <script src="glass-refraction.js?v=green-backgrounds-1" defer></script>
 </head>
 
 <body id="top">
