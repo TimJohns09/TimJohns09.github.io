@@ -55,7 +55,7 @@
                         sampleBackground(source).g,
                         sampleBackground(source - dispersion).b);
       float highlight = pow(max(dot(normal, normalize(vec2(-0.6, -0.8))), 0.0), 4.0);
-      color = color * shade + highlight * edge * 0.055;
+      color = color * shade + highlight * edge * 0.085;
       gl_FragColor = vec4(color, 1.0);
     }`;
 
@@ -206,7 +206,7 @@
           const patternHeight = researchPattern.naturalHeight * patternScale;
           wallpaperContext.save();
           wallpaperContext.globalCompositeOperation = 'screen';
-          wallpaperContext.globalAlpha = dark ? .19 : (width < 560 ? .54 : .58);
+          wallpaperContext.globalAlpha = dark ? .30 : (width < 560 ? .54 : .58);
           wallpaperContext.filter = 'saturate(1.12) contrast(1.12)';
           wallpaperContext.drawImage(
             researchPattern,
@@ -219,10 +219,10 @@
         }
         wallpaperDirty = false;
       }
-      // Diffuse the cached backdrop once, keeping text and the lens edge sharp.
-      // Scrolling reuses this texture; it does not run a blur for every tile.
+      // Keep the artwork legible through the lens so its displacement remains
+      // visible. Only a subpixel softening is cached, never a frosted wash.
       sourceContext.save();
-      sourceContext.filter = 'blur(8px)';
+      sourceContext.filter = 'blur(0.75px)';
       sourceContext.drawImage(wallpaperCanvas,0,0);
       sourceContext.restore();
     }
