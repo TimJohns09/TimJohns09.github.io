@@ -2,7 +2,7 @@
    layer draws the glass behind the real DOM, including the sticky reader. */
 (() => {
   const panes = [...document.querySelectorAll('.report-list-item, .report-preview, .terminal')];
-  const scrollWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
+  const mobileWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
   const simple = matchMedia('(prefers-reduced-transparency: reduce), (forced-colors: active)');
   if (!panes.length || simple.matches) return;
 
@@ -137,8 +137,8 @@
     }
     // The reader replaces its children when a different document opens.
     if (surface.canvas.parentElement !== pane) pane.prepend(surface.canvas);
-    const x = rect.left + scrollX + pane.clientLeft;
-    const y = rect.top + scrollY + pane.clientTop;
+    const x = rect.left + pane.clientLeft;
+    const y = rect.top + pane.clientTop;
     const width = pane.clientWidth;
     const height = pane.clientHeight;
     if (!width || !height) return;
@@ -161,21 +161,21 @@
   function draw() {
     frame = 0;
     if (simple.matches || document.hidden || gl.isContextLost()) return;
-    const scrolls = scrollWallpaper.matches;
+    const mobile = mobileWallpaper.matches;
     const theme = document.documentElement.dataset.theme;
     const ratio = Math.min(devicePixelRatio || 1, 1.5);
-    const tileWidth = scrolls ? Math.max(520, Math.min(innerWidth * 1.15, 840))
+    const tileWidth = mobile ? Math.max(520, Math.min(innerWidth * 1.15, 840))
       : Math.max(740, Math.min(innerWidth * .82, 1160));
-    const tileHeight = tileWidth * (scrolls ? 473 / 840 : art.naturalHeight / art.naturalWidth);
+    const tileHeight = tileWidth * (mobile ? 473 / 840 : art.naturalHeight / art.naturalWidth);
     gl.uniform2f(u.tile, tileWidth, tileHeight);
     gl.uniform1f(u.lightTheme, theme === 'light' ? 1 : 0);
 
-    if (scrolls) {
+    if (mobile) {
       document.documentElement.classList.remove('optics-ready');
       for (const pane of panes) {
         const rect = pane.getBoundingClientRect();
-        if (!rect.width) continue;
-        drawMobile(pane, rect, ratio, tileWidth, theme);
+        if (!rect.width || rect.bottom < -120 || rect.top > innerHeight + 120) continue;
+        drawMobile(pane, rect, Math.min(ratio, 1), tileWidth, theme);
       }
       return;
     }
@@ -213,11 +213,9 @@
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, art);
     if (gl.getError() !== gl.NO_ERROR) return;
     document.body.prepend(layer);
-    window.addEventListener('scroll', () => {
-      if (!scrollWallpaper.matches) schedule();
-    }, { passive: true });
+    window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
-    scrollWallpaper.addEventListener('change', schedule);
+    mobileWallpaper.addEventListener('change', schedule);
     document.addEventListener('visibilitychange', schedule);
     simple.addEventListener('change', () => {
       document.documentElement.classList.remove('optics-ready');

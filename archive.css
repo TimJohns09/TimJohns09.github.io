@@ -451,16 +451,25 @@ body::before {
   border-color: var(--pane-edge);
   box-shadow: inset 0 1px 0 var(--pane-glint);
 }
-/* Use ordinary, pre-tinted tiles on phones and tablets. The root background
-   scrolls with the document, including in Safari with its toolbar collapsed. */
+/* A fixed element keeps the opaque wallpaper in viewport coordinates on
+   mobile without relying on background-attachment: fixed. */
 @media (max-width: 879px), (hover: none) and (pointer: coarse) {
-  html {
-    --pattern-size: clamp(520px, 115vw, 840px) auto;
+  html { --pattern-size: clamp(520px, 115vw, 840px) auto; }
+  body::before {
+    position: fixed;
+    inset: 0;
     background: var(--bg) url("assets/wallpaper-dark.webp") 0 0 / var(--pattern-size) repeat;
+    -webkit-mask: none;
+    mask: none;
+    filter: none;
+    mix-blend-mode: normal;
+    opacity: 1;
   }
-  html[data-theme="light"] { background-image: url("assets/wallpaper-light.webp"); }
-  body { background: transparent; }
-  body::before { display: none; }
+  [data-theme="light"] body::before {
+    background-image: url("assets/wallpaper-light.webp");
+    filter: none;
+    mix-blend-mode: normal;
+  }
   .report-preview { position: relative; top: auto; }
   .terminal::before, .report-preview::before, .report-list-item::before {
     background-attachment: scroll;
@@ -506,6 +515,10 @@ body::before {
   .report-list-item.active { background: var(--soft); }
 }
 
+@media (prefers-reduced-transparency: reduce) and (max-width: 879px),
+       (prefers-reduced-transparency: reduce) and (hover: none) and (pointer: coarse) {
+  body::before { display: block; }
+}
 @media (forced-colors: active) {
-  html, html[data-theme="light"] { background-image: none; }
+  body::before { display: none; }
 }
