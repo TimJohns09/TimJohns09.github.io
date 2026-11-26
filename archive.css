@@ -461,6 +461,7 @@ body::before {
   html[data-theme="light"] { background-image: url("assets/wallpaper-light.webp"); }
   body { background: transparent; }
   body::before { display: none; }
+  .report-preview { position: relative; top: auto; }
   .terminal::before, .report-preview::before, .report-list-item::before {
     background-attachment: scroll;
     background-position: var(--sample-x, 0px) var(--sample-y, 0px);
@@ -478,15 +479,26 @@ body::before {
   visibility: hidden;
 }
 .optics-ready .optical-layer { visibility: visible; }
+.pane-optical-surface {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.optical-pane-ready,
 .optics-ready :is(.terminal, .report-preview, .report-list-item) {
   background: linear-gradient(146deg, rgb(209 244 227 / .065), transparent 22% 83%, rgb(174 229 201 / .045));
 }
+.optical-pane-ready::before,
 .optics-ready :is(.terminal, .report-preview, .report-list-item)::before { display: none; }
 .optics-ready .report-list-item:hover { border-color: var(--accent); }
 .report-list-item::before { opacity: .22; }
 
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
-  body::before, .optical-layer, .report-list-item::before, .terminal::before, .terminal::after,
+  body::before, .optical-layer, .pane-optical-surface, .report-list-item::before, .terminal::before, .terminal::after,
   .report-preview::before, .report-preview::after { display: none; }
   .terminal, .report-preview, .search-wrap, .pgp { background: var(--surface); }
   .report-preview-document { background: var(--bg); }

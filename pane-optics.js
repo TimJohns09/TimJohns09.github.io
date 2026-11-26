@@ -90,35 +90,107 @@
     'lightTheme','isCard','selected'].map(name => [name, gl.getUniformLocation(program,name)]));
   const texture = gl.createTexture();
   const art = new Image();
+  const mobileSurfaces = new Map();
+  const mobileSamples = new WeakMap();
   let frame = 0;
+
+  function resizeBuffer(width, height, ratio) {
+    const w = Math.max(1, Math.round(width * ratio));
+    const h = Math.max(1, Math.round(height * ratio));
+    if (layer.width !== w || layer.height !== h) {
+      layer.width = w;
+      layer.height = h;
+    }
+    gl.viewport(0, 0, w, h);
+  }
+
+  function drawPane(pane, x, y, width, height) {
+    const card = pane.classList.contains('report-list-item');
+    const rim = parseFloat(getComputedStyle(pane).borderTopLeftRadius) || 0;
+    gl.uniform2f(u.origin, x, y);
+    gl.uniform2f(u.size, width, height);
+    gl.uniform1f(u.radius, Math.min(rim, width / 2, height / 2));
+    gl.uniform1f(u.isCard, card ? 1 : 0);
+    gl.uniform1f(u.selected, pane.hasAttribute('aria-current') ? 1 : 0);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  function clearMobileSurfaces() {
+    for (const [pane, surface] of mobileSurfaces) {
+      surface.canvas.remove();
+      pane.classList.remove('optical-pane-ready');
+      mobileSamples.delete(pane);
+    }
+    mobileSurfaces.clear();
+  }
+
+  function drawMobile(pane, rect, ratio, tile, theme) {
+    let surface = mobileSurfaces.get(pane);
+    if (!surface) {
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pane-optical-surface';
+      canvas.setAttribute('aria-hidden', 'true');
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      surface = { canvas, context };
+      mobileSurfaces.set(pane, surface);
+    }
+    // The reader replaces its children when a different document opens.
+    if (surface.canvas.parentElement !== pane) pane.prepend(surface.canvas);
+    const x = rect.left + scrollX + pane.clientLeft;
+    const y = rect.top + scrollY + pane.clientTop;
+    const width = pane.clientWidth;
+    const height = pane.clientHeight;
+    if (!width || !height) return;
+    const selected = pane.getAttribute('aria-current');
+    const radius = getComputedStyle(pane).borderTopLeftRadius;
+    const sample = [Math.round(x * 4), Math.round(y * 4), width, height, tile, ratio, theme, selected, radius].join('/');
+    if (mobileSamples.get(pane) === sample) return;
+    resizeBuffer(width, height, ratio);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(u.viewport, width, height);
+    gl.uniform2f(u.paperOffset, x, y);
+    drawPane(pane, 0, 0, width, height);
+    surface.canvas.width = layer.width;
+    surface.canvas.height = layer.height;
+    surface.context.drawImage(layer, 0, 0);
+    mobileSamples.set(pane, sample);
+    pane.classList.add('optical-pane-ready');
+  }
 
   function draw() {
     frame = 0;
     if (simple.matches || document.hidden || gl.isContextLost()) return;
-    const width = layer.clientWidth, height = layer.clientHeight;
-    if (!width || !height) return;
-    const ratio = Math.min(devicePixelRatio || 1, 1.5);
-    const w = Math.round(width * ratio), h = Math.round(height * ratio);
-    if (layer.width !== w || layer.height !== h) { layer.width = w; layer.height = h; }
-    gl.viewport(0, 0, w, h);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform2f(u.viewport, width, height);
     const scrolls = scrollWallpaper.matches;
+    const theme = document.documentElement.dataset.theme;
+    const ratio = Math.min(devicePixelRatio || 1, 1.5);
     const tileWidth = scrolls ? Math.max(520, Math.min(innerWidth * 1.15, 840))
       : Math.max(740, Math.min(innerWidth * .82, 1160));
-    gl.uniform2f(u.paperOffset, scrolls ? scrollX : 0, scrolls ? scrollY : 0);
-    gl.uniform2f(u.tile, tileWidth, tileWidth * art.naturalHeight / art.naturalWidth);
-    gl.uniform1f(u.lightTheme, document.documentElement.dataset.theme === 'light' ? 1 : 0);
+    const tileHeight = tileWidth * (scrolls ? 473 / 840 : art.naturalHeight / art.naturalWidth);
+    gl.uniform2f(u.tile, tileWidth, tileHeight);
+    gl.uniform1f(u.lightTheme, theme === 'light' ? 1 : 0);
+
+    if (scrolls) {
+      document.documentElement.classList.remove('optics-ready');
+      for (const pane of panes) {
+        const rect = pane.getBoundingClientRect();
+        if (!rect.width) continue;
+        drawMobile(pane, rect, ratio, tileWidth, theme);
+      }
+      return;
+    }
+
+    if (mobileSurfaces.size) clearMobileSurfaces();
+    const width = layer.clientWidth, height = layer.clientHeight;
+    if (!width || !height) return;
+    resizeBuffer(width, height, ratio);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(u.viewport, width, height);
+    gl.uniform2f(u.paperOffset, 0, 0);
     for (const pane of panes) {
-      const r = pane.getBoundingClientRect();
-      if (!r.width || r.bottom <= 0 || r.top >= height) continue;
-      const card = pane.classList.contains('report-list-item');
-      gl.uniform2f(u.origin, r.left, r.top);
-      gl.uniform2f(u.size, r.width, r.height);
-      gl.uniform1f(u.radius, card ? 13 : 14);
-      gl.uniform1f(u.isCard, card ? 1 : 0);
-      gl.uniform1f(u.selected, pane.hasAttribute('aria-current') ? 1 : 0);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      const rect = pane.getBoundingClientRect();
+      if (!rect.width || rect.bottom <= 0 || rect.top >= height) continue;
+      drawPane(pane, rect.left, rect.top, rect.width, rect.height);
     }
     document.documentElement.classList.add('optics-ready');
   }
@@ -127,6 +199,7 @@
   }
   layer.addEventListener('webglcontextlost', () => {
     document.documentElement.classList.remove('optics-ready');
+    clearMobileSurfaces();
     cancelAnimationFrame(frame);
     frame = 0;
   });
@@ -140,20 +213,23 @@
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, art);
     if (gl.getError() !== gl.NO_ERROR) return;
     document.body.prepend(layer);
-    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!scrollWallpaper.matches) schedule();
+    }, { passive: true });
     window.addEventListener('resize', schedule);
     scrollWallpaper.addEventListener('change', schedule);
     document.addEventListener('visibilitychange', schedule);
     simple.addEventListener('change', () => {
       document.documentElement.classList.remove('optics-ready');
+      if (simple.matches) clearMobileSurfaces();
       schedule();
     });
     const changes = new MutationObserver(schedule);
     changes.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    changes.observe(document.querySelector('#articleList'), { subtree: true, attributes: true, attributeFilter: ['hidden','aria-current'] });
+    changes.observe(document.querySelector('#reports'), { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden','aria-current'] });
     if ('ResizeObserver' in window) {
       const sizes = new ResizeObserver(schedule);
-      for (const el of [document.body, document.querySelector('.hero'), ...panes]) sizes.observe(el);
+      for (const el of [document.body, document.querySelector('.hero'), document.querySelector('.report-browser'), ...panes]) sizes.observe(el);
     }
     schedule();
   };
