@@ -545,6 +545,25 @@ async function copyText(text, btn) {
   }
 }
 
+function illuminateArticle(button, event) {
+  if (matchMedia('(prefers-reduced-motion: reduce), (forced-colors: active)').matches || !button.animate) return;
+  const bounds = button.getBoundingClientRect();
+  const x = event.detail ? event.clientX - bounds.left : bounds.width / 2;
+  const y = event.detail ? event.clientY - bounds.top : bounds.height / 2;
+  button.querySelector('.article-light')?.remove();
+  const light = document.createElement('span');
+  light.className = 'article-light';
+  light.setAttribute('aria-hidden', 'true');
+  light.style.setProperty('--light-x', x + 'px');
+  light.style.setProperty('--light-y', y + 'px');
+  button.append(light);
+  const pulse = light.animate(
+    [{ opacity: 0 }, { opacity: 1, offset: .10 }, { opacity: .55, offset: .36 }, { opacity: 0 }],
+    { duration: 720, easing: 'ease-out' }
+  );
+  pulse.onfinish = pulse.oncancel = () => light.remove();
+}
+
 document.addEventListener('click', event => {
   const tab = event.target.closest('.tab');
 
@@ -572,6 +591,7 @@ document.addEventListener('click', event => {
   const reportItem = event.target.closest('[data-select-entry]');
 
   if (reportItem) {
+    illuminateArticle(reportItem, event);
     const index = Number(reportItem.dataset.selectEntry);
     openInlineIndex = inlineReader.matches && openInlineIndex === index ? null : index;
     state.selectedIndex = index;
