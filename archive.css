@@ -240,3 +240,97 @@ summary { cursor: pointer; }
 [data-theme="light"] .code-viewer.python-highlight .py-comment {
   color: #64748b;
 }
+
+/* The page and the optical sample share one copy of the original pixel art. */
+:root {
+  --crypto-pattern: url("assets/research-pattern-v2.webp");
+  --pattern-size: clamp(740px, 82vw, 1160px) auto;
+  --pattern-ink: #b7efcd;
+  --paper-opacity: .55;
+  --sample-opacity: .50;
+  --pane-base: rgb(23 35 31 / .91);
+  --pane-edge: rgb(185 231 203 / .33);
+  --pane-shine: rgb(230 255 243 / .60);
+  --pane-glint: rgb(143 222 189 / .24);
+  --pane-wash: rgb(173 227 197 / .12);
+  --inset-wash: rgb(10 18 15 / .32);
+}
+[data-theme="light"] {
+  --pattern-ink: #28543b;
+  --paper-opacity: .49;
+  --sample-opacity: .53;
+  --pane-base: rgb(246 250 240 / .89);
+  --pane-edge: rgb(64 100 77 / .36);
+  --pane-shine: #fff;
+  --pane-glint: rgb(75 133 101 / .27);
+  --pane-wash: rgb(255 255 255 / .61);
+  --inset-wash: rgb(217 229 213 / .38);
+}
+body { position: relative; isolation: isolate; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: var(--pattern-ink);
+  -webkit-mask: var(--crypto-pattern) 0 0 / var(--pattern-size) repeat;
+  mask: var(--crypto-pattern) 0 0 / var(--pattern-size) repeat;
+  mask-mode: luminance;
+  opacity: var(--paper-opacity);
+}
+.material-defs { position: absolute; pointer-events: none; }
+.pattern-ink { flood-color: var(--pattern-ink); }
+
+.terminal, .report-preview {
+  isolation: isolate;
+  background: linear-gradient(138deg, var(--pane-wash), transparent 34%),
+    linear-gradient(315deg, var(--pane-wash), transparent 18%), var(--pane-base);
+  border-color: var(--pane-edge);
+  box-shadow: 0 16px 34px -26px #07140db3, 0 2px 5px #08140d24;
+}
+.terminal { position: relative; }
+.terminal::before, .report-preview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--crypto-pattern) 0 0 / var(--pattern-size) repeat fixed;
+  filter: url(#pane-refraction);
+  opacity: var(--sample-opacity);
+}
+.terminal::after, .report-preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 1px var(--pane-shine), inset 1px 0 2px var(--pane-glint),
+    inset 0 -2px 3px var(--pane-glint), inset 0 0 0 4px rgb(194 239 211 / .035);
+}
+.pdf-bar, .terminal-titlebar { background: linear-gradient(var(--pane-wash), transparent); }
+.report-preview-document { background: var(--inset-wash); }
+.pdf-viewer canvas { background: white; box-shadow: 0 2px 6px #091c1229; }
+.search-wrap, .pgp {
+  background: linear-gradient(145deg, var(--pane-wash), transparent 58%), var(--pane-base);
+  border-color: var(--pane-edge);
+  box-shadow: inset 0 1px 0 var(--pane-glint);
+}
+@media (max-width: 760px) {
+  /* Mobile browsers treat fixed background attachments inconsistently. In
+     this single-column layout all samples can stay in document coordinates. */
+  body::before { position: absolute; }
+  .report-preview { position: relative; top: auto; }
+  .terminal::before, .report-preview::before {
+    background-attachment: scroll;
+    background-position: var(--sample-x, 0px) var(--sample-y, 0px);
+  }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  body::before, .terminal::before, .terminal::after,
+  .report-preview::before, .report-preview::after { display: none; }
+  .terminal, .report-preview, .search-wrap, .pgp { background: var(--surface); }
+  .report-preview-document { background: var(--bg); }
+}

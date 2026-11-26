@@ -13,11 +13,24 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css" />
-  <script src="script.js?v=research-archive" defer></script>
+  <link rel="stylesheet" href="archive.css?v=pane-glass" />
+  <script src="script.js?v=pane-glass" defer></script>
 </head>
 
 <body id="top">
+  <svg class="material-defs" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- The red and green channels encode the rim normal. Neutral gray leaves
+           the center undistorted. Only the wallpaper sample passes through. -->
+      <filter id="pane-refraction" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feColorMatrix in="SourceGraphic" type="luminanceToAlpha" result="pattern-alpha"/>
+        <feFlood class="pattern-ink" result="ink"/>
+        <feComposite in="ink" in2="pattern-alpha" operator="in" result="pattern"/>
+        <feImage href="data:image/png;base64,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" x="0%" y="0%" width="100%" height="100%" preserveAspectRatio="none" result="rim"/>
+        <feDisplacementMap in="pattern" in2="rim" scale="20" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
   <a class="skip-link" href="#reports">Skip to research</a>
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">

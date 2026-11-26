@@ -668,3 +668,29 @@ curve.addEventListener('pointermove', event => {
 });
 curve.addEventListener('pointerleave', resetLens);
 inspectCurve.addEventListener('change', resetLens);
+
+// Both narrow-layout panes scroll with the page. Register their texture at
+// layout changes, so scrolling, typing and moving the pointer need no sampler.
+const stackedPanes = matchMedia('(max-width: 760px)');
+const glassPanes = [$('.report-preview'), $('.terminal')];
+function alignPaneSamples() {
+  if (!stackedPanes.matches) return;
+  const origins = glassPanes.map(pane => {
+    const rect = pane.getBoundingClientRect();
+    return [rect.left + scrollX + pane.clientLeft, rect.top + scrollY + pane.clientTop];
+  });
+  glassPanes.forEach((pane, i) => {
+    pane.style.setProperty('--sample-x', `${-origins[i][0]}px`);
+    pane.style.setProperty('--sample-y', `${-origins[i][1]}px`);
+  });
+}
+if ('ResizeObserver' in window) {
+  const paneLayout = new ResizeObserver(alignPaneSamples);
+  for (const element of [document.body, $('.site-header'), $('.hero'), $('.report-browser'), ...glassPanes]) {
+    paneLayout.observe(element);
+  }
+} else {
+  window.addEventListener('resize', alignPaneSamples);
+}
+stackedPanes.addEventListener('change', alignPaneSamples);
+alignPaneSamples();
