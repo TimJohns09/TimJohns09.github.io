@@ -1,8 +1,3 @@
-if (window.pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-}
-
 const ICONS = {
   moon: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
   sun: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>',
@@ -168,47 +163,12 @@ const tagClass = tag => `tag-${tag.replace(/[^a-z0-9]+/gi, '-')}`;
 const tagLabel = tag => tag.toLowerCase();
 
 const state = {
-  theme: localStorage.getItem('theme') || document.documentElement.dataset.theme || 'light',
+  theme: document.documentElement.dataset.theme || 'dark',
   filter: 'ALL',
   search: '',
-  selectedIndex: 0,
+  selectedIndex: entries.findIndex(entry => entry.file === 'Johns_Bitcoin_Quantum_Divide.pdf'),
   renderedItems: new Set()
 };
-
-const opening = $('.opening');
-
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
-}
-
-function updateOpeningProgress() {
-  if (!opening) {
-    return;
-  }
-
-  const viewport = window.innerHeight || document.documentElement.clientHeight || 1;
-  const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-  const progress = clamp(scrollTop / (viewport * 0.56), 0, 1);
-  const eased = 1 - Math.pow(1 - progress, 2);
-
-  opening.style.setProperty('--opening-progress', eased.toFixed(3));
-  opening.style.setProperty('--masthead-blur', `${(eased * 12).toFixed(1)}px`);
-  opening.style.setProperty('--masthead-scale', (1 + eased * .018).toFixed(4));
-  opening.style.setProperty('--masthead-veil-opacity', (.08 + eased * .1).toFixed(3));
-  opening.style.setProperty('--masthead-veil-blur', `${(eased * 5).toFixed(1)}px`);
-  opening.style.setProperty('--masthead-light-opacity', (.96 - eased * .04).toFixed(3));
-  opening.style.setProperty('--masthead-dark-opacity', (.98 - eased * .08).toFixed(3));
-  opening.style.setProperty('--hero-veil-opacity', (.04 + eased * .1).toFixed(3));
-  opening.style.setProperty('--hero-veil-blur', `${(eased * 5).toFixed(1)}px`);
-  opening.style.setProperty('--copy-wash-opacity', (.05 + eased * .1).toFixed(3));
-}
-
-function requestOpeningProgressUpdate() {
-  // The liquid-glass composition keeps its background crisp and static. Avoid
-  // style writes during scroll; the lens renderer owns the visual update.
-  if (document.documentElement.classList.contains('liquid-glass-site')) return;
-  updateOpeningProgress();
-}
 
 const PY_KEYWORDS = new Set([
   'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break', 'class',
@@ -225,7 +185,7 @@ const PY_BUILTINS = new Set([
 function setTheme(theme) {
   state.theme = theme;
   document.documentElement.dataset.theme = theme;
-  localStorage.setItem('theme', theme);
+  try { localStorage.setItem('theme', theme); } catch {}
 
   const toggle = $('#themeToggle');
   toggle.innerHTML = ICONS[theme === 'dark' ? 'moon' : 'sun'];
@@ -303,7 +263,7 @@ function renderPapers() {
   if (!$('#articleList').children.length) $('#articleList').innerHTML = entries.map((entry, index) => {
     return `
       <button class="report-list-item glass-surface ${index === state.selectedIndex ? 'active' : ''}" type="button" data-select-entry="${index}" ${index === state.selectedIndex ? 'aria-current="true"' : ''}>
-        <span class="report-list-index">${String(index + 1).padStart(2, '0')}</span>
+        <span class="report-list-icon" aria-hidden="true">${entry.kind === 'pdf' ? ICONS.file : '›_'}</span>
         <span class="report-list-copy">
           <span class="entry-meta">
             <span class="date">${escapeHtml(entry.date)}</span>
@@ -312,7 +272,6 @@ function renderPapers() {
           <strong>${escapeHtml(entry.title)}</strong>
           <span class="report-list-file">${escapeHtml(entry.file)}</span>
         </span>
-        <span class="report-list-arrow" aria-hidden="true">↗</span>
       </button>
     `;
   }).join('');
@@ -324,7 +283,6 @@ function renderPapers() {
     if (index === state.selectedIndex) button.setAttribute('aria-current', 'true');
     else button.removeAttribute('aria-current');
   });
-  document.dispatchEvent(new Event('glass-layout-change'));
 
   $('#reportCount').textContent = `${visible.length} published entr${visible.length === 1 ? 'y' : 'ies'}`;
   $('#emptyState').style.display = visible.length ? 'none' : 'block';
@@ -333,20 +291,40 @@ function renderPapers() {
     renderSelectedReport(state.selectedIndex);
   } else {
     cancelPreview();
-    setPreviewMarkup($('#reportPreview'), '<div class="report-preview-empty"><span>NO MATCH</span><p>Adjust the search or select another filter.</p></div>');
+    $('#reportPreview').innerHTML = '<div class="report-preview-empty"><span>NO MATCH</span><p>Adjust the search or select another filter.</p></div>';
     $('#reportPreview').removeAttribute('data-index');
   }
 }
 
 let previewTask = null;
+let previewObserver = null;
+let pdfLibrary = null;
+
+function loadPdfLibrary() {
+  if (!pdfLibrary) {
+    pdfLibrary = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      script.onload = () => {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        resolve(window.pdfjsLib);
+      };
+      script.onerror = () => {
+        pdfLibrary = null;
+        reject(new Error('Could not load PDF renderer'));
+      };
+      document.head.append(script);
+    });
+  }
+  return pdfLibrary;
+}
+
 function cancelPreview() {
+  previewObserver?.disconnect();
+  previewObserver = null;
   previewTask?.destroy().catch(() => {});
   previewTask = null;
-}
-function setPreviewMarkup(preview, markup) {
-  const glassLayers = [...preview.children].filter(node => node.matches('.glass-effect, .glass-refraction'));
-  preview.innerHTML = markup;
-  preview.prepend(...glassLayers);
 }
 
 function renderSelectedReport(index) {
@@ -361,7 +339,7 @@ function renderSelectedReport(index) {
 
   cancelPreview();
   preview.dataset.index = String(index);
-  setPreviewMarkup(preview, `
+  preview.innerHTML = `
     <div class="report-preview-head">
       <div class="entry-meta">
         <span class="date">${escapeHtml(entry.date)}</span>
@@ -382,12 +360,19 @@ function renderSelectedReport(index) {
     <div class="report-preview-document ${viewerClass}" id="viewer-${index}">
       <div class="loading"><div class="spinner"></div><span>Opening report...</span></div>
     </div>
-  `);
+  `;
 
-  if (isCode) {
-    renderCode(entry.url, $(`#viewer-${index}`), index);
+  const wrapper = $(`#viewer-${index}`);
+  const open = () => isCode ? renderCode(entry.url, wrapper, index) : renderPdf(entry.url, wrapper, index);
+  if ('IntersectionObserver' in window) {
+    previewObserver = new IntersectionObserver(([item], observer) => {
+      if (!item.isIntersecting || !wrapper.isConnected) return;
+      observer.disconnect();
+      open();
+    }, { rootMargin: '160px' });
+    previewObserver.observe(wrapper);
   } else {
-    renderPdf(entry.url, $(`#viewer-${index}`), index);
+    open();
   }
 }
 
@@ -413,14 +398,10 @@ function toggleArticle(article) {
 }
 
 async function renderPdf(url, wrapper, index) {
-  if (!window.pdfjsLib) {
-    wrapper.innerHTML = '<div class="loading"><span>PDF renderer unavailable. Use the Download link above.</span></div>';
-    $(`#pages-${index}`).textContent = 'preview unavailable';
-    return;
-  }
-
   try {
-    const task = pdfjsLib.getDocument(url);
+    const pdfjs = await loadPdfLibrary();
+    if (!wrapper.isConnected) return;
+    const task = pdfjs.getDocument({ url, isEvalSupported: false });
     previewTask = task;
     const pdf = await task.promise;
     if (!wrapper.isConnected) { pdf.destroy(); return; }
@@ -636,8 +617,6 @@ $('#searchInput').addEventListener('input', event => {
   renderPapers();
 });
 
-window.addEventListener('scroll', requestOpeningProgressUpdate, { passive: true });
-window.addEventListener('resize', requestOpeningProgressUpdate);
 
 setTheme(state.theme);
 renderTerminalIndex();
@@ -657,3 +636,35 @@ $$('.tab').forEach(tab => {
   $(`#tab-${tab.dataset.tab}`).setAttribute('aria-labelledby', tab.id);
 });
 if (location.hash === '#contact') $('[data-tab="contact"]').click();
+
+// Only the small lens repaints during pointer inspection. Touch and reduced
+// motion use a stationary lens, and scrolling never schedules a render.
+const curve = $('.curve-figure');
+const lens = $('.curve-lens', curve);
+const inspectCurve = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+let lensFrame = 0;
+let lensX = 0;
+let lensY = 0;
+
+function resetLens() {
+  cancelAnimationFrame(lensFrame);
+  lensFrame = 0;
+  lens.style.removeProperty('--lx');
+  lens.style.removeProperty('--ly');
+}
+
+curve.addEventListener('pointermove', event => {
+  if (!inspectCurve.matches || event.pointerType === 'touch') return;
+  lensX = event.offsetX;
+  lensY = event.offsetY;
+  if (lensFrame) return;
+  lensFrame = requestAnimationFrame(() => {
+    lensFrame = 0;
+    const width = curve.clientWidth;
+    if (!width) return;
+    lens.style.setProperty('--lx', `${100 * lensX / width}cqw`);
+    lens.style.setProperty('--ly', `${100 * lensY / width}cqw`);
+  });
+});
+curve.addEventListener('pointerleave', resetLens);
+inspectCurve.addEventListener('change', resetLens);
