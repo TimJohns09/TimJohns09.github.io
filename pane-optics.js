@@ -2,6 +2,7 @@
    layer draws the glass behind the real DOM, including the sticky reader. */
 (() => {
   const panes = [...document.querySelectorAll('.report-list-item, .report-preview, .terminal')];
+  const scrollWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
   const simple = matchMedia('(prefers-reduced-transparency: reduce), (forced-colors: active)');
   if (!panes.length || simple.matches) return;
 
@@ -24,7 +25,7 @@
     precision highp float;
     varying vec2 local;
     uniform sampler2D pattern;
-    uniform vec2 origin, size, tile;
+    uniform vec2 origin, size, tile, paperOffset;
     uniform float radius, lightTheme, isCard, selected;
     float ink(vec2 p) {
       vec3 rgb = texture2D(pattern, fract(p / tile)).rgb;
@@ -50,7 +51,7 @@
       // A slightly domed face magnifies the grid. Magnification grows
       // toward the shoulders, bending lines that intersect the long sides.
       vec2 dome = p * (.035 + .075 * dot(norm, norm) + .09 * slope);
-      vec2 source = origin + local - n * travel - dome;
+      vec2 source = origin + paperOffset + local - n * travel - dome;
       float fringe = slope * 1.35;
       vec3 sampleInk = vec3(ink(source + n * fringe), ink(source), ink(source - n * fringe));
       float shoulder = 1. - smoothstep(.35, 1., t);
@@ -85,7 +86,7 @@
   const corner = gl.getAttribLocation(program, 'corner');
   gl.enableVertexAttribArray(corner);
   gl.vertexAttribPointer(corner, 2, gl.FLOAT, false, 0, 0);
-  const u = Object.fromEntries(['viewport','origin','size','pattern','tile','radius',
+  const u = Object.fromEntries(['viewport','origin','size','pattern','tile','paperOffset','radius',
     'lightTheme','isCard','selected'].map(name => [name, gl.getUniformLocation(program,name)]));
   const texture = gl.createTexture();
   const art = new Image();
@@ -102,7 +103,10 @@
     gl.viewport(0, 0, w, h);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform2f(u.viewport, width, height);
-    const tileWidth = Math.max(740, Math.min(innerWidth * .82, 1160));
+    const scrolls = scrollWallpaper.matches;
+    const tileWidth = scrolls ? Math.max(520, Math.min(innerWidth * 1.15, 840))
+      : Math.max(740, Math.min(innerWidth * .82, 1160));
+    gl.uniform2f(u.paperOffset, scrolls ? scrollX : 0, scrolls ? scrollY : 0);
     gl.uniform2f(u.tile, tileWidth, tileWidth * art.naturalHeight / art.naturalWidth);
     gl.uniform1f(u.lightTheme, document.documentElement.dataset.theme === 'light' ? 1 : 0);
     for (const pane of panes) {
@@ -138,6 +142,7 @@
     document.body.prepend(layer);
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
+    scrollWallpaper.addEventListener('change', schedule);
     document.addEventListener('visibilitychange', schedule);
     simple.addEventListener('change', () => {
       document.documentElement.classList.remove('optics-ready');

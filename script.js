@@ -721,14 +721,14 @@ curve.addEventListener('pointerleave', event => {
 });
 inspectCurve.addEventListener('change', resetLens);
 
-// Align fallback textures with the same viewport-sized wallpaper as the GPU.
-const stackedPanes = matchMedia('(max-width: 760px)');
+// Align fallback textures to the root wallpaper in document coordinates.
+const scrollWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
 const glassPanes = $$('.report-preview, .terminal, .report-list-item');
 function alignPaneSamples() {
-  if (!stackedPanes.matches) return;
+  if (!scrollWallpaper.matches) return;
   const origins = glassPanes.map(pane => {
     const rect = pane.getBoundingClientRect();
-    return [rect.left + pane.clientLeft, rect.top + pane.clientTop];
+    return [rect.left + scrollX + pane.clientLeft, rect.top + scrollY + pane.clientTop];
   });
   glassPanes.forEach((pane, i) => {
     pane.style.setProperty('--sample-x', `${-origins[i][0]}px`);
@@ -743,13 +743,5 @@ if ('ResizeObserver' in window) {
 } else {
   window.addEventListener('resize', alignPaneSamples);
 }
-let sampleFrame = 0;
-window.addEventListener('scroll', () => {
-  if (!stackedPanes.matches || sampleFrame || document.documentElement.classList.contains('optics-ready')) return;
-  sampleFrame = requestAnimationFrame(() => {
-    sampleFrame = 0;
-    alignPaneSamples();
-  });
-}, { passive: true });
-stackedPanes.addEventListener('change', alignPaneSamples);
+scrollWallpaper.addEventListener('change', alignPaneSamples);
 alignPaneSamples();
