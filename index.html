@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" class="liquid-glass-site">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Tim Johns Cyber Blog and Portfolio — applied cryptography, malware analysis, network security, PDFs, code, and PGP keys." />
-  <title>Tim Johns Cyber Blog and Portfolio</title>
+  <title>Tim Johns · Security Research</title>
   <script>
     try {
       const theme = localStorage.getItem('theme');
@@ -12,80 +12,69 @@
     } catch {}
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=glass-restored" />
-  <link rel="stylesheet" href="glass-material.css?v=glass-polish-1" />
-  <link rel="stylesheet" href="liquid-glass.css?v=green-backgrounds-1" />
-  <link rel="stylesheet" href="workspace-layout.css?v=glass-polish-1" />
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
-  <script src="script.js?v=glass-polish-1" defer></script>
-  <script src="glass-effect.js?v=glass-polish-1" defer></script>
-  <script src="glass-refraction.js?v=green-backgrounds-1" defer></script>
+  <meta name="theme-color" content="#0d1616" />
+  <link rel="stylesheet" href="archive.css" />
+  <script src="script.js?v=research-archive" defer></script>
 </head>
 
 <body id="top">
-  <div class="page-frame" aria-hidden="true"></div>
-  <div class="research-wallpaper" aria-hidden="true"></div>
-
+  <a class="skip-link" href="#reports">Skip to research</a>
   <header class="site-header">
-    <nav class="site-nav glass-surface" aria-label="Primary navigation">
-      <a class="brand" href="#top" aria-label="Tim Johns Cyber Blog and Portfolio home">
-        <span class="brand-mark" aria-hidden="true">
-          <span>TJ</span>
-        </span>
-        <span class="brand-lockup">
-          <strong>Tim Johns</strong>
-          <span>Cybersecurity research</span>
-        </span>
-      </a>
-
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Tim Johns home"><span class="brand-mark" aria-hidden="true">tj<span>_</span></span>Tim Johns</a>
       <div class="nav-links">
+        <a href="#reports">Research</a>
         <a href="#terminal">Terminal</a>
-        <a href="#reports">Reports</a>
         <a href="#contact">Contact</a>
-        <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer">GitHub</a>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme"></button>
       </div>
     </nav>
   </header>
-
   <main>
-    <section class="profile-workspace">
-      <section class="hero" aria-labelledby="heroTitle">
-        <div class="hero-inner">
-          <div class="hero-copy">
-            <p class="eyebrow">Applied cryptography · network defense · adversarial systems</p>
-            <h1 id="heroTitle">Security research with a working lab attached.</h1>
-            <p class="hero-lede">A living portfolio of papers, code demonstrations, cryptographic keys, and field notes from Tim Johns. Built to read like a portfolio, behave like a toolkit, and stay close to the underlying work.</p>
-
-            <div class="hero-actions" aria-label="Primary actions">
-              <a class="button primary" href="#reports">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <path d="M14 2v6h6M8 13h8M8 17h5"></path>
-                </svg>
-                Browse reports
-              </a>
-              <a class="button" href="#terminal">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m4 17 6-6-6-6"></path>
-                  <path d="M12 19h8"></path>
-                </svg>
-                Open terminal
-              </a>
-            </div>
-
-
-          </div>
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <p class="eyebrow"><span aria-hidden="true"></span> Applied cryptography</p>
+        <h1 id="heroTitle">Security<br><em>research.</em></h1>
+        <p class="hero-lede">I'm Tim Johns. I study how cryptographic systems hold up in practice, from Bitcoin’s post-quantum transition to privacy on the network.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#reports">Browse research</a>
+          <a class="button secondary" href="#terminal"><span aria-hidden="true">›_</span> Open terminal</a>
         </div>
-      </section>
+      </div>
+      <figure class="curve-figure">
+        <img src="assets/elliptic-curve.webp" alt="An elliptic curve over the real numbers. A secant meets the highlighted curve at P, Q, and R." width="1080" height="680" fetchpriority="high">
+        <span class="curve-lens" aria-hidden="true"></span>
+        <figcaption><span>Elliptic curve</span><b>y² = x³ − 3x + 1</b></figcaption>
+      </figure>
+    </section>
+    <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
+      <div class="section-header">
+        <h2 id="reportsTitle">Research archive</h2>
+        <span class="section-count" id="reportCount">8 published entries</span>
+      </div>
+      <div class="reports-workspace">
+        <div class="report-browser">
+          <div class="controls" aria-label="Report controls">
+            <label class="search-wrap glass-surface">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search reports, topics, or files…" autocomplete="off" />
+            </label>
+            <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
+          </div>
 
-      <section class="terminal-wrap" id="terminal" aria-label="Profile terminal">
+          <div class="articles" id="articleList"></div>
+          <div class="empty" id="emptyState">No entries match that filter.</div>
+        </div>
+        <section class="report-preview glass-surface" id="reportPreview" aria-live="polite" aria-label="Selected report preview"></section>
+      </div>
+    </section>
+    <section class="terminal-wrap" id="terminal" aria-labelledby="terminalTitle">
+      <div class="section-header"><h2 id="terminalTitle">Profile terminal</h2></div>
 
-      <div class="terminal glass-surface" data-glass-native id="contact" aria-label="Profile terminal">
+      <div class="terminal glass-surface" id="contact" aria-label="Profile terminal">
         <div class="terminal-titlebar">
           <div class="window-dots" aria-hidden="true">
             <span class="dot red"></span>
@@ -171,33 +160,6 @@
         </div>
       </div>
       </section>
-    </section>
-
-    <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
-      <div class="section-header">
-        <div><p class="section-kicker">Selected work</p><h2 class="section-title" id="reportsTitle">Reports, demos, and working notes.</h2></div>
-        <span class="section-count" id="reportCount">8 published entries</span>
-      </div>
-      <div class="reports-workspace">
-        <section class="report-preview glass-surface" id="reportPreview" aria-live="polite" aria-label="Selected report preview"></section>
-
-        <div class="report-browser">
-          <div class="controls" aria-label="Report controls">
-            <label class="search-wrap glass-surface" data-glass-native>
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-              <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search reports, topics, or files…" autocomplete="off" />
-            </label>
-            <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
-          </div>
-
-          <div class="articles" id="articleList"></div>
-          <div class="empty" id="emptyState">No entries match that filter.</div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="site-footer glass-surface">
