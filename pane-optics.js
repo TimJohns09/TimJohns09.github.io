@@ -3,7 +3,6 @@
 (() => {
   const panes = [...document.querySelectorAll('.report-list-item, .report-preview, .terminal')];
   const simple = matchMedia('(prefers-reduced-transparency: reduce), (forced-colors: active)');
-  const stacked = matchMedia('(max-width: 760px)');
   if (!panes.length || simple.matches) return;
 
   const layer = document.createElement('canvas');
@@ -25,7 +24,7 @@
     precision highp float;
     varying vec2 local;
     uniform sampler2D pattern;
-    uniform vec2 origin, size, tile, paperOffset;
+    uniform vec2 origin, size, tile;
     uniform float radius, lightTheme, isCard, selected;
     float ink(vec2 p) {
       vec3 rgb = texture2D(pattern, fract(p / tile)).rgb;
@@ -51,7 +50,7 @@
       // A slightly domed face magnifies the grid. Magnification grows
       // toward the shoulders, bending lines that intersect the long sides.
       vec2 dome = p * (.035 + .075 * dot(norm, norm) + .09 * slope);
-      vec2 source = origin + paperOffset + local - n * travel - dome;
+      vec2 source = origin + local - n * travel - dome;
       float fringe = slope * 1.35;
       vec3 sampleInk = vec3(ink(source + n * fringe), ink(source), ink(source - n * fringe));
       float shoulder = 1. - smoothstep(.35, 1., t);
@@ -86,7 +85,7 @@
   const corner = gl.getAttribLocation(program, 'corner');
   gl.enableVertexAttribArray(corner);
   gl.vertexAttribPointer(corner, 2, gl.FLOAT, false, 0, 0);
-  const u = Object.fromEntries(['viewport','origin','size','pattern','tile','paperOffset','radius',
+  const u = Object.fromEntries(['viewport','origin','size','pattern','tile','radius',
     'lightTheme','isCard','selected'].map(name => [name, gl.getUniformLocation(program,name)]));
   const texture = gl.createTexture();
   const art = new Image();
@@ -105,7 +104,6 @@
     gl.uniform2f(u.viewport, width, height);
     const tileWidth = Math.max(740, Math.min(innerWidth * .82, 1160));
     gl.uniform2f(u.tile, tileWidth, tileWidth * art.naturalHeight / art.naturalWidth);
-    gl.uniform2f(u.paperOffset, stacked.matches ? scrollX : 0, stacked.matches ? scrollY : 0);
     gl.uniform1f(u.lightTheme, document.documentElement.dataset.theme === 'light' ? 1 : 0);
     for (const pane of panes) {
       const r = pane.getBoundingClientRect();

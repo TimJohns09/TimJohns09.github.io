@@ -13,9 +13,9 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=clear-lens" />
-  <script src="script.js?v=clear-lens" defer></script>
-  <script src="pane-optics.js" defer></script>
+  <link rel="stylesheet" href="archive.css?v=archive-layout" />
+  <script src="script.js?v=archive-layout" defer></script>
+  <script src="pane-optics.js?v=archive-layout" defer></script>
 </head>
 
 <body id="top">
@@ -69,19 +69,18 @@
         <h2 id="reportsTitle">Research archive</h2>
         <span class="section-count" id="reportCount">8 published entries</span>
       </div>
+      <div class="controls" aria-label="Report controls">
+        <label class="search-wrap glass-surface">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search reports, topics, or files…" autocomplete="off" />
+        </label>
+        <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
+      </div>
       <div class="reports-workspace">
         <div class="report-browser">
-          <div class="controls" aria-label="Report controls">
-            <label class="search-wrap glass-surface">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-              <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search reports, topics, or files…" autocomplete="off" />
-            </label>
-            <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
-          </div>
-
           <div class="articles" id="articleList"></div>
           <div class="empty" id="emptyState">No entries match that filter.</div>
         </div>

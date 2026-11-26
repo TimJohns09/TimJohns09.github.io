@@ -270,28 +270,45 @@ function renderPapers() {
             ${entry.tags.map(tag => `<span class="tag ${tagClass(tag)}">${escapeHtml(tagLabel(tag))}</span>`).join('')}
           </span>
           <strong>${escapeHtml(entry.title)}</strong>
-          <span class="report-list-file">${escapeHtml(entry.file)}</span>
         </span>
       </button>
     `;
   }).join('');
 
-  $$('.report-list-item').forEach(button => {
+  const buttons = $$('.report-list-item');
+  const inline = inlineReader.matches;
+  for (const button of buttons) {
     const index = Number(button.dataset.selectEntry);
+    const selected = index === state.selectedIndex && (!inline || openInlineIndex === index);
     button.hidden = !entryMatches(entries[index]);
-    button.classList.toggle('active', index === state.selectedIndex);
-    if (index === state.selectedIndex) button.setAttribute('aria-current', 'true');
+    button.classList.toggle('active', selected);
+    if (selected) button.setAttribute('aria-current', 'true');
     else button.removeAttribute('aria-current');
-  });
+    button.setAttribute('aria-controls', 'reportPreview');
+    if (inline) button.setAttribute('aria-expanded', String(selected));
+    else button.removeAttribute('aria-expanded');
+  }
+  const preview = $('#reportPreview');
+  const show = visible.length > 0 && (!inline || openInlineIndex === state.selectedIndex);
+  preview.hidden = !show;
+  if (inline && show) {
+    const position = visible.findIndex(item => item.index === state.selectedIndex);
+    const rowEnd = pairedCards.matches && position % 2 === 0 ? Math.min(position + 1, visible.length - 1) : position;
+    const last = buttons[visible[rowEnd].index];
+    if (last.nextElementSibling !== preview) last.after(preview);
+  } else if (preview.parentElement !== $('.reports-workspace')) {
+    $('.reports-workspace').append(preview);
+  }
 
   $('#reportCount').textContent = `${visible.length} published entr${visible.length === 1 ? 'y' : 'ies'}`;
   $('#emptyState').style.display = visible.length ? 'none' : 'block';
 
-  if (visible.length) {
+  if (show) {
     renderSelectedReport(state.selectedIndex);
   } else {
     cancelPreview();
-    $('#reportPreview').innerHTML = '<div class="report-preview-empty"><span>NO MATCH</span><p>Adjust the search or select another filter.</p></div>';
+    preview.replaceChildren();
+    openInlineIndex = null;
     $('#reportPreview').removeAttribute('data-index');
   }
 }
@@ -555,11 +572,10 @@ document.addEventListener('click', event => {
   const reportItem = event.target.closest('[data-select-entry]');
 
   if (reportItem) {
-    state.selectedIndex = Number(reportItem.dataset.selectEntry);
+    const index = Number(reportItem.dataset.selectEntry);
+    openInlineIndex = inlineReader.matches && openInlineIndex === index ? null : index;
+    state.selectedIndex = index;
     renderPapers();
-    if (matchMedia('(max-width: 760px)').matches) {
-      $('#reportPreview').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-    }
   }
 
   const articleToggle = event.target.closest('.entry-head, .article-toggle');
@@ -589,10 +605,10 @@ document.addEventListener('click', event => {
 
 document.addEventListener('keydown', event => {
   const tab = event.target.closest('.tab');
-  if (tab && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+  if (tab && ['ArrowLeft', 'ArrowRight', 'Home', 'End', ...(inlineReader.matches ? [] : ['ArrowUp', 'ArrowDown'])].includes(event.key)) {
     event.preventDefault();
     const tabs = $$('.tab');
-    const offset = event.key === 'ArrowLeft' ? -1 : 1;
+    const offset = ['ArrowLeft', 'ArrowUp'].includes(event.key) ? -1 : 1;
     const index = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (tabs.indexOf(tab) + offset + tabs.length) % tabs.length;
     tabs[index].click();
     tabs[index].focus();
@@ -618,11 +634,21 @@ $('#searchInput').addEventListener('input', event => {
 });
 
 
+const inlineReader = matchMedia('(max-width: 879px)');
+const pairedCards = matchMedia('(min-width: 600px) and (max-width: 879px)');
+let openInlineIndex = null;
+function adaptArchive() {
+  $('.tabs').setAttribute('aria-orientation', inlineReader.matches ? 'horizontal' : 'vertical');
+  renderPapers();
+}
+inlineReader.addEventListener('change', adaptArchive);
+pairedCards.addEventListener('change', renderPapers);
+
 setTheme(state.theme);
 renderTerminalIndex();
 renderFilters();
 renderPgpKeys();
-renderPapers();
+adaptArchive();
 updateOpeningProgress();
 
 // Contact links open the contact panel before following their anchor.
@@ -637,8 +663,7 @@ $$('.tab').forEach(tab => {
 });
 if (location.hash === '#contact') $('[data-tab="contact"]').click();
 
-// Only the small lens repaints during pointer inspection. Touch and reduced
-// motion use a stationary lens, and scrolling never schedules a render.
+// Hover inspects the plot on desktop. A tap places the lens on touchscreens.
 const curve = $('.curve-figure');
 const lens = $('.curve-lens', curve);
 const inspectCurve = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
@@ -653,8 +678,7 @@ function resetLens() {
   lens.style.removeProperty('--ly');
 }
 
-curve.addEventListener('pointermove', event => {
-  if (!inspectCurve.matches || event.pointerType === 'touch') return;
+function positionLens(event) {
   lensX = event.offsetX;
   lensY = event.offsetY;
   if (lensFrame) return;
@@ -665,19 +689,26 @@ curve.addEventListener('pointermove', event => {
     lens.style.setProperty('--lx', `${100 * lensX / width}cqw`);
     lens.style.setProperty('--ly', `${100 * lensY / width}cqw`);
   });
+}
+curve.addEventListener('pointermove', event => {
+  if (inspectCurve.matches && event.pointerType !== 'touch') positionLens(event);
 });
-curve.addEventListener('pointerleave', resetLens);
+curve.addEventListener('click', event => {
+  if (!inspectCurve.matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) positionLens(event);
+});
+curve.addEventListener('pointerleave', event => {
+  if (event.pointerType !== 'touch') resetLens();
+});
 inspectCurve.addEventListener('change', resetLens);
 
-// Narrow-layout glass surfaces scroll with the page. Register their fallback texture at
-// layout changes, so scrolling, typing and moving the pointer need no sampler.
+// Align fallback textures with the same viewport-sized wallpaper as the GPU.
 const stackedPanes = matchMedia('(max-width: 760px)');
 const glassPanes = $$('.report-preview, .terminal, .report-list-item');
 function alignPaneSamples() {
   if (!stackedPanes.matches) return;
   const origins = glassPanes.map(pane => {
     const rect = pane.getBoundingClientRect();
-    return [rect.left + scrollX + pane.clientLeft, rect.top + scrollY + pane.clientTop];
+    return [rect.left + pane.clientLeft, rect.top + pane.clientTop];
   });
   glassPanes.forEach((pane, i) => {
     pane.style.setProperty('--sample-x', `${-origins[i][0]}px`);
@@ -692,5 +723,13 @@ if ('ResizeObserver' in window) {
 } else {
   window.addEventListener('resize', alignPaneSamples);
 }
+let sampleFrame = 0;
+window.addEventListener('scroll', () => {
+  if (!stackedPanes.matches || sampleFrame || document.documentElement.classList.contains('optics-ready')) return;
+  sampleFrame = requestAnimationFrame(() => {
+    sampleFrame = 0;
+    alignPaneSamples();
+  });
+}, { passive: true });
 stackedPanes.addEventListener('change', alignPaneSamples);
 alignPaneSamples();
