@@ -486,11 +486,14 @@ body::before {
 .report-list-item::before { opacity: .22; }
 
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
-  html, html[data-theme="light"] { background-image: none; }
   body::before, .optical-layer, .report-list-item::before, .terminal::before, .terminal::after,
   .report-preview::before, .report-preview::after { display: none; }
   .terminal, .report-preview, .search-wrap, .pgp { background: var(--surface); }
   .report-preview-document { background: var(--bg); }
   .report-list-item { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .report-list-item.active { background: var(--soft); }
+}
+
+@media (forced-colors: active) {
+  html, html[data-theme="light"] { background-image: none; }
 }
