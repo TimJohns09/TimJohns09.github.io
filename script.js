@@ -669,10 +669,10 @@ curve.addEventListener('pointermove', event => {
 curve.addEventListener('pointerleave', resetLens);
 inspectCurve.addEventListener('change', resetLens);
 
-// Both narrow-layout panes scroll with the page. Register their texture at
+// Narrow-layout glass surfaces scroll with the page. Register their fallback texture at
 // layout changes, so scrolling, typing and moving the pointer need no sampler.
 const stackedPanes = matchMedia('(max-width: 760px)');
-const glassPanes = [$('.report-preview'), $('.terminal')];
+const glassPanes = $$('.report-preview, .terminal, .report-list-item');
 function alignPaneSamples() {
   if (!stackedPanes.matches) return;
   const origins = glassPanes.map(pane => {

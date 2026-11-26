@@ -13,25 +13,25 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=polished-glass" />
-  <script src="script.js?v=pane-glass" defer></script>
+  <link rel="stylesheet" href="archive.css?v=clear-lens" />
+  <script src="script.js?v=clear-lens" defer></script>
+  <script src="pane-optics.js" defer></script>
 </head>
 
 <body id="top">
   <svg class="material-defs" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <!-- Red and green encode the rim normal. Blue selects its sharper optical
-           detail. The reading surface retains only the diffused wallpaper. -->
+           detail. The reading surface retains only the clear wallpaper. -->
       <filter id="pane-refraction" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
         <feColorMatrix in="SourceGraphic" type="luminanceToAlpha" result="pattern-alpha"/>
         <feFlood class="pattern-ink" result="ink"/>
         <feComposite in="ink" in2="pattern-alpha" operator="in" result="pattern"/>
         <feImage href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOAAAACQCAIAAACebfB3AAAHbUlEQVR42u3cz27bVhbH8XMvD8kr0jYVGzZcAbFTIBACJM6iKNJNVwMUyDP0afo0WXdZwKsBukkWs0gboDCyaJJCFizYkiyJIqn7ZxYJijQdzzSpqLmift8lcbjQ0QeSSAkS330n6Yb0sEvzA6lb0t04g9AnJ4SVPKfWhbl1dtMM//lQNesUg0d2fFdOO1xmkVbgiepIEkVccDyWWz2bvSz2ny3S3v8AOjz/Jh98ZYb3xPVRlO+pKmEdY5WoJqAhlyrKo+RS7Lw21w/y/aejz05vBNp78+3k4uvq6gGNj6PZri0SXpCzRA7LRHW8xRNLUiGpIo/KY6qOthadlt4/v/3kPwB90/v26uof+fgLM73D88yUFGgyjhx0opqAOgochZpaZaJkwsG2CbYUR0FAv3We/AHo+fCbi8nX4/yLsuwK3VJEHJJl7WhGosAqUW1GlaSUBSsipTNRdls58aTSw0H/1uk7oLOqM8i/uqoeTM0dLVpRRCzJiQsZ9GTYF8GEhMEq0dJzLrBm2y4OhemwO4iZItFS5k5QTRd57zp9kUc9JqJB8Who7o3peM4ZKZJMQryJohcq+SlOzwLVB1BUR8YFZXFYzLpVfuKq++xuKybiLKDjytzbLx69ir5nIhrbu9fiaBbtloZCJuEuouhFmv6zvfdD2n6OPaK6gBJNiOzoobp8vDMjV8UsDkImGe2W4iizd4mIh7o7lZ082itsogNiqwPZS9RPe+0f0hQ6Ue3N2s8vQ8pGu6Y4FHY3lCzCJIn2tmSnrbs8p4OSs0olCyZniNwslP00PmtDJ1pVo/T5zH65iE/Ifi5FFgYUcRJz1qID1rKlI6U5to6cI0FFICYq6GNraJUVSd/EE+cKSZkTxCJmqVi22ElJkui9m/GCjKA/XhXhViiqI/EeMTaOzQeHBcm/9DW7E9glqlHnf+mv/g4ERtHqdX4EUBhFq9f5cUBhFK1Y50cDhVG0Sp2fAhRG0cp0fiJQGEWr0fnpQGEUrUDn3wIKo6hunX8XKIyiWnUuASiMovp0LgcojKKadC4NKIyiOnQuEyiMoqXrXDJQGEW0bADL/1cbGIVOr4HCKHT6DhRGodN3oDAKnb4DhVHo9B0ojEKn70BhFDp9Bwqj0Ok7UBiFTt+Bwih0+g4URqHTd6AwCp2+A4VR6PQdKIxCp+9AYRQ6fQcKo9DpO1AYhU7fgcIodPoOFEah03egMAqdvgOFUej0HSiMQqfvQGEUOn0HCqPQ6TtQGIVO34HCKHT6DhRGN1znGgCF0U3WuR5AYXRjda4NUBjdTJ3rBBRGN1DnmgGF0U3TuX5AYXSjdK4lUBjdHJ3rChRGN0TnGgOF0U3Qud5AYbTxOtceKIw2W2cTgMJog3U2BCiMNlVnc4DCaCN1NgoojDZPZ9OAwig17uHL5j1Hm2u0iQ+c8VQhvIICJwJQ6ARQ6EQACp2ocUChE0ChEwEodKImAYVOAIVOBKDQiZoEFDoBFDoRgEInahJQ6ARQ6EQACp2oSUChE0ChEwEodKImAYVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET+AoVO5C9Q6ET/r1gIS5JIkhDkBBGRc4EzARksB60uEQQiCOidQCJHZMlZyyznHBUclpLJBeSEMna7KA9pgqWh1aWSwyDeFlJZR86Q1qVeFLqac4suYh5HKg8V6ZBIpgt7OCu6I/uwPXuOxaEV1E4fpjvdUB2STK0lvaCqyEs3nlcXfMucbcleEl0WKi9biWA2opNXJ5fqcXhJ6QhGUb2l7Yd7e4+T9CSIOs7xQlM5z3N7OS17I3PGRJTZlzvidRkdS5WQIscHlbs/26FRtmtnXyZFnx0+kKLlF4ggUYc7aTdNTqLovhAHWpMuaG6uruevx/YlETER7RfPrs2Dio4C3tYq45gc365cXJjDeHESmwmAopqAxsG2Cg+joPNWZ1GS1uMpvRqaXwbFs3dA00VvP3+62OoEZqsUXRG1WJHgAyt2LX3uXIFVolqu3ImkUJJS51hrKguqqnlpfh1XPw/yp/mi9w4oEX02OtWtfVZR3iKj7jBlHJIMWciMZIZVoppylt5eFRWatB6b8tc8/9fV5Mf+6PTtAP8+evv8SRDQhKsqmFJwHMndUCRBSMLhTj2qR6cj42ihaV7mZn5F01fV+OfJ1Y/n509+n+H3T+j89mSoB/miZ6p7ojyKkj2OEsExVolqAUqkdVlUuc0v59evzfCXfPB01D99f4Y/OOdW/zS9flHsP7LZXbnV4TiTrLBKVEeWaKELV47Lac+OXxaDZ4u898EM//m0KO9Fr74nIt3uUutAcouExDbR8oE6W+l5Nb8wo7ObZv4NE9KEEXydDYkAAAAASUVORK5CYII=" x="0%" y="0%" width="100%" height="100%" preserveAspectRatio="none" result="rim"/>
-        <feDisplacementMap in="pattern" in2="rim" scale="38" xChannelSelector="R" yChannelSelector="G" result="bent"/>
-        <feGaussianBlur in="bent" stdDeviation="3.4" result="diffuse"/>
+        <feDisplacementMap in="pattern" in2="rim" scale="68" xChannelSelector="R" yChannelSelector="G" result="bent"/>
         <feColorMatrix in="rim" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1 0 0" result="rim-mask"/>
         <feComposite in="bent" in2="rim-mask" operator="in" result="edge-detail"/>
-        <feMerge><feMergeNode in="diffuse"/><feMergeNode in="edge-detail"/></feMerge>
+        <feMerge><feMergeNode in="bent"/><feMergeNode in="edge-detail"/></feMerge>
       </filter>
     </defs>
   </svg>
@@ -41,7 +41,7 @@
       <a class="brand" href="#top" aria-label="Tim Johns home"><span class="brand-mark" aria-hidden="true">tj<span>_</span></span>Tim Johns</a>
       <div class="nav-links">
         <a href="#reports">Research</a>
-        <a href="#terminal">Terminal</a>
+        <a href="#about">About me</a>
         <a href="#contact">Contact</a>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme"></button>
       </div>
@@ -55,7 +55,7 @@
         <p class="hero-lede">I'm Tim Johns. I study how cryptographic systems hold up in practice, from Bitcoin’s post-quantum transition to privacy on the network.</p>
         <div class="hero-actions">
           <a class="button primary" href="#reports">Browse research</a>
-          <a class="button secondary" href="#terminal"><span aria-hidden="true">›_</span> Open terminal</a>
+          <a class="button secondary" href="#about">About me</a>
         </div>
       </div>
       <figure class="curve-figure">
@@ -88,10 +88,10 @@
         <section class="report-preview glass-surface" id="reportPreview" aria-live="polite" aria-label="Selected report preview"></section>
       </div>
     </section>
-    <section class="terminal-wrap" id="terminal" aria-labelledby="terminalTitle">
-      <div class="section-header"><h2 id="terminalTitle">Profile terminal</h2></div>
+    <section class="terminal-wrap" id="about" aria-labelledby="terminal">
+      <div class="section-header"><h2 id="terminal">About me</h2></div>
 
-      <div class="terminal glass-surface" id="contact" aria-label="Profile terminal">
+      <div class="terminal glass-surface" id="contact" aria-label="About me">
         <div class="terminal-titlebar">
           <div class="window-dots" aria-hidden="true">
             <span class="dot red"></span>
