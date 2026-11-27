@@ -669,7 +669,6 @@ renderTerminalIndex();
 renderFilters();
 renderPgpKeys();
 adaptArchive();
-updateOpeningProgress();
 
 // Contact links open the contact panel before following their anchor.
 $$('a[href="#contact"]').forEach(link => link.addEventListener('click', () => {

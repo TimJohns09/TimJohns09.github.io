@@ -4,7 +4,8 @@
   const poster = figure.querySelector('.globe-poster');
   const help = figure.querySelector('figcaption');
   const gl = canvas.getContext('webgl', { alpha: true, antialias: false, depth: false });
-  if (!gl) return;
+  const flat = gl ? null : canvas.getContext('2d');
+  if (!gl && !flat) return;
 
   const vertex = `
     attribute vec2 position;
@@ -44,7 +45,7 @@
   canvas.height = size[1];
   let yaw = -.53;
   let pitch = .36;
-  let program, angles, frame, drag;
+  let program, angles, frame, drag, texturePixels, framePixels;
   const land = new Image();
 
   function shader(type, source) {
@@ -57,6 +58,18 @@
   }
 
   function initialize() {
+    if (flat) {
+      const textureCanvas = document.createElement('canvas');
+      textureCanvas.width = land.naturalWidth;
+      textureCanvas.height = land.naturalHeight;
+      const textureContext = textureCanvas.getContext('2d');
+      textureContext.drawImage(land, 0, 0);
+      texturePixels = textureContext.getImageData(0, 0, land.naturalWidth, land.naturalHeight).data;
+      framePixels = flat.createImageData(...size);
+      showGlobe();
+      return;
+    }
+
     const vs = shader(gl.VERTEX_SHADER, vertex);
     const fs = shader(gl.FRAGMENT_SHADER, fragment);
     if (!vs || !fs) return;
@@ -86,6 +99,10 @@
     gl.viewport(0, 0, ...size);
     angles = ['yaw', 'pitch', 'pale'].map(name => gl.getUniformLocation(program, name));
 
+    showGlobe();
+  }
+
+  function showGlobe() {
     canvas.hidden = false;
     canvas.tabIndex = 0;
     poster.hidden = true;
@@ -95,12 +112,54 @@
 
   function draw() {
     frame = 0;
+    if (flat) {
+      if (texturePixels) drawFlat();
+      return;
+    }
     if (!program || gl.isContextLost()) return;
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform1f(angles[0], yaw);
     gl.uniform1f(angles[1], pitch);
     gl.uniform1f(angles[2], document.documentElement.dataset.theme === 'light' ? 1 : 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  // Keep the same projection and interaction when WebGL is unavailable.
+  function drawFlat() {
+    const [width, height] = size;
+    const pixels = framePixels.data;
+    const radius = height * .44;
+    const cosPitch = Math.cos(pitch);
+    const sinPitch = Math.sin(pitch);
+    const lightTheme = document.documentElement.dataset.theme === 'light' ? .88 : 1;
+    for (let row = 0; row < height; row++) {
+      const y = (height / 2 - row - .5) / radius;
+      for (let col = 0; col < width; col++) {
+        const x = (col + .5 - width / 2) / radius;
+        const distance = x*x + y*y;
+        if (distance > 1) continue;
+        const z = Math.sqrt(1 - distance);
+        const lat = Math.asin(Math.max(-1, Math.min(1, y*cosPitch + z*sinPitch)));
+        const lon = Math.atan2(x, z*cosPitch - y*sinPitch) + yaw;
+        const meridian = lon / (2*Math.PI) + .5;
+        const u = Math.floor((meridian - Math.floor(meridian)) * land.naturalWidth);
+        const v = Math.min(land.naturalHeight - 1, Math.floor((.5 - lat / Math.PI) * land.naturalHeight));
+        const ground = texturePixels[(v*land.naturalWidth + u)*4] > 127;
+        const diffuse = Math.max(0, -.47*x + .53*y + .71*z);
+        const tone = Math.floor(diffuse*6 + ((row + col) % 2)*.52) / 6;
+        const rim = Math.max(0, Math.min(1, (.27-z)/.17)) * (.45 + .4*diffuse);
+        const grid = Math.min(Math.abs(Math.sin(lon*6)), Math.abs(Math.sin(lat*6))) < .019 ? .24*z : 0;
+        const index = (row*width + col)*4;
+        const red = ground ? .13 + .58*tone : .035 + .065*tone;
+        const green = ground ? .35 + .61*tone : .10 + .16*tone;
+        const blue = ground ? .27 + .51*tone : .086 + .134*tone;
+        pixels[index] = ((red + (.53-red)*grid)*(1-rim) + .45*rim)*255*lightTheme;
+        pixels[index+1] = ((green + (.84-green)*grid)*(1-rim) + .86*rim)*255*lightTheme;
+        pixels[index+2] = ((blue + (.65-blue)*grid)*(1-rim) + .67*rim)*255*lightTheme;
+        pixels[index+3] = 255;
+      }
+    }
+    flat.putImageData(framePixels, 0, 0);
   }
 
   function refresh() {
