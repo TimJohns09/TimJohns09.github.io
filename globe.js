@@ -58,6 +58,7 @@
   const zoomControls = figure.querySelector('.globe-zoom');
   const zoomButtons = [...zoomControls.querySelectorAll('button')];
   const coordinates = figure.querySelector('.globe-coordinates');
+  const scaleDisplay = figure.querySelector('.globe-scale');
   let program, angles, frame, texturePixels, framePixels;
   const land = new Image();
   const pinLayer = figure.querySelector('.globe-pins');
@@ -92,6 +93,8 @@
 
   function setZoom(value) {
     zoom = Math.max(1, Math.min(maxZoom, value));
+    const label = zoom.toFixed(1).replace(/\.0$/, '') + '×';
+    if (scaleDisplay.value !== label) scaleDisplay.value = label;
     zoomButtons[0].disabled = zoom <= 1;
     zoomButtons[1].disabled = zoom >= maxZoom;
     refresh();

@@ -13,10 +13,10 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=boot-menu" />
+  <link rel="stylesheet" href="archive.css?v=atlas-layout" />
   <script src="script.js?v=about-globe" defer></script>
   <script src="pane-optics.js?v=pixel-globe" defer></script>
-  <script src="globe.js?v=pixel-controls" defer></script>
+  <script src="globe.js?v=atlas-layout" defer></script>
 </head>
 
 <body id="top">
@@ -39,7 +39,7 @@
   <a class="skip-link" href="#reports">Skip to posts</a>
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
-      <a class="brand" href="#top" aria-label="Tim Johns home"><span class="brand-mark" aria-hidden="true">tj<span>_</span></span>Tim Johns</a>
+      <a class="brand" href="#top" aria-label="Tim Johns home">Tim Johns</a>
       <div class="nav-links">
         <a href="#reports">Blog</a>
         <a href="#about">About me</a>
@@ -51,12 +51,12 @@
   <main>
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero-copy">
-        <p class="eyebrow"><span aria-hidden="true"></span> Applied cryptography</p>
-        <h1 id="heroTitle">Security<br><em>blog.</em></h1>
+        <p class="eyebrow">Applied cryptography</p>
+        <h1 id="heroTitle">Security <em>blog.</em></h1>
         <p class="hero-lede">I'm Tim Johns. I study how cryptographic systems hold up in practice, from Bitcoin’s post-quantum transition to privacy on the network.</p>
         <div class="hero-actions">
           <a class="button primary" href="#reports">Browse posts</a>
-          <a class="button secondary" href="#about">About me</a>
+          <a class="about-link" href="#about">About me</a>
         </div>
       </div>
       <figure class="globe-figure glass-surface">
@@ -65,18 +65,19 @@
           <canvas class="globe-view" hidden aria-label="Interactive world map. Arrow keys rotate, plus and minus zoom."></canvas>
           <div class="globe-pins"></div>
         </div>
-        <div class="globe-zoom" aria-label="Globe zoom" hidden>
-          <button type="button" data-zoom="-1" aria-label="Zoom out">−</button>
-          <button type="button" data-zoom="1" aria-label="Zoom in">+</button>
-        </div>
+
         <figcaption class="globe-places">
           <div class="globe-locations" aria-label="About me locations">
             <button type="button" data-lat="39.55" data-lon="-104.97" data-region="CO" aria-pressed="false" hidden>Highlands Ranch</button>
             <button type="button" data-lat="39.95" data-lon="-75.17" data-region="PA" aria-pressed="false" hidden>Philadelphia</button>
             <button type="button" data-lat="37.78" data-lon="-79.44" data-region="VA" aria-pressed="false" hidden>Lexington</button>
           </div>
-          <a class="globe-about" href="#about">About me</a>
           <span class="globe-coordinates" aria-live="polite"></span>
+          <div class="globe-zoom" role="group" aria-label="Globe zoom" hidden>
+            <button type="button" data-zoom="-1" aria-label="Zoom out">−</button>
+            <output class="globe-scale" aria-label="Globe magnification">1×</output>
+            <button type="button" data-zoom="1" aria-label="Zoom in">+</button>
+          </div>
         </figcaption>
       </figure>
     </section>
@@ -85,18 +86,18 @@
         <h2 id="reportsTitle">Post archive</h2>
         <span class="section-count" id="reportCount">8 published entries</span>
       </div>
-      <div class="controls" aria-label="Report controls">
-        <label class="search-wrap">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search reports, topics, or files…" autocomplete="off" />
-        </label>
-        <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
-      </div>
       <div class="reports-workspace">
         <div class="report-browser">
+          <div class="controls" aria-label="Report controls">
+            <label class="search-wrap">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search the archive" autocomplete="off" />
+            </label>
+            <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
+          </div>
           <div class="articles" id="articleList"></div>
           <div class="empty" id="emptyState">No entries match that filter.</div>
         </div>
