@@ -2,7 +2,6 @@
   const figure = document.querySelector('.globe-figure');
   const canvas = figure.querySelector('.globe-view');
   const poster = figure.querySelector('.globe-poster');
-  const help = figure.querySelector('figcaption');
   const gl = canvas.getContext('webgl', { alpha: true, antialias: false, depth: false });
   const flat = gl ? null : canvas.getContext('2d');
   if (!gl && !flat) return;
@@ -47,6 +46,35 @@
   let pitch = .36;
   let program, angles, frame, drag, texturePixels, framePixels;
   const land = new Image();
+  const pinLayer = figure.querySelector('.globe-pins');
+  const pins = [...figure.querySelectorAll('.globe-posts a')].map(link => {
+    const marker = document.createElement('a');
+    marker.href = link.getAttribute('href');
+    marker.className = 'globe-pin';
+    marker.title = link.getAttribute('aria-label');
+    marker.setAttribute('aria-label', marker.title);
+    marker.tabIndex = -1; // The location links expose the same destinations by keyboard.
+    marker.hidden = true;
+    pinLayer.append(marker);
+    return { marker, latitude: Number(link.dataset.lat) * Math.PI / 180,
+      longitude: Number(link.dataset.lon) * Math.PI / 180 };
+  });
+
+  function placePins() {
+    const sinPitch = Math.sin(pitch);
+    const cosPitch = Math.cos(pitch);
+    for (const { marker, latitude, longitude } of pins) {
+      const x = Math.cos(latitude) * Math.sin(longitude - yaw);
+      const north = Math.sin(latitude);
+      const forward = Math.cos(latitude) * Math.cos(longitude - yaw);
+      const y = north * cosPitch - forward * sinPitch;
+      const depth = north * sinPitch + forward * cosPitch;
+      marker.hidden = depth < .12;
+      if (marker.hidden) continue;
+      marker.style.left = (50 + x * 44 * size[1] / size[0]) + '%';
+      marker.style.top = (50 - y * 44) + '%';
+    }
+  }
 
   function shader(type, source) {
     const item = gl.createShader(type);
@@ -106,14 +134,13 @@
     canvas.hidden = false;
     canvas.tabIndex = 0;
     poster.hidden = true;
-    help.hidden = false;
     draw();
   }
 
   function draw() {
     frame = 0;
     if (flat) {
-      if (texturePixels) drawFlat();
+      if (texturePixels) { drawFlat(); placePins(); }
       return;
     }
     if (!program || gl.isContextLost()) return;
@@ -122,6 +149,7 @@
     gl.uniform1f(angles[1], pitch);
     gl.uniform1f(angles[2], document.documentElement.dataset.theme === 'light' ? 1 : 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    placePins();
   }
 
   // Keep the same projection and interaction when WebGL is unavailable.
@@ -196,8 +224,8 @@
     event.preventDefault();
     program = null;
     canvas.hidden = true;
-    help.hidden = true;
     poster.hidden = false;
+    for (const { marker } of pins) marker.hidden = true;
     drag = null;
   });
   canvas.addEventListener('webglcontextrestored', () => {

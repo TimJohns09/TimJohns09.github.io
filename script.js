@@ -670,6 +670,39 @@ renderFilters();
 renderPgpKeys();
 adaptArchive();
 
+const postPermalinks = {
+  "post-dual-ec": "Dual_EC-1.pdf",
+  "post-bitcoin-quantum": "Johns_Bitcoin_Quantum_Divide.pdf",
+  "post-tor-censorship": "tor_rst.py"
+};
+function openLinkedPost() {
+  const slug = location.hash.slice(1);
+  if (!Object.hasOwn(postPermalinks, slug)) return;
+  const index = entries.findIndex(entry => entry.file === postPermalinks[slug]);
+  if (index < 0) return;
+  state.filter = 'ALL';
+  state.search = '';
+  $('#searchInput').value = '';
+  state.selectedIndex = index;
+  openInlineIndex = index;
+  renderFilters();
+  renderPapers();
+  const preview = $('#reportPreview');
+  preview.tabIndex = -1;
+  preview.focus({ preventScroll: true });
+  preview.scrollIntoView({ block: 'start' });
+}
+window.addEventListener('hashchange', openLinkedPost);
+$('.globe-figure').addEventListener('click', event => {
+  const link = event.target.closest('a[href^="#post-"]');
+  if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
+      link?.getAttribute('href') === location.hash) {
+    event.preventDefault();
+    openLinkedPost();
+  }
+});
+openLinkedPost();
+
 // Contact links open the contact panel before following their anchor.
 $$('a[href="#contact"]').forEach(link => link.addEventListener('click', () => {
   $('[data-tab="contact"]').click();

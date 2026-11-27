@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Tim Johns Cyber Blog and Portfolio — applied cryptography, malware analysis, network security, PDFs, code, and PGP keys." />
-  <title>Tim Johns · Security Research</title>
+  <title>Tim Johns · Security Blog</title>
   <script>
     try {
       const theme = localStorage.getItem('theme');
@@ -13,10 +13,10 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=pixel-globe" />
-  <script src="script.js?v=pixel-globe-2" defer></script>
+  <link rel="stylesheet" href="archive.css?v=globe-posts" />
+  <script src="script.js?v=globe-posts" defer></script>
   <script src="pane-optics.js?v=pixel-globe" defer></script>
-  <script src="globe.js?v=2" defer></script>
+  <script src="globe.js?v=globe-posts" defer></script>
 </head>
 
 <body id="top">
@@ -36,12 +36,12 @@
       </filter>
     </defs>
   </svg>
-  <a class="skip-link" href="#reports">Skip to research</a>
+  <a class="skip-link" href="#reports">Skip to posts</a>
   <header class="site-header">
     <nav class="site-nav" aria-label="Primary navigation">
       <a class="brand" href="#top" aria-label="Tim Johns home"><span class="brand-mark" aria-hidden="true">tj<span>_</span></span>Tim Johns</a>
       <div class="nav-links">
-        <a href="#reports">Research</a>
+        <a href="#reports">Blog</a>
         <a href="#about">About me</a>
         <a href="#contact">Contact</a>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme"></button>
@@ -52,22 +52,29 @@
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero-copy">
         <p class="eyebrow"><span aria-hidden="true"></span> Applied cryptography</p>
-        <h1 id="heroTitle">Security<br><em>research.</em></h1>
+        <h1 id="heroTitle">Security<br><em>blog.</em></h1>
         <p class="hero-lede">I'm Tim Johns. I study how cryptographic systems hold up in practice, from Bitcoin’s post-quantum transition to privacy on the network.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#reports">Browse research</a>
+          <a class="button primary" href="#reports">Browse posts</a>
           <a class="button secondary" href="#about">About me</a>
         </div>
       </div>
       <figure class="globe-figure glass-surface">
-        <img class="globe-poster" src="assets/earth-poster.png" width="180" height="120" alt="A pixelated globe">
-        <canvas class="globe-view" hidden aria-label="Interactive globe" aria-describedby="globe-help"></canvas>
-        <figcaption id="globe-help" hidden>Drag<span class="globe-keyboard-hint"> or use arrow keys</span> to rotate</figcaption>
+        <div class="globe-stage">
+          <img class="globe-poster" src="assets/earth-poster.png" width="180" height="120" alt="A pixelated globe">
+          <canvas class="globe-view" hidden aria-label="Interactive world map. Use the arrow keys to rotate."></canvas>
+          <div class="globe-pins"></div>
+        </div>
+        <figcaption class="globe-posts" aria-label="Posts by location">
+          <a href="#post-dual-ec" data-lat="38.91" data-lon="-77.04" aria-label="Washington, DC: Dual EC backdoor analysis">Washington, DC</a>
+          <a href="#post-bitcoin-quantum" data-lat="50.85" data-lon="4.35" aria-label="Brussels: Bitcoin’s Quantum Divide">Brussels</a>
+          <a href="#post-tor-censorship" data-lat="39.90" data-lon="116.41" aria-label="Beijing: Tor censorship demonstration">Beijing</a>
+        </figcaption>
       </figure>
     </section>
     <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
       <div class="section-header">
-        <h2 id="reportsTitle">Research archive</h2>
+        <h2 id="reportsTitle">Post archive</h2>
         <span class="section-count" id="reportCount">8 published entries</span>
       </div>
       <div class="controls" aria-label="Report controls">
@@ -180,7 +187,7 @@
   </main>
 
   <footer class="site-footer glass-surface">
-    <span><strong>Tim Johns</strong> · Security research and applied cryptography</span>
+    <span><strong>Tim Johns</strong> · Security blog and applied cryptography</span>
     <span class="footer-links">
       <a href="https://github.com/TimJohns09" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a href="mailto:tjohns917@outlook.com">Contact</a>

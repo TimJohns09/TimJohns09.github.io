@@ -75,28 +75,64 @@ h1 em { display: inline-block; color: var(--accent); font-family: var(--serif); 
   border-radius: 16px;
   background: var(--surface);
 }
-.globe-figure :is(.globe-view, .globe-poster) {
-  width: 86%;
-  height: 90%;
-  margin-top: -2%;
+.globe-stage {
+  position: relative;
+  width: min(82%, 420px);
+  aspect-ratio: 180 / 110;
+  display: grid;
+  place-items: center;
+  margin-block: 4px 44px;
+}
+.globe-stage :is(.globe-view, .globe-poster) {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   image-rendering: pixelated;
 }
 .globe-view { cursor: grab; touch-action: none; }
 .globe-view:active { cursor: grabbing; }
 .globe-view:focus-visible { outline-offset: -3px; border-radius: 8px; }
-.globe-figure figcaption {
+.globe-pins { position: absolute; inset: 0; pointer-events: none; }
+.globe-pin {
   position: absolute;
-  inset: auto 0 5%;
-  text-align: center;
-  pointer-events: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+.globe-pin::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: #ffdf99;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px #705126c0, 0 0 12px #ffc764;
+}
+.globe-pin:hover::before { background: #fff1c7; box-shadow: 0 0 0 4px #705126c0, 0 0 16px #ffc764; }
+.globe-posts {
+  position: absolute;
+  inset: auto 8px 9px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+.globe-posts a {
+  display: grid;
+  place-items: center;
+  min-height: 32px;
+  padding-inline: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
   color: var(--text);
   font: .72rem var(--mono);
+  white-space: nowrap;
 }
-.globe-figure figcaption::first-letter { text-transform: uppercase; }
-@media (pointer: coarse) {
-  .globe-figure figcaption .globe-keyboard-hint { display: none; }
-}
+.globe-posts a:hover { border-color: var(--accent); color: var(--accent); }
 .reports-section, .terminal-wrap { padding-block: clamp(24px,2.5vw,36px) clamp(32px,3.5vw,50px); border-top: 1px solid var(--line); }
 .section-header { justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 18px; }
 h2 { font: 500 clamp(2rem,3.3vw,2.9rem)/1.15 var(--sans); letter-spacing: -.06em; }
