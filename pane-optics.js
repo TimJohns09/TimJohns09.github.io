@@ -1,7 +1,9 @@
 /* Sample the page's pixel wallpaper in screen coordinates. A single transparent
    layer draws the glass behind the real DOM, including the sticky reader. */
 (() => {
-  const panes = [...document.querySelectorAll('.report-list-item, .report-preview, .terminal:not(.crt-window), .crt-screen')];
+  const paneSelector = '.report-list-item, .report-preview, .terminal:not(.crt-window), .crt-screen';
+  let panes = [...document.querySelectorAll(paneSelector)];
+  let panesDirty = false;
   const mobileWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
   const simple = matchMedia('(prefers-reduced-transparency: reduce), (forced-colors: active)');
   if (!panes.length || simple.matches) return;
@@ -96,6 +98,8 @@
   const mobileSurfaces = new Map();
   const mobileSamples = new WeakMap();
   let frame = 0;
+  let desktopSample = '';
+  const overscan = 120;
 
   function resizeBuffer(width, height, ratio, scratch = false) {
     const w = Math.max(1, Math.round(width * ratio));
@@ -105,14 +109,12 @@
     gl.viewport(0, 0, w, h);
   }
 
-  function drawPane(pane, x, y, width, height) {
-    const card = pane.classList.contains('report-list-item');
-    const rim = parseFloat(getComputedStyle(pane).borderTopLeftRadius) || 0;
+  function drawPane({card, rim, selected}, x, y, width, height) {
     gl.uniform2f(u.origin, x, y);
     gl.uniform2f(u.size, width, height);
     gl.uniform1f(u.radius, Math.min(rim, width / 2, height / 2));
     gl.uniform1f(u.isCard, card ? 1 : 0);
-    gl.uniform1f(u.selected, pane.hasAttribute('aria-current') ? 1 : 0);
+    gl.uniform1f(u.selected, selected ? 1 : 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
@@ -126,7 +128,7 @@
     }
   }
 
-  function drawClipped(pane, rect, ratio, tile, theme) {
+  function drawClipped({pane, width, height, x, y, rim, selected, card}, ratio, tile, theme) {
     let surface = mobileSurfaces.get(pane);
     if (!surface) {
       const canvas = document.createElement('canvas');
@@ -139,31 +141,31 @@
     }
     // The reader replaces its children when a different document opens.
     if (surface.canvas.parentElement !== pane) pane.prepend(surface.canvas);
-    const x = rect.left + pane.clientLeft;
-    const y = rect.top + pane.clientTop;
-    const width = pane.clientWidth;
-    const height = pane.clientHeight;
-    if (!width || !height) return;
-    const selected = pane.getAttribute('aria-current');
-    const radius = getComputedStyle(pane).borderTopLeftRadius;
-    const sample = [Math.round(x * 4), Math.round(y * 4), width, height, tile, ratio, theme, selected, radius].join('/');
+    const w = Math.max(1, Math.round(width * ratio));
+    const h = Math.max(1, Math.round(height * ratio));
+    // A transformed CRT can show a different portion of its local canvas.
+    // Keep the whole screen there and clip axis-aligned report panes only.
+    const top = pane === monitor ? 0 : Math.max(0, Math.floor((-overscan - y) * ratio));
+    const bottom = pane === monitor ? h : Math.min(h, Math.ceil((innerHeight + overscan - y) * ratio));
+    const rows = bottom - top;
+    if (rows <= 0) return;
+    const sample = [Math.round(x * 4), Math.round(y * 4), w, h, tile, ratio, theme, selected, rim, top, bottom].join('/');
     if (mobileSamples.get(pane) === sample) return;
     resizeBuffer(width, height, ratio, true);
     gl.enable(gl.SCISSOR_TEST);
-    const w = Math.max(1, Math.round(width * ratio));
-    const h = Math.max(1, Math.round(height * ratio));
-    gl.scissor(0, 0, w, h);
+    gl.scissor(0, h - bottom, w, rows);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform2f(u.viewport, width, height);
     gl.uniform2f(u.paperOffset, x, y);
-    drawPane(pane, 0, 0, width, height);
+    drawPane({card, rim, selected}, 0, 0, width, height);
     gl.disable(gl.SCISSOR_TEST);
     if (surface.canvas.width !== w) surface.canvas.width = w;
     if (surface.canvas.height !== h) surface.canvas.height = h;
-    surface.context.clearRect(0, 0, w, h);
-    surface.context.drawImage(layer, 0, layer.height - h, w, h, 0, 0, w, h);
+    surface.context.clearRect(0, top, w, rows);
+    surface.context.drawImage(layer, 0, layer.height - h + top, w, rows, 0, top, w, rows);
     mobileSamples.set(pane, sample);
     pane.classList.add('optical-pane-ready');
+    return true;
   }
 
   function draw() {
@@ -178,34 +180,57 @@
     gl.uniform2f(u.tile, tileWidth, tileHeight);
     gl.uniform1f(u.lightTheme, theme === 'light' ? 1 : 0);
 
+    if (panesDirty) {
+      panes = [...document.querySelectorAll(paneSelector)];
+      panesDirty = false;
+      for (const pane of mobileSurfaces.keys()) {
+        if (pane.isConnected) continue;
+        mobileSurfaces.delete(pane);
+        mobileSamples.delete(pane);
+      }
+    }
+    // Read all pane geometry before changing any canvas dimensions or classes.
+    const visible = [];
+    for (const pane of panes) {
+      const rect = pane.getBoundingClientRect();
+      if (!rect.width || rect.bottom < -overscan || rect.top > innerHeight + overscan) continue;
+      visible.push({
+        pane, rect, width: pane.clientWidth, height: pane.clientHeight,
+        x: rect.left + pane.clientLeft, y: rect.top + pane.clientTop,
+        rim: parseFloat(getComputedStyle(pane).borderTopLeftRadius) || 0,
+        card: pane.classList.contains('report-list-item'),
+        selected: pane.hasAttribute('aria-current')
+      });
+    }
     if (mobile) {
+      desktopSample = '';
       document.documentElement.classList.remove('optics-ready');
-      for (const pane of panes) {
-        const rect = pane.getBoundingClientRect();
-        if (!rect.width || rect.bottom < -120 || rect.top > innerHeight + 120) continue;
-        drawClipped(pane, rect, Math.min(ratio, 1), tileWidth, theme);
+      for (const item of visible) {
+        if (item.width && item.height) drawClipped(item, Math.min(ratio, 1), tileWidth, theme);
       }
       return;
     }
 
     clearMobileSurfaces(true);
-    // Keep the screen refraction clipped to the housing opening.
-    if (monitor) {
-      const rect = monitor.getBoundingClientRect();
-      if (rect.width && rect.bottom > -120 && rect.top < innerHeight + 120) {
-        drawClipped(monitor, rect, ratio, tileWidth, theme);
-      }
-    }
+    const screen = visible.find(item => item.pane === monitor);
+    const screenRedrawn = screen?.width && screen.height && drawClipped(screen, ratio, tileWidth, theme);
+
     const width = layer.clientWidth, height = layer.clientHeight;
     if (!width || !height) return;
+    const reports = visible.filter(({pane, rect}) => pane !== monitor && rect.bottom > 0 && rect.top < height);
+    const sample = JSON.stringify([width, height, ratio, tileWidth, theme, reports.map(({rect, rim, selected, card}) =>
+      [rect.left, rect.top, rect.width, rect.height, rim, selected, card])]);
+    // The default framebuffer is discarded after compositing, so only reuse
+    // the displayed image when no other draw changed this canvas.
+    if (!screenRedrawn && desktopSample === sample) return;
+    desktopSample = sample;
     resizeBuffer(width, height, ratio);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform2f(u.viewport, width, height);
     gl.uniform2f(u.paperOffset, 0, 0);
-    for (const pane of panes) {
-      const rect = pane.getBoundingClientRect();
-      if (pane === monitor || !rect.width || rect.bottom <= 0 || rect.top >= height) continue;
-      drawPane(pane, rect.left, rect.top, rect.width, rect.height);
+    for (const item of reports) {
+      const {rect} = item;
+      drawPane(item, rect.left, rect.top, rect.width, rect.height);
     }
     document.documentElement.classList.add('optics-ready');
   }
@@ -234,10 +259,14 @@
     document.addEventListener('visibilitychange', schedule);
     simple.addEventListener('change', () => {
       document.documentElement.classList.remove('optics-ready');
+      desktopSample = '';
       if (simple.matches) clearMobileSurfaces();
       schedule();
     });
-    const changes = new MutationObserver(schedule);
+    const changes = new MutationObserver(records => {
+      if (records.some(record => record.type === 'childList')) panesDirty = true;
+      schedule();
+    });
     changes.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     changes.observe(document.querySelector('#reports'), { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden','aria-current'] });
     if ('ResizeObserver' in window) {
