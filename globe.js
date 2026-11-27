@@ -2,6 +2,16 @@
   const figure = document.querySelector('.globe-figure');
   const canvas = figure.querySelector('.globe-view');
   const poster = figure.querySelector('.globe-poster');
+  const stage = figure.querySelector('.globe-stage');
+  const size = [180, 110];
+
+  function syncPixelSize() {
+    const step = stage.getBoundingClientRect().width / size[0];
+    if (step > 0) document.documentElement.style.setProperty('--globe-pixel', step + 'px');
+  }
+  syncPixelSize();
+  if ('ResizeObserver' in window) new ResizeObserver(syncPixelSize).observe(stage);
+  else window.addEventListener('resize', syncPixelSize);
   const gl = canvas.getContext('webgl', { alpha: true, antialias: false, depth: false });
   const flat = gl ? null : canvas.getContext('2d');
   if (!gl && !flat) return;
@@ -39,7 +49,6 @@
     }
   `;
 
-  const size = [180, 110];
   canvas.width = size[0];
   canvas.height = size[1];
   let yaw = -Math.PI / 2;
