@@ -598,120 +598,73 @@ body::before {
   body::before { display: none; }
 }
 
-/* One control step is one displayed globe texel. Keep text sharp at every size. */
+/* Solid controls use the restrained geometry of a boot menu. */
 :root {
   --globe-pixel: 2px;
-  --pixel-body: #152d24;
-  --pixel-edge: #477b61;
-  --pixel-lit: #78ae8c;
-  --pixel-shade: #091d15;
-  --pixel-active-body: #b6eaca;
-  --pixel-active-edge: #5c9d76;
-  --pixel-active-lit: #e2ffec;
-  --pixel-active-shade: #7eb491;
+  --menu-face: #14201b;
+  --menu-hover: #1e3228;
+  --menu-border: #456252;
+  --menu-selected: #bfe5cc;
 }
 [data-theme="light"] {
-  --pixel-body: #e6f3e7;
-  --pixel-edge: #528065;
-  --pixel-lit: #fbfff9;
-  --pixel-shade: #a0bca9;
-  --pixel-active-body: #255c43;
-  --pixel-active-edge: #193d2c;
-  --pixel-active-lit: #609b78;
-  --pixel-active-shade: #143322;
+  --menu-face: #f0f5eb;
+  --menu-hover: #e2eee3;
+  --menu-border: #738d7c;
+  --menu-selected: #285d45;
 }
-@supports (clip-path: polygon(0 0, 100% 0, 0 100%)) {
-  :is(.button, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
-      .globe-zoom button, .globe-locations button, .globe-about) {
-    --step: var(--globe-pixel);
-    --two: calc(2 * var(--step));
-    --right: calc(100% - var(--step));
-    --right-two: calc(100% - var(--two));
-    --bottom: calc(100% - var(--step));
-    --bottom-two: calc(100% - var(--two));
-    --face: var(--pixel-body);
-    --edge: var(--pixel-edge);
-    --lit: var(--pixel-lit);
-    --shade: var(--pixel-shade);
-    position: relative;
-    isolation: isolate;
-    border-radius: 0;
-    border: 1px solid transparent;
-    color: var(--text);
-    background: var(--edge);
-    box-shadow: none;
-    clip-path: polygon(
-      var(--two) 0, var(--right-two) 0, var(--right-two) var(--step), var(--right) var(--step),
-      var(--right) var(--two), 100% var(--two), 100% var(--bottom-two),
-      var(--right) var(--bottom-two), var(--right) var(--bottom), var(--right-two) var(--bottom),
-      var(--right-two) 100%, var(--two) 100%, var(--two) var(--bottom), var(--step) var(--bottom),
-      var(--step) var(--bottom-two), 0 var(--bottom-two), 0 var(--two),
-      var(--step) var(--two), var(--step) var(--step), var(--two) var(--step)
-    );
-  }
-  :is(.button, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
-      .globe-zoom button, .globe-locations button, .globe-about)::before {
-    content: "";
-    position: absolute;
-    inset: max(0px, calc(var(--step) - 1px));
-    z-index: -1;
-    background: var(--face);
-    box-shadow: inset 0 var(--step) var(--lit), inset var(--step) 0 var(--lit),
-      inset 0 calc(-1 * var(--step)) var(--shade), inset calc(-1 * var(--step)) 0 var(--shade);
-    clip-path: polygon(
-      var(--step) 0, var(--right) 0, var(--right) var(--step), 100% var(--step),
-      100% var(--bottom), var(--right) var(--bottom), var(--right) 100%,
-      var(--step) 100%, var(--step) var(--bottom), 0 var(--bottom),
-      0 var(--step), var(--step) var(--step)
-    );
-    pointer-events: none;
-  }
-  .button.primary, .filter.active, .tab.active, .globe-locations [aria-pressed="true"], .globe-locations [aria-pressed="true"]:hover {
-    --face: var(--pixel-active-body);
-    --edge: var(--pixel-active-edge);
-    --lit: var(--pixel-active-lit);
-    --shade: var(--pixel-active-shade);
-    border-color: transparent;
-    box-shadow: none;
-    background: var(--edge);
-    color: var(--on-accent);
-  }
-  :is(.button, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
-      .globe-zoom button, .globe-locations button, .globe-about):enabled:hover,
-  :is(a.button, a.pdf-btn, a.chip, a.globe-about):hover {
-    --edge: var(--accent);
-    background: var(--edge);
-    border-color: transparent;
-    box-shadow: none;
-  }
-  :is(.button, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
-      .globe-zoom button, .globe-locations button, .globe-about):not(:disabled):active {
-    --lit: var(--pixel-shade);
-    --shade: var(--pixel-lit);
-  }
-  :is(.button, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
-      .globe-zoom button, .globe-locations button, .globe-about):focus-visible {
-    background: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: .22em;
-  }
-  .theme-toggle:focus-visible .icon { outline: 1px solid currentColor; outline-offset: 2px; }
-  .globe-pin::before {
-    width: calc(3 * var(--globe-pixel));
-    height: calc(3 * var(--globe-pixel));
-    border-radius: 0;
-  }
-  @media (forced-colors: active) {
-    :is(.button, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
-        .globe-zoom button, .globe-locations button, .globe-about) {
-      clip-path: none;
-      border-color: ButtonText;
-    }
-    :is(.button, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
-        .globe-zoom button, .globe-locations button, .globe-about)::before { display: none; }
-    :is(.button.primary, .filter.active, .tab.active, .globe-locations [aria-pressed="true"]) {
-      border-color: Highlight;
-      text-decoration: underline;
-    }
+:is(.button, .button.secondary, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
+    .globe-zoom button, .globe-locations button, .globe-about) {
+  position: relative;
+  border: 1px solid var(--menu-border);
+  border-radius: 0;
+  background: var(--menu-face);
+  color: var(--text);
+  box-shadow: none;
+  font-family: var(--mono);
+}
+:is(.button, .button.secondary, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
+    .globe-zoom button, .globe-locations button, .globe-about):where(:not(:disabled)):hover {
+  border-color: var(--accent);
+  background: var(--menu-hover);
+  color: var(--text);
+  box-shadow: none;
+}
+:is(.button, .pdf-btn, .copy-btn, .chip, .theme-toggle, .filter, .tab,
+    .globe-zoom button, .globe-locations button, .globe-about):not(:disabled):active {
+  box-shadow: inset 0 var(--globe-pixel) color-mix(in srgb, var(--menu-border) 75%, transparent);
+}
+:is(.button.primary, .filter.active, .tab.active, .globe-locations [aria-pressed="true"]),
+:is(.button.primary, .filter.active, .tab.active, .globe-locations [aria-pressed="true"]):hover {
+  border-color: var(--menu-selected);
+  background: var(--menu-selected);
+  color: var(--on-accent);
+}
+:is(.filter, .tab, .globe-locations button) { padding-inline-start: 16px; }
+:is(.filter.active, .tab.active, .globe-locations [aria-pressed="true"])::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 5px;
+  width: var(--globe-pixel);
+  height: calc(3 * var(--globe-pixel));
+  background: currentColor;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.globe-pin::before {
+  width: calc(3 * var(--globe-pixel));
+  height: calc(3 * var(--globe-pixel));
+  border-radius: 0;
+}
+.globe-coordinates:not(:empty) {
+  border-inline-start: var(--globe-pixel) solid var(--accent);
+  border-radius: 0;
+}
+@media (forced-colors: active) {
+  :is(.button.primary, .filter.active, .tab.active, .globe-locations [aria-pressed="true"]) {
+    border-color: Highlight;
+    color: HighlightText;
+    background: Highlight;
+    forced-color-adjust: none;
   }
 }
