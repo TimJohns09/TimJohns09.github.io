@@ -46,14 +46,16 @@
       float slope = 1. - smoothstep(0., 1., t);
       // Snell's law gives the lateral travel through a convex glass lip.
       float angle = slope * 1.19;
-      float travel = tan(angle - asin(sin(angle) / 1.50)) * bevel * 1.8;
+      float travel = slope == 0. ? 0. : tan(angle - asin(sin(angle) / 1.50)) * bevel * 1.8;
       vec2 norm = p / halfSize;
       // A slightly domed face magnifies the grid. Magnification grows
       // toward the shoulders, bending lines that intersect the long sides.
       vec2 dome = p * (.035 + .075 * dot(norm, norm) + .09 * slope);
       vec2 source = origin + paperOffset + local - n * travel - dome;
       float fringe = slope * 1.35;
-      vec3 sampleInk = vec3(ink(source + n * fringe), ink(source), ink(source - n * fringe));
+      float centerInk = ink(source);
+      vec3 sampleInk = vec3(centerInk);
+      if (fringe > 0.) sampleInk = vec3(ink(source + n * fringe), centerInk, ink(source - n * fringe));
       float shoulder = 1. - smoothstep(.35, 1., t);
       vec3 base = mix(vec3(.079,.126,.107), vec3(.951,.969,.933), lightTheme);
       vec3 tint = mix(vec3(.70,.94,.81), vec3(.14,.33,.23), lightTheme);
@@ -95,13 +97,11 @@
   const mobileSamples = new WeakMap();
   let frame = 0;
 
-  function resizeBuffer(width, height, ratio) {
+  function resizeBuffer(width, height, ratio, scratch = false) {
     const w = Math.max(1, Math.round(width * ratio));
     const h = Math.max(1, Math.round(height * ratio));
-    if (layer.width !== w || layer.height !== h) {
-      layer.width = w;
-      layer.height = h;
-    }
+    if (scratch ? layer.width < w : layer.width !== w) layer.width = w;
+    if (scratch ? layer.height < h : layer.height !== h) layer.height = h;
     gl.viewport(0, 0, w, h);
   }
 
@@ -148,14 +148,20 @@
     const radius = getComputedStyle(pane).borderTopLeftRadius;
     const sample = [Math.round(x * 4), Math.round(y * 4), width, height, tile, ratio, theme, selected, radius].join('/');
     if (mobileSamples.get(pane) === sample) return;
-    resizeBuffer(width, height, ratio);
+    resizeBuffer(width, height, ratio, true);
+    gl.enable(gl.SCISSOR_TEST);
+    const w = Math.max(1, Math.round(width * ratio));
+    const h = Math.max(1, Math.round(height * ratio));
+    gl.scissor(0, 0, w, h);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform2f(u.viewport, width, height);
     gl.uniform2f(u.paperOffset, x, y);
     drawPane(pane, 0, 0, width, height);
-    surface.canvas.width = layer.width;
-    surface.canvas.height = layer.height;
-    surface.context.drawImage(layer, 0, 0);
+    gl.disable(gl.SCISSOR_TEST);
+    if (surface.canvas.width !== w) surface.canvas.width = w;
+    if (surface.canvas.height !== h) surface.canvas.height = h;
+    surface.context.clearRect(0, 0, w, h);
+    surface.context.drawImage(layer, 0, layer.height - h, w, h, 0, 0, w, h);
     mobileSamples.set(pane, sample);
     pane.classList.add('optical-pane-ready');
   }

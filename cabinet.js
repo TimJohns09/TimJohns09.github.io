@@ -6,11 +6,11 @@
   const launch = scene.querySelector('.crt-launch');
   const reset = document.querySelector('.case-reset');
   let yaw = -16, pitch = -5;
+  const finish = screen.querySelector('.crt-glass-finish');
   function rotate(y, p) {
     yaw = y % 360; pitch = p % 360;
-    screen.style.setProperty('--reflection-x', (24 + 36 * Math.sin(yaw * Math.PI / 180)) + '%');
-    cabinet.style.setProperty('--yaw', yaw + 'deg');
-    cabinet.style.setProperty('--pitch', pitch + 'deg');
+    finish.style.setProperty('--reflection-x', (24 + 36 * Math.sin(yaw * Math.PI / 180)) + '%');
+    cabinet.style.transform = `rotateX(${pitch}deg) rotateY(${yaw}deg)`;
     reset.hidden = yaw === 0 && pitch === 0;
   }
   function show(open) {
@@ -46,19 +46,32 @@
     const movingWindow = e.target.closest('.terminal-titlebar');
     if(!movingWindow && e.target.closest('.crt-screen')) return;
     const x = e.clientX, y = e.clientY, initialYaw = yaw, initialPitch = pitch;
-    const left = win.offsetLeft, top = win.offsetTop;
-    cabinet.setPointerCapture(e.pointerId);
-    function move(event) {
-      if(event.pointerId !== e.pointerId) return;
-      const dx = event.clientX-x, dy = event.clientY-y;
-      if(movingWindow) {
-        const scale = screen.clientWidth / screen.getBoundingClientRect().width;
-        win.style.left = Math.max(0,Math.min(screen.clientWidth-win.offsetWidth,left+dx*scale))+'px';
-        win.style.top = Math.max(0,Math.min(screen.clientHeight-win.offsetHeight,top+dy*scale))+'px';
+    const bounds = movingWindow && {
+      left: win.offsetLeft, top: win.offsetTop,
+      maxLeft: screen.clientWidth - win.offsetWidth,
+      maxTop: screen.clientHeight - win.offsetHeight,
+      scale: screen.clientWidth / screen.getBoundingClientRect().width
+    };
+    let frame = 0, dx = 0, dy = 0;
+    function paint() {
+      frame = 0;
+      if (bounds) {
+        win.style.left = Math.max(0,Math.min(bounds.maxLeft,bounds.left+dx*bounds.scale))+'px';
+        win.style.top = Math.max(0,Math.min(bounds.maxTop,bounds.top+dy*bounds.scale))+'px';
       } else rotate(initialYaw+dx*.55,initialPitch-dy*.55);
     }
-    cabinet.addEventListener('pointermove',move);
-    cabinet.addEventListener('lostpointercapture',()=>cabinet.removeEventListener('pointermove',move),{once:true});
+    function move(event) {
+      if (event.pointerId !== e.pointerId) return;
+      dx = event.clientX-x;
+      dy = event.clientY-y;
+      if (!frame) frame = requestAnimationFrame(paint);
+    }
+    cabinet.setPointerCapture(e.pointerId);
+    cabinet.addEventListener('pointermove', move);
+    cabinet.addEventListener('lostpointercapture', () => {
+      cabinet.removeEventListener('pointermove', move);
+      if (frame) { cancelAnimationFrame(frame); paint(); }
+    }, {once:true});
   });
   new ResizeObserver(()=>{win.style.left=''; win.style.top='';}).observe(screen);
 })();

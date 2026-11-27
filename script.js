@@ -709,9 +709,9 @@ if (location.hash === '#contact') $('[data-tab="contact"]').click();
 
 // Align fallback textures to the fixed wallpaper in viewport coordinates.
 const mobileWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
-const glassPanes = $('.report-preview, .terminal, .report-list-item, .crt-screen');
+const glassPanes = $$('.report-preview, .report-list-item, .crt-screen');
 function alignPaneSamples() {
-  if (!mobileWallpaper.matches) return;
+  if (!mobileWallpaper.matches || document.querySelector('.optical-pane-ready')) return;
   const origins = glassPanes.map(pane => {
     const rect = pane.getBoundingClientRect();
     return [rect.left + pane.clientLeft, rect.top + pane.clientTop];
