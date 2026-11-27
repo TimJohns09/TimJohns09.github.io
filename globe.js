@@ -95,12 +95,16 @@
     zoom = Math.max(1, Math.min(maxZoom, value));
     const label = zoom.toFixed(1).replace(/\.0$/, '') + '×';
     if (scaleDisplay.value !== label) scaleDisplay.value = label;
-    zoomButtons[0].disabled = zoom <= 1;
-    zoomButtons[1].disabled = zoom >= maxZoom;
+    zoomButtons[0].setAttribute('aria-disabled', String(zoom <= 1));
+    zoomButtons[1].setAttribute('aria-disabled', String(zoom >= maxZoom));
     refresh();
   }
   for (const button of zoomButtons) {
-    button.addEventListener('click', () => setZoom(zoom * (Number(button.dataset.zoom) > 0 ? 1.25 : .8)));
+    button.addEventListener('click', () => {
+      if (button.getAttribute('aria-disabled') !== 'true') {
+        setZoom(zoom * (Number(button.dataset.zoom) > 0 ? 1.25 : .8));
+      }
+    });
   }
 
   function placePins() {

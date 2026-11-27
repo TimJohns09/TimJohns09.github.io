@@ -13,10 +13,10 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=crt" />
+  <link rel="stylesheet" href="archive.css?v=crt-detail" />
   <script src="script.js?v=crt" defer></script>
   <script src="pane-optics.js?v=crt" defer></script>
-  <script src="globe.js?v=atlas-layout" defer></script>
+  <script src="globe.js?v=crt-detail" defer></script>
 </head>
 
 <body id="top">
@@ -61,12 +61,23 @@
       </div>
       <figure class="globe-figure">
         <div class="crt-housing">
-          <img class="crt-shell" src="assets/crt-monitor.webp" alt="" fetchpriority="high">
+          <img class="crt-shell" src="assets/crt-monitor-detail.webp" alt="" fetchpriority="high">
           <div class="crt-screen glass-surface">
             <div class="globe-stage">
-          <img class="globe-poster" src="assets/earth-poster.png" width="180" height="120" alt="A pixelated globe">
-          <canvas class="globe-view" hidden aria-label="Interactive world map. Arrow keys rotate, plus and minus zoom."></canvas>
+              <img class="globe-poster" src="assets/earth-poster.png" width="180" height="120" alt="A pixelated globe">
+              <canvas class="globe-view" hidden aria-label="Interactive world map. Arrow keys rotate, plus and minus zoom."></canvas>
               <div class="globe-pins"></div>
+            </div>
+            <div class="crt-glass-finish" aria-hidden="true"></div>
+          </div>
+          <div class="globe-zoom crt-controls" role="group" aria-label="Globe zoom" hidden>
+            <span class="crt-readout">
+              <span aria-hidden="true">Zoom</span>
+              <output class="globe-scale" aria-label="Globe magnification">1×</output>
+            </span>
+            <div class="crt-key-bank">
+              <button type="button" data-zoom="-1" aria-label="Zoom out" aria-disabled="true"><span aria-hidden="true">−</span></button>
+              <button type="button" data-zoom="1" aria-label="Zoom in"><span aria-hidden="true">+</span></button>
             </div>
           </div>
         </div>
@@ -78,11 +89,6 @@
             <button type="button" data-lat="37.78" data-lon="-79.44" data-region="VA" aria-pressed="false" hidden>Lexington</button>
           </div>
           <span class="globe-coordinates" aria-live="polite"></span>
-          <div class="globe-zoom" role="group" aria-label="Globe zoom" hidden>
-            <button type="button" data-zoom="-1" aria-label="Zoom out">−</button>
-            <output class="globe-scale" aria-label="Globe magnification">1×</output>
-            <button type="button" data-zoom="1" aria-label="Zoom in">+</button>
-          </div>
         </figcaption>
       </figure>
     </section>
