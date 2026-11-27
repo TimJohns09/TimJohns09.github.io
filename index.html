@@ -13,10 +13,10 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=globe-posts" />
-  <script src="script.js?v=globe-posts" defer></script>
+  <link rel="stylesheet" href="archive.css?v=about-globe" />
+  <script src="script.js?v=about-globe" defer></script>
   <script src="pane-optics.js?v=pixel-globe" defer></script>
-  <script src="globe.js?v=globe-posts" defer></script>
+  <script src="globe.js?v=about-globe" defer></script>
 </head>
 
 <body id="top">
@@ -62,13 +62,21 @@
       <figure class="globe-figure glass-surface">
         <div class="globe-stage">
           <img class="globe-poster" src="assets/earth-poster.png" width="180" height="120" alt="A pixelated globe">
-          <canvas class="globe-view" hidden aria-label="Interactive world map. Use the arrow keys to rotate."></canvas>
+          <canvas class="globe-view" hidden aria-label="Interactive world map. Arrow keys rotate, plus and minus zoom."></canvas>
           <div class="globe-pins"></div>
         </div>
-        <figcaption class="globe-posts" aria-label="Posts by location">
-          <a href="#post-dual-ec" data-lat="38.91" data-lon="-77.04" aria-label="Washington, DC: Dual EC backdoor analysis">Washington, DC</a>
-          <a href="#post-bitcoin-quantum" data-lat="50.85" data-lon="4.35" aria-label="Brussels: Bitcoin’s Quantum Divide">Brussels</a>
-          <a href="#post-tor-censorship" data-lat="39.90" data-lon="116.41" aria-label="Beijing: Tor censorship demonstration">Beijing</a>
+        <div class="globe-zoom" aria-label="Globe zoom" hidden>
+          <button type="button" data-zoom="-1" aria-label="Zoom out">−</button>
+          <button type="button" data-zoom="1" aria-label="Zoom in">+</button>
+        </div>
+        <figcaption class="globe-places">
+          <div class="globe-locations" aria-label="About me locations">
+            <button type="button" data-lat="39.55" data-lon="-104.97" data-region="CO" aria-pressed="false" hidden>Highlands Ranch</button>
+            <button type="button" data-lat="39.95" data-lon="-75.17" data-region="PA" aria-pressed="false" hidden>Philadelphia</button>
+            <button type="button" data-lat="37.78" data-lon="-79.44" data-region="VA" aria-pressed="false" hidden>Lexington</button>
+          </div>
+          <a class="globe-about" href="#about">About me</a>
+          <span class="globe-coordinates" aria-live="polite"></span>
         </figcaption>
       </figure>
     </section>
@@ -137,6 +145,11 @@
           <div class="term-body">
             <div class="line"><span class="prompt">tim@research</span><span class="sep"> ~ % </span><span class="cmd">whoami</span></div>
             <p class="terminal-copy"><span class="val">Tim Johns</span> — I'm Tim Johns, and I graduated from Washington and Lee University in May 2026 with a bachelor's degree in Computer Science. I live in Denver, Colorado, where I work as an associate cybersecurity analyst specializing in applied cryptography. My projects draw on interests spanning cryptography, malware obfuscation, and open-source anonymity projects like Tor and I2P. I'm interested in topics such as digital surveillance and censorship, cyber-related threats to national security, and privacy-focused software like TailsOS and Qubes. I also enjoy learning about emerging AI/ML technologies like neuromorphic computing and artificial intelligence.</p>
+            <ul class="bio-places">
+              <li><strong>Highlands Ranch, CO</strong><span>Applied cryptography and post-quantum security</span></li>
+              <li><strong>Philadelphia, PA</strong></li>
+              <li><strong>Lexington, VA</strong><span>Washington and Lee University</span></li>
+            </ul>
             <div class="line final-line"><span class="prompt">tim@research</span><span class="sep"> ~ % </span><span class="cursor"></span></div>
           </div>
         </div>

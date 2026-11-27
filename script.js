@@ -693,14 +693,6 @@ function openLinkedPost() {
   preview.scrollIntoView({ block: 'start' });
 }
 window.addEventListener('hashchange', openLinkedPost);
-$('.globe-figure').addEventListener('click', event => {
-  const link = event.target.closest('a[href^="#post-"]');
-  if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
-      link?.getAttribute('href') === location.hash) {
-    event.preventDefault();
-    openLinkedPost();
-  }
-});
 openLinkedPost();
 
 // Contact links open the contact panel before following their anchor.

@@ -14,10 +14,10 @@
     precision mediump float;
     uniform sampler2D land;
     uniform vec2 size;
-    uniform float yaw, pitch, pale;
+    uniform float yaw, pitch, pale, zoom;
     const float PI = 3.14159265;
     void main() {
-      vec2 p = (gl_FragCoord.xy - size * .5) / (size.y * .44);
+      vec2 p = (gl_FragCoord.xy - size * .5) / (size.y * .44 * zoom);
       float d = dot(p, p);
       if (d > 1.0) discard;
       vec3 normal = vec3(p, sqrt(1.0 - d));
@@ -42,23 +42,54 @@
   const size = [180, 110];
   canvas.width = size[0];
   canvas.height = size[1];
-  let yaw = -.53;
-  let pitch = .36;
-  let program, angles, frame, drag, texturePixels, framePixels;
+  let yaw = -Math.PI / 2;
+  let pitch = .58;
+  let zoom = 1;
+  const maxZoom = 3.5;
+  const zoomControls = figure.querySelector('.globe-zoom');
+  const zoomButtons = [...zoomControls.querySelectorAll('button')];
+  const coordinates = figure.querySelector('.globe-coordinates');
+  let program, angles, frame, texturePixels, framePixels;
   const land = new Image();
   const pinLayer = figure.querySelector('.globe-pins');
-  const pins = [...figure.querySelectorAll('.globe-posts a')].map(link => {
-    const marker = document.createElement('a');
-    marker.href = link.getAttribute('href');
+  const pins = [...figure.querySelectorAll('.globe-locations button')].map(button => {
+    const marker = document.createElement('button');
+    marker.type = 'button';
     marker.className = 'globe-pin';
-    marker.title = link.getAttribute('aria-label');
+    marker.title = button.textContent + ', ' + button.dataset.region;
     marker.setAttribute('aria-label', marker.title);
-    marker.tabIndex = -1; // The location links expose the same destinations by keyboard.
+    marker.tabIndex = -1; // The location buttons provide keyboard access.
     marker.hidden = true;
     pinLayer.append(marker);
-    return { marker, latitude: Number(link.dataset.lat) * Math.PI / 180,
-      longitude: Number(link.dataset.lon) * Math.PI / 180 };
+    const pin = { button, marker, latitude: Number(button.dataset.lat) * Math.PI / 180,
+      longitude: Number(button.dataset.lon) * Math.PI / 180 };
+    button.addEventListener('click', () => focusPin(pin));
+    marker.addEventListener('click', () => focusPin(pin));
+    return pin;
   });
+
+  function focusPin(pin) {
+    yaw = pin.longitude;
+    pitch = pin.latitude;
+    for (const { button, marker } of pins) {
+      const selected = button === pin.button;
+      button.setAttribute('aria-pressed', String(selected));
+      marker.classList.toggle('active', selected);
+    }
+    const { lat, lon } = pin.button.dataset;
+    coordinates.textContent = `${pin.marker.title} · ${Number(lat).toFixed(2)}° N, ${Math.abs(Number(lon)).toFixed(2)}° W`;
+    setZoom(Math.max(zoom, 2.2));
+  }
+
+  function setZoom(value) {
+    zoom = Math.max(1, Math.min(maxZoom, value));
+    zoomButtons[0].disabled = zoom <= 1;
+    zoomButtons[1].disabled = zoom >= maxZoom;
+    refresh();
+  }
+  for (const button of zoomButtons) {
+    button.addEventListener('click', () => setZoom(zoom * (Number(button.dataset.zoom) > 0 ? 1.25 : .8)));
+  }
 
   function placePins() {
     const sinPitch = Math.sin(pitch);
@@ -69,10 +100,12 @@
       const forward = Math.cos(latitude) * Math.cos(longitude - yaw);
       const y = north * cosPitch - forward * sinPitch;
       const depth = north * sinPitch + forward * cosPitch;
-      marker.hidden = depth < .12;
+      const left = 50 + x * 44 * zoom * size[1] / size[0];
+      const top = 50 - y * 44 * zoom;
+      marker.hidden = depth < .12 || left < 2 || left > 98 || top < 2 || top > 98;
       if (marker.hidden) continue;
-      marker.style.left = (50 + x * 44 * size[1] / size[0]) + '%';
-      marker.style.top = (50 - y * 44) + '%';
+      marker.style.left = left + '%';
+      marker.style.top = top + '%';
     }
   }
 
@@ -125,7 +158,7 @@
     gl.uniform1i(gl.getUniformLocation(program, 'land'), 0);
     gl.uniform2f(gl.getUniformLocation(program, 'size'), ...size);
     gl.viewport(0, 0, ...size);
-    angles = ['yaw', 'pitch', 'pale'].map(name => gl.getUniformLocation(program, name));
+    angles = ['yaw', 'pitch', 'pale', 'zoom'].map(name => gl.getUniformLocation(program, name));
 
     showGlobe();
   }
@@ -134,7 +167,9 @@
     canvas.hidden = false;
     canvas.tabIndex = 0;
     poster.hidden = true;
-    draw();
+    zoomControls.hidden = false;
+    for (const { button } of pins) button.hidden = false;
+    setZoom(zoom);
   }
 
   function draw() {
@@ -148,6 +183,7 @@
     gl.uniform1f(angles[0], yaw);
     gl.uniform1f(angles[1], pitch);
     gl.uniform1f(angles[2], document.documentElement.dataset.theme === 'light' ? 1 : 0);
+    gl.uniform1f(angles[3], zoom);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     placePins();
   }
@@ -156,7 +192,8 @@
   function drawFlat() {
     const [width, height] = size;
     const pixels = framePixels.data;
-    const radius = height * .44;
+    const radius = height * .44 * zoom;
+    pixels.fill(0);
     const cosPitch = Math.cos(pitch);
     const sinPitch = Math.sin(pitch);
     const lightTheme = document.documentElement.dataset.theme === 'light' ? .88 : 1;
@@ -200,25 +237,41 @@
     refresh();
   }
 
+  const pointers = new Map();
+  function pinchDistance() {
+    const [first, second] = pointers.values();
+    return Math.hypot(first.x - second.x, first.y - second.y);
+  }
   canvas.addEventListener('pointerdown', event => {
-    if (drag || event.button !== 0) return;
-    drag = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    if (event.button !== 0 || pointers.size >= 2) return;
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     canvas.setPointerCapture(event.pointerId);
   });
   canvas.addEventListener('pointermove', event => {
-    if (drag?.id !== event.pointerId) return;
-    const scale = 4 / canvas.clientWidth;
-    rotate((drag.x - event.clientX) * scale, (event.clientY - drag.y) * scale);
-    drag.x = event.clientX;
-    drag.y = event.clientY;
+    const previous = pointers.get(event.pointerId);
+    if (!previous) return;
+    const distance = pointers.size === 2 ? pinchDistance() : 0;
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (distance > 0) { setZoom(zoom * pinchDistance() / distance); return; }
+    const scale = 4 / (canvas.clientWidth * zoom);
+    rotate((previous.x - event.clientX) * scale, (event.clientY - previous.y) * scale);
   });
-  canvas.addEventListener('lostpointercapture', () => { drag = null; });
-  canvas.addEventListener('contextmenu', event => { if (drag) event.preventDefault(); });
+  canvas.addEventListener('lostpointercapture', event => { pointers.delete(event.pointerId); });
+  canvas.addEventListener('contextmenu', event => { if (pointers.size) event.preventDefault(); });
+  canvas.addEventListener('wheel', event => {
+    if (document.activeElement !== canvas || event.ctrlKey) return;
+    event.preventDefault();
+    if (event.deltaY) setZoom(zoom * (event.deltaY < 0 ? 1.12 : 1/1.12));
+  }, { passive: false });
   const keys = { ArrowLeft: [.16, 0], ArrowRight: [-.16, 0], ArrowUp: [0, -.16], ArrowDown: [0, .16] };
   canvas.addEventListener('keydown', event => {
-    if (!Object.hasOwn(keys, event.key)) return;
-    event.preventDefault();
-    rotate(...keys[event.key]);
+    if (['+', '=', '-'].includes(event.key)) {
+      event.preventDefault();
+      setZoom(zoom * (event.key === '-' ? .8 : 1.25));
+    } else if (Object.hasOwn(keys, event.key)) {
+      event.preventDefault();
+      rotate(...keys[event.key].map(step => step / zoom));
+    }
   });
   canvas.addEventListener('webglcontextlost', event => {
     event.preventDefault();
@@ -226,7 +279,10 @@
     canvas.hidden = true;
     poster.hidden = false;
     for (const { marker } of pins) marker.hidden = true;
-    drag = null;
+    pointers.clear();
+    zoomControls.hidden = true;
+    coordinates.textContent = '';
+    for (const { button } of pins) button.hidden = true;
   });
   canvas.addEventListener('webglcontextrestored', () => {
     if (land.naturalWidth) initialize();

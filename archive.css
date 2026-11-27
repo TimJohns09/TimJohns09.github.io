@@ -70,18 +70,20 @@ h1 em { display: inline-block; color: var(--accent); font-family: var(--serif); 
   overflow: hidden;
   display: grid;
   place-items: center;
-  aspect-ratio: 1.64;
+  aspect-ratio: 180 / 110;
+  min-height: 230px;
   border: 1px solid var(--pane-edge);
   border-radius: 16px;
   background: var(--surface);
 }
 .globe-stage {
-  position: relative;
-  width: min(82%, 420px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(100%, 620px);
   aspect-ratio: 180 / 110;
-  display: grid;
-  place-items: center;
-  margin-block: 4px 44px;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
 }
 .globe-stage :is(.globe-view, .globe-poster) {
   display: block;
@@ -94,33 +96,49 @@ h1 em { display: inline-block; color: var(--accent); font-family: var(--serif); 
 .globe-view:active { cursor: grabbing; }
 .globe-view:focus-visible { outline-offset: -3px; border-radius: 8px; }
 .globe-pins { position: absolute; inset: 0; pointer-events: none; }
+.globe-pin.active::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  opacity: .88;
+  background: linear-gradient(#ffe0a7,#ffe0a7) left top/7px 1px,
+    linear-gradient(#ffe0a7,#ffe0a7) left top/1px 7px,
+    linear-gradient(#ffe0a7,#ffe0a7) right bottom/7px 1px,
+    linear-gradient(#ffe0a7,#ffe0a7) right bottom/1px 7px;
+  background-repeat: no-repeat;
+}
 .globe-pin {
   position: absolute;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  padding: 0;
+  background: none;
   transform: translate(-50%, -50%);
   pointer-events: auto;
 }
 .globe-pin::before {
   content: "";
-  width: 7px;
-  height: 7px;
-  background: #ffdf99;
+  width: 6px;
+  height: 6px;
+  background: #ffdc8d;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px #705126c0, 0 0 12px #ffc764;
+  box-shadow: 0 0 0 2px #25190a, 0 0 12px #ffd28b;
 }
-.globe-pin:hover::before { background: #fff1c7; box-shadow: 0 0 0 4px #705126c0, 0 0 16px #ffc764; }
-.globe-posts {
+.globe-pin.active::before, .globe-pin:hover::before {
+  background: #fff6d4;
+  box-shadow: 0 0 0 2px #3e2710, 0 0 0 4px #ffe0a7b0, 0 0 14px #ffd28b;
+}
+.globe-zoom {
   position: absolute;
-  inset: auto 8px 9px;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px 6px;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  gap: 4px;
 }
-.globe-posts a {
+.globe-zoom button, .globe-locations button, .globe-about {
   display: grid;
   place-items: center;
   min-height: 32px;
@@ -130,9 +148,37 @@ h1 em { display: inline-block; color: var(--accent); font-family: var(--serif); 
   background: var(--surface);
   color: var(--text);
   font: .72rem var(--mono);
-  white-space: nowrap;
 }
-.globe-posts a:hover { border-color: var(--accent); color: var(--accent); }
+.globe-zoom button { min-width: 34px; font-size: 1rem; }
+.globe-zoom button:disabled { opacity: .55; cursor: default; }
+.globe-places {
+  position: absolute;
+  inset: auto 8px 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  pointer-events: none;
+}
+.globe-locations { display: flex; flex-wrap: wrap; gap: 4px; }
+.globe-places :is(button, a) { pointer-events: auto; white-space: nowrap; }
+.globe-places :is(button, a):hover, .globe-locations [aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.globe-about { margin-left: auto; }
+.globe-coordinates {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 0;
+  color: var(--accent);
+  background: var(--surface);
+  font: .72rem var(--mono);
+}
+.globe-coordinates:not(:empty) { padding: 4px 7px; border-radius: 4px; }
+.bio-places { display: flex; flex-wrap: wrap; gap: 8px 24px; padding: 0; list-style: none; font: .82rem/1.5 var(--mono); }
+.bio-places strong { display: block; color: var(--accent); font-weight: 500; }
+.bio-places span { color: var(--muted); }
 .reports-section, .terminal-wrap { padding-block: clamp(24px,2.5vw,36px) clamp(32px,3.5vw,50px); border-top: 1px solid var(--line); }
 .section-header { justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 18px; }
 h2 { font: 500 clamp(2rem,3.3vw,2.9rem)/1.15 var(--sans); letter-spacing: -.06em; }
