@@ -13,9 +13,10 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=pinned-wallpaper" />
-  <script src="script.js?v=pinned-wallpaper" defer></script>
-  <script src="pane-optics.js?v=pinned-wallpaper" defer></script>
+  <link rel="stylesheet" href="archive.css?v=pixel-globe" />
+  <script src="script.js?v=pixel-globe" defer></script>
+  <script src="pane-optics.js?v=pixel-globe" defer></script>
+  <script src="globe.js?v=1" defer></script>
 </head>
 
 <body id="top">
@@ -58,9 +59,10 @@
           <a class="button secondary" href="#about">About me</a>
         </div>
       </div>
-      <figure class="curve-figure">
-        <img src="assets/curve-slices.svg" alt="Mint wireframe curves stacked in perspective. An amber secant crosses the upper slice at three points." width="1080" height="680" fetchpriority="high">
-        <span class="curve-lens" aria-hidden="true"></span>
+      <figure class="globe-figure glass-surface">
+        <img class="globe-poster" src="assets/earth-poster.png" width="180" height="120" alt="A pixelated globe">
+        <canvas class="globe-view" hidden aria-label="Interactive globe" aria-describedby="globe-help"></canvas>
+        <figcaption id="globe-help" hidden>Drag<span class="globe-keyboard-hint"> or use arrow keys</span> to rotate</figcaption>
       </figure>
     </section>
     <section class="reports-section" id="reports" aria-labelledby="reportsTitle">

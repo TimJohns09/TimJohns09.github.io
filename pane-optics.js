@@ -1,7 +1,7 @@
 /* Sample the page's pixel wallpaper in screen coordinates. A single transparent
    layer draws the glass behind the real DOM, including the sticky reader. */
 (() => {
-  const panes = [...document.querySelectorAll('.report-list-item, .report-preview, .terminal')];
+  const panes = [...document.querySelectorAll('.report-list-item, .report-preview, .terminal, .globe-figure')];
   const mobileWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
   const simple = matchMedia('(prefers-reduced-transparency: reduce), (forced-colors: active)');
   if (!panes.length || simple.matches) return;

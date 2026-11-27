@@ -683,47 +683,9 @@ $$('.tab').forEach(tab => {
 });
 if (location.hash === '#contact') $('[data-tab="contact"]').click();
 
-// Hover inspects the plot on desktop. A tap places the lens on touchscreens.
-const curve = $('.curve-figure');
-const lens = $('.curve-lens', curve);
-const inspectCurve = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
-let lensFrame = 0;
-let lensX = 0;
-let lensY = 0;
-
-function resetLens() {
-  cancelAnimationFrame(lensFrame);
-  lensFrame = 0;
-  lens.style.removeProperty('--lx');
-  lens.style.removeProperty('--ly');
-}
-
-function positionLens(event) {
-  lensX = event.offsetX;
-  lensY = event.offsetY;
-  if (lensFrame) return;
-  lensFrame = requestAnimationFrame(() => {
-    lensFrame = 0;
-    const width = curve.clientWidth;
-    if (!width) return;
-    lens.style.setProperty('--lx', `${100 * lensX / width}cqw`);
-    lens.style.setProperty('--ly', `${100 * lensY / width}cqw`);
-  });
-}
-curve.addEventListener('pointermove', event => {
-  if (inspectCurve.matches && event.pointerType !== 'touch') positionLens(event);
-});
-curve.addEventListener('click', event => {
-  if (!inspectCurve.matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) positionLens(event);
-});
-curve.addEventListener('pointerleave', event => {
-  if (event.pointerType !== 'touch') resetLens();
-});
-inspectCurve.addEventListener('change', resetLens);
-
 // Align fallback textures to the fixed wallpaper in viewport coordinates.
 const mobileWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
-const glassPanes = $$('.report-preview, .terminal, .report-list-item');
+const glassPanes = $('.report-preview, .terminal, .report-list-item, .globe-figure');
 function alignPaneSamples() {
   if (!mobileWallpaper.matches) return;
   const origins = glassPanes.map(pane => {
