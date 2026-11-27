@@ -8,6 +8,7 @@
   let yaw = -9, pitch = 3;
   function rotate(y, p) {
     yaw = y % 360; pitch = p % 360;
+    screen.style.setProperty('--reflection-x', (24 + 36 * Math.sin(yaw * Math.PI / 180)) + '%');
     cabinet.style.setProperty('--yaw', yaw + 'deg');
     cabinet.style.setProperty('--pitch', pitch + 'deg');
     reset.hidden = yaw === 0 && pitch === 0;
