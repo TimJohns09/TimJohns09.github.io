@@ -13,9 +13,9 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=crt-detail" />
+  <link rel="stylesheet" href="archive.css?v=cabinet" />
   <script src="script.js?v=crt" defer></script>
-  <script src="pane-optics.js?v=crt" defer></script>
+  <script src="pane-optics.js?v=cabinet" defer></script>
   <script src="globe.js?v=crt-detail" defer></script>
 </head>
 
@@ -60,65 +60,17 @@
         </div>
       </div>
       <figure class="globe-figure">
-        <div class="crt-housing">
+        <div class="crt-scene" id="about"><div class="crt-cabinet" tabindex="0" role="group" aria-label="Rotatable computer. Drag the case or use arrow keys to rotate. Home faces forward.">
+          <div class="case-face case-left"></div><div class="case-face case-right"></div><div class="case-face case-top"></div><div class="case-face case-base"></div><div class="case-face case-back"><div class="rear-panel"><i></i><b></b></div></div>
+          <div class="crt-housing">
           <img class="crt-shell" src="assets/crt-monitor-detail.webp" alt="" fetchpriority="high">
-          <div class="crt-screen glass-surface">
+          <div class="crt-screen glass-surface" id="terminal">
             <div class="globe-stage">
               <img class="globe-poster" src="assets/earth-poster.png" width="180" height="120" alt="A pixelated globe">
               <canvas class="globe-view" hidden aria-label="Interactive world map. Arrow keys rotate, plus and minus zoom."></canvas>
               <div class="globe-pins"></div>
             </div>
-            <div class="crt-glass-finish" aria-hidden="true"></div>
-          </div>
-          <div class="globe-zoom crt-controls" role="group" aria-label="Globe zoom" hidden>
-            <span class="crt-readout">
-              <span aria-hidden="true">Zoom</span>
-              <output class="globe-scale" aria-label="Globe magnification">1×</output>
-            </span>
-            <div class="crt-key-bank">
-              <button type="button" data-zoom="-1" aria-label="Zoom out" aria-disabled="true"><span aria-hidden="true">−</span></button>
-              <button type="button" data-zoom="1" aria-label="Zoom in"><span aria-hidden="true">+</span></button>
-            </div>
-          </div>
-        </div>
-
-        <figcaption class="globe-places">
-          <div class="globe-locations" aria-label="About me locations">
-            <button type="button" data-lat="39.55" data-lon="-104.97" data-region="CO" aria-pressed="false" hidden>Highlands Ranch</button>
-            <button type="button" data-lat="39.95" data-lon="-75.17" data-region="PA" aria-pressed="false" hidden>Philadelphia</button>
-            <button type="button" data-lat="37.78" data-lon="-79.44" data-region="VA" aria-pressed="false" hidden>Lexington</button>
-          </div>
-          <span class="globe-coordinates" aria-live="polite"></span>
-        </figcaption>
-      </figure>
-    </section>
-    <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
-      <div class="section-header">
-        <h2 id="reportsTitle">Post archive</h2>
-        <span class="section-count" id="reportCount">8 published entries</span>
-      </div>
-      <div class="reports-workspace">
-        <div class="report-browser">
-          <div class="controls" aria-label="Report controls">
-            <label class="search-wrap">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-              <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search the archive" autocomplete="off" />
-            </label>
-            <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
-          </div>
-          <div class="articles" id="articleList"></div>
-          <div class="empty" id="emptyState">No entries match that filter.</div>
-        </div>
-        <section class="report-preview glass-surface" id="reportPreview" aria-live="polite" aria-label="Selected report preview"></section>
-      </div>
-    </section>
-    <section class="terminal-wrap" id="about" aria-labelledby="terminal">
-      <div class="section-header"><h2 id="terminal">About me</h2></div>
-
-      <div class="terminal glass-surface" id="contact" aria-label="About me">
+            <div class="terminal crt-window" hidden id="contact" aria-label="About me">
         <div class="terminal-titlebar">
           <div class="window-dots" aria-hidden="true">
             <span class="dot red"></span>
@@ -126,8 +78,8 @@
             <span class="dot green"></span>
           </div>
 
-          <span class="terminal-caption">tim — zsh — ~/research</span>
-          <span class="terminal-session" aria-hidden="true">⌘</span>
+          <span class="terminal-caption">About me</span>
+          <button class="crt-close" aria-label="Close About me">×</button>
         </div>
         <div class="tabs" role="tablist" aria-label="Profile sections">
             <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="whoami">
@@ -208,7 +160,55 @@
           </div>
         </div>
       </div>
-      </section>
+            <div class="crt-glass-finish" aria-hidden="true"></div>
+          </div>
+          <button class="crt-launch" aria-controls="contact" aria-expanded="false">About me</button>
+          <div class="globe-zoom crt-controls" role="group" aria-label="Globe zoom" hidden>
+            <span class="crt-readout">
+              <span aria-hidden="true">Zoom</span>
+              <output class="globe-scale" aria-label="Globe magnification">1×</output>
+            </span>
+            <div class="crt-key-bank">
+              <button type="button" data-zoom="-1" aria-label="Zoom out" aria-disabled="true"><span aria-hidden="true">−</span></button>
+              <button type="button" data-zoom="1" aria-label="Zoom in"><span aria-hidden="true">+</span></button>
+            </div>
+          </div>
+        </div>
+
+        </div></div><div class="globe-places" hidden>
+          <div class="globe-locations" aria-label="About me locations">
+            <button type="button" data-lat="39.55" data-lon="-104.97" data-region="CO" aria-pressed="false" hidden>Highlands Ranch</button>
+            <button type="button" data-lat="39.95" data-lon="-75.17" data-region="PA" aria-pressed="false" hidden>Philadelphia</button>
+            <button type="button" data-lat="37.78" data-lon="-79.44" data-region="VA" aria-pressed="false" hidden>Lexington</button>
+          </div>
+          <span class="globe-coordinates" aria-live="polite"></span>
+        </div><button class="case-reset" hidden>Face front</button>
+      </figure>
+    </section>
+    <section class="reports-section" id="reports" aria-labelledby="reportsTitle">
+      <div class="section-header">
+        <h2 id="reportsTitle">Post archive</h2>
+        <span class="section-count" id="reportCount">8 published entries</span>
+      </div>
+      <div class="reports-workspace">
+        <div class="report-browser">
+          <div class="controls" aria-label="Report controls">
+            <label class="search-wrap">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input class="search" id="searchInput" type="search" aria-label="Search reports" placeholder="Search the archive" autocomplete="off" />
+            </label>
+            <div class="filters" role="group" aria-label="Filter by tag" id="filters"></div>
+          </div>
+          <div class="articles" id="articleList"></div>
+          <div class="empty" id="emptyState">No entries match that filter.</div>
+        </div>
+        <section class="report-preview glass-surface" id="reportPreview" aria-live="polite" aria-label="Selected report preview"></section>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer glass-surface">
@@ -218,5 +218,5 @@
       <a href="mailto:tjohns917@outlook.com">Contact</a>
     </span>
   </footer>
-</body>
+<script src="cabinet.js" defer></script></body>
 </html>
