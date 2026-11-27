@@ -481,7 +481,7 @@ body::before {
 .material-defs { position: absolute; pointer-events: none; }
 .pattern-ink { flood-color: var(--pattern-ink); }
 
-.terminal, .report-preview, .globe-figure {
+.terminal, .report-preview, .crt-screen {
   isolation: isolate;
   background: linear-gradient(138deg, var(--pane-wash), transparent 34%),
     linear-gradient(315deg, var(--pane-wash), transparent 18%), var(--pane-base);
@@ -489,7 +489,7 @@ body::before {
   box-shadow: 0 16px 34px -26px #07140db3, 0 2px 5px #08140d24;
 }
 .terminal { position: relative; }
-.terminal::before, .report-preview::before, .report-list-item::before, .globe-figure::before {
+.terminal::before, .report-preview::before, .report-list-item::before, .crt-screen::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -500,7 +500,7 @@ body::before {
   filter: url(#pane-refraction);
   opacity: var(--sample-opacity);
 }
-.terminal::after, .report-preview::after, .globe-figure::after {
+.terminal::after, .report-preview::after, .crt-screen::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -510,7 +510,7 @@ body::before {
     inset 0 0 7px 2px var(--pane-wash), inset 0 -4px 7px -5px var(--pane-shine);
 }
 @supports (mask-composite: exclude) {
-  .terminal::after, .report-preview::after, .globe-figure::after {
+  .terminal::after, .report-preview::after, .crt-screen::after {
     padding: 2px;
     background: linear-gradient(133deg, var(--pane-shine), transparent 25% 53%,
       var(--pane-glint) 74%, var(--pane-shine) 87%, transparent);
@@ -546,7 +546,7 @@ body::before {
     mix-blend-mode: normal;
   }
   .report-preview { position: relative; top: auto; }
-  .terminal::before, .report-preview::before, .report-list-item::before, .globe-figure::before {
+  .terminal::before, .report-preview::before, .report-list-item::before, .crt-screen::before {
     background-attachment: scroll;
     background-position: var(--sample-x, 0px) var(--sample-y, 0px);
   }
@@ -573,18 +573,18 @@ body::before {
   pointer-events: none;
 }
 .optical-pane-ready,
-.optics-ready :is(.terminal, .report-preview, .report-list-item, .globe-figure) {
+.optics-ready :is(.terminal, .report-preview, .report-list-item, .crt-screen) {
   background: linear-gradient(146deg, rgb(209 244 227 / .065), transparent 22% 83%, rgb(174 229 201 / .045));
 }
 .optical-pane-ready::before,
-.optics-ready :is(.terminal, .report-preview, .report-list-item, .globe-figure)::before { display: none; }
+.optics-ready :is(.terminal, .report-preview, .report-list-item, .crt-screen)::before { display: none; }
 .optics-ready .report-list-item:hover { border-color: var(--accent); }
 .report-list-item::before { opacity: .22; }
 
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
   body::before, .optical-layer, .pane-optical-surface, .report-list-item::before, .terminal::before, .terminal::after,
-  .report-preview::before, .report-preview::after, .globe-figure::before, .globe-figure::after { display: none; }
-  .terminal, .report-preview, .globe-figure, .search-wrap, .pgp { background: var(--surface); }
+  .report-preview::before, .report-preview::after, .crt-screen::before, .crt-screen::after { display: none; }
+  .terminal, .report-preview, .crt-screen, .search-wrap, .pgp { background: var(--surface); }
   .report-preview-document { background: var(--bg); }
   .report-list-item { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .report-list-item.active { background: var(--soft); }
@@ -826,4 +826,49 @@ h2 {
   .globe-locations button { font-size: .7rem; }
   .globe-zoom button { min-width: 25px; }
   .globe-scale { min-width: 3ch; font-size: .68rem; }
+}
+
+/* Match the screen rectangle to the housing artwork. */
+.globe-figure {
+  display: block;
+  min-height: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.crt-housing {
+  position: relative;
+  aspect-ratio: 1300 / 1086;
+  container-type: inline-size;
+}
+.crt-shell {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  filter: drop-shadow(0 8px 16px rgb(0 0 0 / .26));
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.crt-screen {
+  position: absolute;
+  inset: 12.5% 12.1% 21.9% 12%;
+  container-type: size;
+  overflow: hidden;
+  border: 1px solid var(--pane-edge);
+  border-radius: 3.3cqw;
+}
+.crt-screen .globe-stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(100%, calc(100cqh * 180 / 110));
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+.globe-places { margin-inline: 7%; border-radius: 10px; border: 1px solid var(--line); }
+@media (max-width: 599px) {
+  .globe-places { margin-inline: 3%; }
 }

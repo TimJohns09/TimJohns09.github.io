@@ -13,9 +13,9 @@
   </script>
 
   <meta name="theme-color" content="#0d1616" />
-  <link rel="stylesheet" href="archive.css?v=atlas-layout" />
-  <script src="script.js?v=about-globe" defer></script>
-  <script src="pane-optics.js?v=pixel-globe" defer></script>
+  <link rel="stylesheet" href="archive.css?v=crt" />
+  <script src="script.js?v=crt" defer></script>
+  <script src="pane-optics.js?v=crt" defer></script>
   <script src="globe.js?v=atlas-layout" defer></script>
 </head>
 
@@ -59,11 +59,16 @@
           <a class="about-link" href="#about">About me</a>
         </div>
       </div>
-      <figure class="globe-figure glass-surface">
-        <div class="globe-stage">
+      <figure class="globe-figure">
+        <div class="crt-housing">
+          <img class="crt-shell" src="assets/crt-monitor.webp" alt="" fetchpriority="high">
+          <div class="crt-screen glass-surface">
+            <div class="globe-stage">
           <img class="globe-poster" src="assets/earth-poster.png" width="180" height="120" alt="A pixelated globe">
           <canvas class="globe-view" hidden aria-label="Interactive world map. Arrow keys rotate, plus and minus zoom."></canvas>
-          <div class="globe-pins"></div>
+              <div class="globe-pins"></div>
+            </div>
+          </div>
         </div>
 
         <figcaption class="globe-places">

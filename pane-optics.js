@@ -1,7 +1,7 @@
 /* Sample the page's pixel wallpaper in screen coordinates. A single transparent
    layer draws the glass behind the real DOM, including the sticky reader. */
 (() => {
-  const panes = [...document.querySelectorAll('.report-list-item, .report-preview, .terminal, .globe-figure')];
+  const panes = [...document.querySelectorAll('.report-list-item, .report-preview, .terminal, .crt-screen')];
   const mobileWallpaper = matchMedia('(max-width: 879px), (hover: none) and (pointer: coarse)');
   const simple = matchMedia('(prefers-reduced-transparency: reduce), (forced-colors: active)');
   if (!panes.length || simple.matches) return;
@@ -90,6 +90,7 @@
     'lightTheme','isCard','selected'].map(name => [name, gl.getUniformLocation(program,name)]));
   const texture = gl.createTexture();
   const art = new Image();
+  const monitor = document.querySelector('.crt-screen');
   const mobileSurfaces = new Map();
   const mobileSamples = new WeakMap();
   let frame = 0;
@@ -115,16 +116,17 @@
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
-  function clearMobileSurfaces() {
+  function clearMobileSurfaces(keepMonitor = false) {
     for (const [pane, surface] of mobileSurfaces) {
+      if (keepMonitor && pane === monitor) continue;
       surface.canvas.remove();
       pane.classList.remove('optical-pane-ready');
       mobileSamples.delete(pane);
+      mobileSurfaces.delete(pane);
     }
-    mobileSurfaces.clear();
   }
 
-  function drawMobile(pane, rect, ratio, tile, theme) {
+  function drawClipped(pane, rect, ratio, tile, theme) {
     let surface = mobileSurfaces.get(pane);
     if (!surface) {
       const canvas = document.createElement('canvas');
@@ -175,12 +177,19 @@
       for (const pane of panes) {
         const rect = pane.getBoundingClientRect();
         if (!rect.width || rect.bottom < -120 || rect.top > innerHeight + 120) continue;
-        drawMobile(pane, rect, Math.min(ratio, 1), tileWidth, theme);
+        drawClipped(pane, rect, Math.min(ratio, 1), tileWidth, theme);
       }
       return;
     }
 
-    if (mobileSurfaces.size) clearMobileSurfaces();
+    clearMobileSurfaces(true);
+    // Keep the screen refraction clipped to the housing opening.
+    if (monitor) {
+      const rect = monitor.getBoundingClientRect();
+      if (rect.width && rect.bottom > -120 && rect.top < innerHeight + 120) {
+        drawClipped(monitor, rect, ratio, tileWidth, theme);
+      }
+    }
     const width = layer.clientWidth, height = layer.clientHeight;
     if (!width || !height) return;
     resizeBuffer(width, height, ratio);
@@ -189,7 +198,7 @@
     gl.uniform2f(u.paperOffset, 0, 0);
     for (const pane of panes) {
       const rect = pane.getBoundingClientRect();
-      if (!rect.width || rect.bottom <= 0 || rect.top >= height) continue;
+      if (pane === monitor || !rect.width || rect.bottom <= 0 || rect.top >= height) continue;
       drawPane(pane, rect.left, rect.top, rect.width, rect.height);
     }
     document.documentElement.classList.add('optics-ready');
