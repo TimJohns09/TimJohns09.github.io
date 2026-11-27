@@ -5,7 +5,7 @@
   const win = screen.querySelector('.crt-window');
   const launch = scene.querySelector('.crt-launch');
   const reset = document.querySelector('.case-reset');
-  let yaw = -9, pitch = 3;
+  let yaw = -16, pitch = -5;
   function rotate(y, p) {
     yaw = y % 360; pitch = p % 360;
     screen.style.setProperty('--reflection-x', (24 + 36 * Math.sin(yaw * Math.PI / 180)) + '%');
